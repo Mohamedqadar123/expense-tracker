@@ -1,0 +1,40 @@
+.layout-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.layout-brand {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.layout-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.layout-nav a {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.layout-nav a.active {
+  color: #111;
+  font-weight: bold;
+  border-bottom-color: #333;
+}
+
+@media (min-width: 640px) {
+  .layout-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

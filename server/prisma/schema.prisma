@@ -16,3 +16,19 @@ model Transaction {
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
 }
+
+model Budget {
+  id           Int      @id @default(autoincrement())
+  category     String   @unique
+  monthlyLimit Float
+  createdAt    DateTime @default(now())
+}
+
+model SavingsGoal {
+  id           Int       @id @default(autoincrement())
+  name         String
+  targetAmount Float
+  savedAmount  Float     @default(0)
+  targetDate   DateTime?
+  createdAt    DateTime  @default(now())
+}

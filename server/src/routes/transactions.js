@@ -1,10 +1,15 @@
 import { Router } from 'express';
 import prisma from '../prismaClient.js';
+import { parseDateRange } from '../utils/dateRange.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const transactions = await prisma.transaction.findMany({ orderBy: { date: 'desc' } });
+  const range = parseDateRange(req.query);
+  const transactions = await prisma.transaction.findMany({
+    where: range ? { date: range } : undefined,
+    orderBy: { date: 'desc' },
+  });
   res.json(transactions);
 });
 
