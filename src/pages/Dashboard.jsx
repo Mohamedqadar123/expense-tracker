@@ -9,11 +9,16 @@ import IncomeExpensesChart from '../components/dashboard/IncomeExpensesChart.jsx
 import SpendingByCategoryChart from '../components/dashboard/SpendingByCategoryChart.jsx'
 import RecentTransactionsList from '../components/dashboard/RecentTransactionsList.jsx'
 import InsightsList from '../components/dashboard/InsightsList.jsx'
+import BudgetAlertsBanner from '../components/dashboard/BudgetAlertsBanner.jsx'
 import BudgetsSection from '../components/dashboard/BudgetsSection.jsx'
 import SavingsGoalsSection from '../components/dashboard/SavingsGoalsSection.jsx'
 
 function todayString() {
-  return new Date().toISOString().slice(0, 10);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function Dashboard() {
@@ -70,6 +75,8 @@ function Dashboard() {
         </div>
       ) : (
         <>
+          <BudgetAlertsBanner budgets={overview.budgetProgress} />
+
           <StatCardsRow summary={overview.summary} />
 
           <div className="dashboard-charts-grid">

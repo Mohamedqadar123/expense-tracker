@@ -250,13 +250,69 @@
 .budget-row-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   font-size: 14px;
   margin-bottom: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.budget-name {
+  font-weight: bold;
+}
+
+.budget-meta {
+  color: #888;
+  font-size: 12px;
+  text-transform: capitalize;
 }
 
 .budget-category {
   font-weight: bold;
   text-transform: capitalize;
+}
+
+.budget-status-label {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.budget-status-label.status-normal {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.budget-status-label.status-warning {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.budget-status-label.status-near_limit {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.budget-status-label.status-exceeded {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.budget-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.budget-dates {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
 }
 
 .progress-bar {
@@ -272,11 +328,15 @@
   background: #2e7d32;
 }
 
-.progress-bar-fill.near {
+.progress-bar-fill.warning {
   background: #f9a825;
 }
 
-.progress-bar-fill.over {
+.progress-bar-fill.near_limit {
+  background: #ef6c00;
+}
+
+.progress-bar-fill.exceeded {
   background: #c62828;
 }
 
@@ -327,6 +387,22 @@
 .inline-form button[type="button"] {
   background: #eee;
   color: #333;
+}
+
+.inline-form-to {
+  align-self: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.budget-alerts-banner {
+  margin-bottom: 20px;
+}
+
+.auth-error {
+  color: #c62828;
+  font-size: 13px;
+  width: 100%;
 }
 
 /* Breakpoints */

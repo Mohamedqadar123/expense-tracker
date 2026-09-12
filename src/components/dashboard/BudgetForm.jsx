@@ -1,34 +1,87 @@
 import { useState } from 'react'
-import { CATEGORIES } from '../../constants/categories'
+import { BUDGET_CATEGORIES, BUDGET_PERIODS } from '../../constants/budgetCategories'
+import { computePeriodDates } from '../../utils/budgetPeriod'
 
 function BudgetForm({ initialValues, onSubmit, onCancel }) {
-  const [category, setCategory] = useState(initialValues?.category || CATEGORIES[0]);
-  const [monthlyLimit, setMonthlyLimit] = useState(initialValues?.monthlyLimit ?? '');
+  const [name, setName] = useState(initialValues?.name || '');
+  const [category, setCategory] = useState(initialValues?.category || BUDGET_CATEGORIES[0]);
+  const [amount, setAmount] = useState(initialValues?.amount ?? '');
+  const [period, setPeriod] = useState(initialValues?.period || 'monthly');
+  const defaultDates = initialValues ? null : computePeriodDates('monthly');
+  const [startDate, setStartDate] = useState(
+    initialValues?.startDate ? initialValues.startDate.slice(0, 10) : defaultDates?.start || ''
+  );
+  const [endDate, setEndDate] = useState(
+    initialValues?.endDate ? initialValues.endDate.slice(0, 10) : defaultDates?.end || ''
+  );
+  const [error, setError] = useState(null);
+
+  const handlePeriodChange = (nextPeriod) => {
+    setPeriod(nextPeriod);
+    const computed = computePeriodDates(nextPeriod);
+    if (computed) {
+      setStartDate(computed.start);
+      setEndDate(computed.end);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!monthlyLimit || Number(monthlyLimit) <= 0) return;
-    await onSubmit({ category, monthlyLimit: Number(monthlyLimit) });
-    if (!initialValues) {
-      setMonthlyLimit('');
+    setError(null);
+    if (!name || !amount || Number(amount) <= 0 || !startDate || !endDate) return;
+    try {
+      await onSubmit({ name, category, amount: Number(amount), period, startDate, endDate });
+      if (!initialValues) {
+        setName('');
+        setAmount('');
+        setPeriod('monthly');
+        const computed = computePeriodDates('monthly');
+        setStartDate(computed.start);
+        setEndDate(computed.end);
+      }
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <form className="inline-form" onSubmit={handleSubmit}>
-      <select value={category} onChange={(e) => setCategory(e.target.value)} disabled={!!initialValues}>
-        {CATEGORIES.map(cat => (
+    <form className="inline-form budget-form" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Budget name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        {BUDGET_CATEGORIES.map(cat => (
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
       <input
         type="number"
-        placeholder="Monthly limit"
-        value={monthlyLimit}
-        onChange={(e) => setMonthlyLimit(e.target.value)}
+        placeholder="Amount"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
+      <select value={period} onChange={(e) => handlePeriodChange(e.target.value)}>
+        {BUDGET_PERIODS.map(p => (
+          <option key={p.value} value={p.value}>{p.label}</option>
+        ))}
+      </select>
+      <input
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+      />
+      <span className="inline-form-to">to</span>
+      <input
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
       />
       <button type="submit">{initialValues ? 'Save' : 'Add'}</button>
       {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
+      {error && <p className="auth-error">{error}</p>}
     </form>
   );
 }

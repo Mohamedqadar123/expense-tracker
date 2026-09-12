@@ -1,7 +1,16 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import './Layout.css'
+import { useAuth } from '../context/useAuth.js'
 
 function Layout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <div className="layout">
       <header className="layout-header">
@@ -14,6 +23,10 @@ function Layout() {
             Transactions
           </NavLink>
         </nav>
+        <div className="layout-user">
+          <span className="layout-user-email">{user?.name || user?.email}</span>
+          <button type="button" onClick={handleLogout}>Log Out</button>
+        </div>
       </header>
       <main className="layout-main">
         <Outlet />

@@ -1,26 +1,45 @@
-export async function getBudgetProgress(prisma) {
-  const now = new Date();
-  const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-  const startOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+export const BUDGET_STATUS = {
+  NORMAL: 'normal',
+  WARNING: 'warning',
+  NEAR_LIMIT: 'near_limit',
+  EXCEEDED: 'exceeded',
+};
 
-  const [budgets, spend] = await Promise.all([
-    prisma.budget.findMany({ orderBy: { category: 'asc' } }),
-    prisma.transaction.groupBy({
-      by: ['category'],
-      where: { type: 'expense', date: { gte: startOfMonth, lt: startOfNextMonth } },
-      _sum: { amount: true },
-    }),
-  ]);
+export function getBudgetStatus(percentUsed) {
+  if (percentUsed >= 100) return BUDGET_STATUS.EXCEEDED;
+  if (percentUsed >= 90) return BUDGET_STATUS.NEAR_LIMIT;
+  if (percentUsed >= 70) return BUDGET_STATUS.WARNING;
+  return BUDGET_STATUS.NORMAL;
+}
 
-  const spendByCategory = Object.fromEntries(spend.map(s => [s.category, s._sum.amount ?? 0]));
-
-  return budgets.map(b => {
-    const spent = spendByCategory[b.category] ?? 0;
-    return {
-      ...b,
-      spent,
-      remaining: b.monthlyLimit - spent,
-      percentUsed: b.monthlyLimit > 0 ? (spent / b.monthlyLimit) * 100 : 0,
-    };
+export async function getBudgetProgress(prisma, userId) {
+  const budgets = await prisma.budget.findMany({
+    where: { userId },
+    orderBy: { startDate: 'desc' },
   });
+
+  return Promise.all(
+    budgets.map(async (b) => {
+      const spendAgg = await prisma.transaction.aggregate({
+        where: {
+          userId,
+          type: 'expense',
+          category: { equals: b.category, mode: 'insensitive' },
+          date: { gte: b.startDate, lte: b.endDate },
+        },
+        _sum: { amount: true },
+      });
+
+      const spent = spendAgg._sum.amount ?? 0;
+      const percentUsed = b.amount > 0 ? (spent / b.amount) * 100 : 0;
+
+      return {
+        ...b,
+        spent,
+        remaining: b.amount - spent,
+        percentUsed,
+        status: getBudgetStatus(percentUsed),
+      };
+    })
+  );
 }

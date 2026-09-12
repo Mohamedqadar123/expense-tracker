@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react'
 import '../App.css'
 import { getTransactions, createTransaction, deleteTransaction } from '../api/transactions'
 import { CATEGORIES } from '../constants/categories'
+import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
+
+function mergeCategories(a, b) {
+  const seen = new Map();
+  for (const cat of [...a, ...b]) {
+    const key = cat.toLowerCase();
+    if (!seen.has(key)) seen.set(key, cat);
+  }
+  return [...seen.values()];
+}
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -22,7 +32,7 @@ function Transactions() {
   const [filterType, setFilterType] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
 
-  const categories = CATEGORIES;
+  const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
   const totalIncome = transactions
     .filter(t => t.type === "income")

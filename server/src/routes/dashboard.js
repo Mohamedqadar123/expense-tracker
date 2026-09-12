@@ -60,6 +60,7 @@ router.get('/overview', async (req, res) => {
     const now = new Date();
     const sixMonthsAgoStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 5, 1));
     const startOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    const userId = req.user.id;
 
     const [
       allTimeGroups,
@@ -70,21 +71,24 @@ router.get('/overview', async (req, res) => {
       periodTransactions,
       budgetProgress,
     ] = await Promise.all([
-      prisma.transaction.groupBy({ by: ['type'], _sum: { amount: true } }),
-      prisma.transaction.groupBy({ by: ['type'], where: { date: { gte, lt } }, _sum: { amount: true } }),
+      prisma.transaction.groupBy({ by: ['type'], where: { userId }, _sum: { amount: true } }),
+      prisma.transaction.groupBy({ by: ['type'], where: { userId, date: { gte, lt } }, _sum: { amount: true } }),
       prisma.transaction.groupBy({
         by: ['category'],
-        where: { type: 'expense', date: { gte, lt } },
+        where: { userId, type: 'expense', date: { gte, lt } },
         _sum: { amount: true },
         orderBy: { _sum: { amount: 'desc' } },
       }),
-      prisma.transaction.findMany({ where: { date: { gte, lt } }, orderBy: { date: 'desc' }, take: 5 }),
+      prisma.transaction.findMany({ where: { userId, date: { gte, lt } }, orderBy: { date: 'desc' }, take: 5 }),
       prisma.transaction.findMany({
-        where: { type: 'expense', date: { gte: sixMonthsAgoStart, lt: startOfNextMonth } },
+        where: { userId, type: 'expense', date: { gte: sixMonthsAgoStart, lt: startOfNextMonth } },
         select: { amount: true, date: true },
       }),
-      prisma.transaction.findMany({ where: { date: { gte, lt } }, select: { amount: true, type: true, date: true } }),
-      getBudgetProgress(prisma),
+      prisma.transaction.findMany({
+        where: { userId, date: { gte, lt } },
+        select: { amount: true, type: true, date: true },
+      }),
+      getBudgetProgress(prisma, userId),
     ]);
 
     const totalBalance = sumByType(allTimeGroups, 'income') - sumByType(allTimeGroups, 'expense');
@@ -124,7 +128,7 @@ router.get('/overview', async (req, res) => {
     const incomeVsExpenses = ivsBuckets.map(b => ({ bucket: b.key, income: b.income, expenses: b.expenses }));
 
     const summary = { totalBalance, income, expenses, savings, savingsRate };
-    const insights = buildInsights({ summary, spendingByCategory, monthlySpendingTrend, budgetProgress });
+    const insights = buildInsights({ summary, spendingByCategory, monthlySpendingTrend });
 
     res.json({
       summary,
@@ -133,6 +137,7 @@ router.get('/overview', async (req, res) => {
       recentTransactions,
       spendingByCategory,
       insights,
+      budgetProgress,
     });
   } catch (err) {
     console.error(err);

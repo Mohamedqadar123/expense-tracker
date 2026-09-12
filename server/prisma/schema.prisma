@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+
+  transactions Transaction[]
+  budgets      Budget[]
+  savingsGoals SavingsGoal[]
+}
+
 model Transaction {
   id          Int      @id @default(autoincrement())
   description String
@@ -15,13 +27,27 @@ model Transaction {
   category    String
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Budget {
-  id           Int      @id @default(autoincrement())
-  category     String   @unique
-  monthlyLimit Float
-  createdAt    DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  category  String
+  amount    Float
+  period    String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, category])
 }
 
 model SavingsGoal {
@@ -31,4 +57,9 @@ model SavingsGoal {
   savedAmount  Float     @default(0)
   targetDate   DateTime?
   createdAt    DateTime  @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

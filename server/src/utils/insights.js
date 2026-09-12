@@ -1,4 +1,4 @@
-export function buildInsights({ summary, spendingByCategory, monthlySpendingTrend, budgetProgress }) {
+export function buildInsights({ summary, spendingByCategory, monthlySpendingTrend }) {
   const insights = [];
   let nextId = 1;
   const push = (type, message, tone) => insights.push({ id: nextId++, type, message, tone });
@@ -40,22 +40,6 @@ export function buildInsights({ summary, spendingByCategory, monthlySpendingTren
     push('savings-rate', `Great job — you're saving ${summary.savingsRate.toFixed(0)}% of your income this period.`, 'positive');
   } else {
     push('savings-rate', `You're saving ${summary.savingsRate.toFixed(0)}% of your income this period.`, 'neutral');
-  }
-
-  for (const budget of budgetProgress) {
-    if (budget.percentUsed >= 100) {
-      push(
-        'budget-over',
-        `You're over budget for ${budget.category} this month ($${budget.spent.toFixed(2)} of $${budget.monthlyLimit.toFixed(2)}).`,
-        'negative'
-      );
-    } else if (budget.percentUsed >= 80) {
-      push(
-        'budget-near',
-        `You've used ${budget.percentUsed.toFixed(0)}% of your ${budget.category} budget this month.`,
-        'warning'
-      );
-    }
   }
 
   return insights;

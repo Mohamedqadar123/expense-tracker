@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getBudgets, createBudget, updateBudget, deleteBudget } from '../../api/budgets'
 import BudgetForm from './BudgetForm.jsx'
+import { BUDGET_STATUS_LABEL } from '../../utils/budgetStatus'
 
 function BudgetsSection() {
   const [budgets, setBudgets] = useState([]);
@@ -68,15 +69,28 @@ function BudgetsSection() {
                   ) : (
                     <>
                       <div className="budget-row-header">
-                        <span className="budget-category">{b.category}</span>
-                        <span>${b.spent.toFixed(2)} / ${b.monthlyLimit.toFixed(2)}</span>
+                        <div>
+                          <span className="budget-name">{b.name}</span>
+                          <span className="budget-meta"> · {b.category} · {b.period}</span>
+                        </div>
+                        <span className={`budget-status-label status-${b.status}`}>
+                          {BUDGET_STATUS_LABEL[b.status]}
+                        </span>
+                      </div>
+                      <div className="budget-amounts">
+                        <span>${b.spent.toFixed(2)} spent of ${b.amount.toFixed(2)}</span>
+                        <span>${Math.max(b.remaining, 0).toFixed(2)} remaining</span>
+                        <span>{b.percentUsed.toFixed(0)}%</span>
                       </div>
                       <div className="progress-bar">
                         <div
-                          className={`progress-bar-fill ${b.percentUsed >= 100 ? 'over' : b.percentUsed >= 80 ? 'near' : ''}`}
+                          className={`progress-bar-fill ${b.status}`}
                           style={{ width: `${Math.min(b.percentUsed, 100)}%` }}
                         />
                       </div>
+                      <p className="budget-dates">
+                        {b.startDate.slice(0, 10)} – {b.endDate.slice(0, 10)}
+                      </p>
                       <div className="budget-actions">
                         <button onClick={() => setEditingId(b.id)}>Edit</button>
                         <button onClick={() => handleDelete(b.id)}>Delete</button>

@@ -31,6 +31,26 @@
   border-bottom-color: #333;
 }
 
+.layout-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.layout-user-email {
+  color: #666;
+}
+
+.layout-user button {
+  padding: 6px 12px;
+  background: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
 @media (min-width: 640px) {
   .layout-header {
     flex-direction: row;
