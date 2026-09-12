@@ -1,16 +1,10 @@
-const PRESETS = [
-  { key: 'today', label: 'Today' },
-  { key: 'week', label: 'This Week' },
-  { key: 'month', label: 'This Month' },
-  { key: 'year', label: 'This Year' },
-  { key: 'custom', label: 'Custom' },
-];
+import { DASHBOARD_PRESETS } from '../../constants/periodPresets'
 
-function PeriodSelector({ preset, customStart, customEnd, onChange }) {
+function PeriodSelector({ preset, customStart, customEnd, onChange, presets = DASHBOARD_PRESETS }) {
   return (
     <div className="period-selector">
       <div className="period-presets">
-        {PRESETS.map(p => (
+        {presets.map(p => (
           <button
             key={p.key}
             type="button"

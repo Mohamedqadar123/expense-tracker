@@ -7,6 +7,7 @@ import transactionsRouter from './routes/transactions.js';
 import dashboardRouter from './routes/dashboard.js';
 import budgetsRouter from './routes/budgets.js';
 import goalsRouter from './routes/goals.js';
+import reportsRouter from './routes/reports.js';
 import requireAuth from './middleware/requireAuth.js';
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/transactions', requireAuth, transactionsRouter);
 app.use('/api/dashboard', requireAuth, dashboardRouter);
 app.use('/api/budgets', requireAuth, budgetsRouter);
 app.use('/api/goals', requireAuth, goalsRouter);
+app.use('/api/reports', requireAuth, reportsRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

@@ -1,0 +1,96 @@
+.reports {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.reports h1 {
+  margin-bottom: 4px;
+}
+
+.reports .subtitle {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.reports-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.reports-export-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reports-export-toolbar button {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+.reports-export-toolbar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.reports-content > * {
+  margin-bottom: 20px;
+}
+
+.reports-table-wrapper {
+  overflow-x: auto;
+}
+
+.reports-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reports-table-wrapper th,
+.reports-table-wrapper td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.reports-table-wrapper th {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .reports-toolbar {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+@media print {
+  .no-print,
+  .layout-header {
+    display: none !important;
+  }
+
+  .reports {
+    max-width: none;
+    padding: 0;
+  }
+
+  .chart-card,
+  .list-card,
+  .section-card {
+    break-inside: avoid;
+    border: 1px solid #999;
+  }
+}
