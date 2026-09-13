@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "recurring:run": "node scripts/runRecurringTransactions.js"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
@@ -14,7 +15,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.6.0"
   },
   "devDependencies": {
     "prisma": "^6.2.1"

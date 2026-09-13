@@ -8,7 +8,9 @@ import dashboardRouter from './routes/dashboard.js';
 import budgetsRouter from './routes/budgets.js';
 import goalsRouter from './routes/goals.js';
 import reportsRouter from './routes/reports.js';
+import recurringTransactionsRouter from './routes/recurringTransactions.js';
 import requireAuth from './middleware/requireAuth.js';
+import { startRecurringTransactionScheduler } from './scheduler.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -23,7 +25,9 @@ app.use('/api/dashboard', requireAuth, dashboardRouter);
 app.use('/api/budgets', requireAuth, budgetsRouter);
 app.use('/api/goals', requireAuth, goalsRouter);
 app.use('/api/reports', requireAuth, reportsRouter);
+app.use('/api/recurring-transactions', requireAuth, recurringTransactionsRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
+  startRecurringTransactionScheduler();
 });

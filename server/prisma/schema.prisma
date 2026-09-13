@@ -14,9 +14,10 @@ model User {
   name         String?
   createdAt    DateTime @default(now())
 
-  transactions Transaction[]
-  budgets      Budget[]
-  savingsGoals SavingsGoal[]
+  transactions          Transaction[]
+  budgets               Budget[]
+  savingsGoals          SavingsGoal[]
+  recurringTransactions RecurringTransaction[]
 }
 
 model Transaction {
@@ -31,7 +32,52 @@ model Transaction {
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  recurringTransactionId Int?
+  recurringTransaction   RecurringTransaction? @relation(fields: [recurringTransactionId], references: [id], onDelete: SetNull)
+  recurringLogs          RecurringTransactionLog[]
+
   @@index([userId])
+  @@index([recurringTransactionId])
+}
+
+model RecurringTransaction {
+  id                Int       @id @default(autoincrement())
+  description       String
+  amount            Float
+  type              String
+  category          String
+  account           String?
+  frequency         String
+  status            String    @default("active")
+  startDate         DateTime
+  endDate           DateTime?
+  nextExecutionDate DateTime
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+  logs         RecurringTransactionLog[]
+
+  @@index([userId])
+  @@index([status, nextExecutionDate])
+}
+
+model RecurringTransactionLog {
+  id                     Int      @id @default(autoincrement())
+  recurringTransactionId Int
+  recurringTransaction   RecurringTransaction @relation(fields: [recurringTransactionId], references: [id], onDelete: Cascade)
+  occurrenceDate         DateTime
+  status                 String   @default("generated")
+  transactionId          Int?
+  transaction            Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  message                String?
+  createdAt              DateTime @default(now())
+
+  @@unique([recurringTransactionId, occurrenceDate])
+  @@index([recurringTransactionId])
 }
 
 model Budget {

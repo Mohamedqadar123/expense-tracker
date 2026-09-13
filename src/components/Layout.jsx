@@ -25,6 +25,9 @@ function Layout() {
           <NavLink to="/reports" className={({ isActive }) => isActive ? 'active' : ''}>
             Reports
           </NavLink>
+          <NavLink to="/recurring" className={({ isActive }) => isActive ? 'active' : ''}>
+            Recurring
+          </NavLink>
         </nav>
         <div className="layout-user">
           <span className="layout-user-email">{user?.name || user?.email}</span>
