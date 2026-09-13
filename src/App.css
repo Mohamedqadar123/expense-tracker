@@ -146,3 +146,107 @@ th {
   font-size: 12px;
   color: #333;
 }
+
+.list-empty {
+  color: #888;
+  font-size: 13px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.dashboard-error {
+  color: #c62828;
+  font-size: 13px;
+  padding: 12px 0;
+}
+
+.dashboard-error button {
+  margin-top: 6px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.transaction-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.transaction-filters input,
+.transaction-filters select {
+  padding: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  flex: 1 1 140px;
+}
+
+.filter-date-range,
+.filter-amount-range {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 220px;
+}
+
+.filter-date-range input,
+.filter-amount-range input {
+  flex: 1;
+}
+
+.clear-filters-btn {
+  padding: 6px 14px;
+  background: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  flex: 0 0 auto;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  background: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .transaction-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-date-range,
+  .filter-amount-range {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
