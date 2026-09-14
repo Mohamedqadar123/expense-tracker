@@ -18,6 +18,7 @@ model User {
   budgets               Budget[]
   savingsGoals          SavingsGoal[]
   recurringTransactions RecurringTransaction[]
+  aiMessages            AiMessage[]
 }
 
 model Transaction {
@@ -97,6 +98,17 @@ model Budget {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, category])
+}
+
+model AiMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model SavingsGoal {
