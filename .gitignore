@@ -15,6 +15,7 @@ dist-ssr
 # Backend
 server/node_modules
 server/.env
+server/.env.test
 
 # Claude Code local state
 .claude/
