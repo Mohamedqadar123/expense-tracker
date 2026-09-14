@@ -46,6 +46,8 @@ function Transactions() {
       else next.set(k, v);
     });
     if (!isPageOnly) next.delete('page');
+    setIsLoading(true);
+    setError(null);
     setSearchParams(next);
   }, [searchParams, setSearchParams]);
 
@@ -57,10 +59,8 @@ function Transactions() {
     loadAccounts();
   }, [loadAccounts]);
 
-  const load = useCallback(() => {
-    setIsLoading(true);
-    setError(null);
-    getTransactions({
+  const fetchTransactions = useCallback(() => {
+    return getTransactions({
       search: filters.search,
       type: filters.type !== 'all' ? filters.type : undefined,
       category: filters.category !== 'all' ? filters.category : undefined,
@@ -77,6 +77,7 @@ function Transactions() {
         setTransactions(res.data);
         setTotal(res.total);
         setTotalPages(res.totalPages);
+        setError(null);
         if (res.data.length === 0 && filters.page > 1 && res.total > 0) {
           updateFilters({ page: filters.page - 1 });
         }
@@ -85,9 +86,15 @@ function Transactions() {
       .finally(() => setIsLoading(false));
   }, [filters, updateFilters, t]);
 
+  const load = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    return fetchTransactions();
+  }, [fetchTransactions]);
+
   useEffect(() => {
-    load();
-  }, [load]);
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   useEffect(() => {
     const handleCreated = () => { load(); loadAccounts(); };

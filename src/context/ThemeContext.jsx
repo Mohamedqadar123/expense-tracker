@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useReducer } from 'react'
 import ThemeContext from './themeContext.js'
 
 const STORAGE_KEY = 'theme';
@@ -23,21 +23,19 @@ function resolveTheme(theme) {
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(getStoredTheme);
-  const [resolvedTheme, setResolvedTheme] = useState(() => resolveTheme(getStoredTheme()));
+  const [, forceSystemThemeRecheck] = useReducer((c) => c + 1, 0);
+  const resolvedTheme = resolveTheme(theme);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', resolvedTheme);
   }, [resolvedTheme]);
 
   useEffect(() => {
-    setResolvedTheme(resolveTheme(theme));
+    if (theme !== 'system') return;
 
-    if (theme === 'system') {
-      const mql = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => setResolvedTheme(getSystemTheme());
-      mql.addEventListener('change', handleChange);
-      return () => mql.removeEventListener('change', handleChange);
-    }
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    mql.addEventListener('change', forceSystemThemeRecheck);
+    return () => mql.removeEventListener('change', forceSystemThemeRecheck);
   }, [theme]);
 
   const setTheme = useCallback((next) => {
