@@ -50,6 +50,11 @@ const authLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
+  // Only failed signup/login attempts count against the quota — otherwise a
+  // normal signup -> login -> logout -> login cycle (or a shared office/NAT
+  // IP with several legitimate users) burns through the budget and locks
+  // out real credentials with a 429 that looks like a login failure.
+  skipSuccessfulRequests: true,
   skip: () => process.env.NODE_ENV === 'test',
   keyGenerator: (req) => ipKeyGenerator(req.ip),
   handler: (req, res) => {
