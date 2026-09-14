@@ -2,6 +2,7 @@ import { Router } from 'express';
 import prisma from '../prismaClient.js';
 import { getBudgetProgress } from '../utils/budgetProgress.js';
 import { BUDGET_CATEGORIES, BUDGET_PERIODS } from '../constants/budgetCategories.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -32,12 +33,12 @@ function validateBudgetInput({ name, category, amount, period, startDate, endDat
   return null;
 }
 
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const budgets = await getBudgetProgress(prisma, req.user.id);
   res.json(budgets);
-});
+}));
 
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
   const error = validateBudgetInput(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -56,10 +57,11 @@ router.post('/', async (req, res) => {
     },
   });
   res.status(201).json(budget);
-});
+}));
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid budget id' });
   const error = validateBudgetInput(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -69,8 +71,8 @@ router.put('/:id', async (req, res) => {
   const { name, category, amount, period, startDate, endDate } = req.body;
   const canonicalCategory = BUDGET_CATEGORIES.find((c) => c.toLowerCase() === category.toLowerCase());
 
-  const budget = await prisma.budget.update({
-    where: { id },
+  const result = await prisma.budget.updateMany({
+    where: { id, userId: req.user.id },
     data: {
       name,
       category: canonicalCategory,
@@ -80,17 +82,23 @@ router.put('/:id', async (req, res) => {
       endDate: new Date(endDate),
     },
   });
-  res.json(budget);
-});
+  if (result.count === 0) return res.status(404).json({ error: 'Budget not found' });
 
-router.delete('/:id', async (req, res) => {
+  const budget = await prisma.budget.findUnique({ where: { id } });
+  res.json(budget);
+}));
+
+router.delete('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid budget id' });
 
   const existing = await prisma.budget.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Budget not found' });
 
-  await prisma.budget.delete({ where: { id } });
+  const result = await prisma.budget.deleteMany({ where: { id, userId: req.user.id } });
+  if (result.count === 0) return res.status(404).json({ error: 'Budget not found' });
+
   res.status(204).end();
-});
+}));
 
 export default router;

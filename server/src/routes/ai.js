@@ -4,6 +4,7 @@ import prisma from '../prismaClient.js';
 import { buildFinancialSummary } from '../services/financialAnalysisService.js';
 import { askFinancialQuestion, AiServiceError } from '../services/anthropicClient.js';
 import { MAX_QUESTION_LENGTH, CONVERSATION_CONTEXT_LIMIT } from '../constants/ai.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -28,15 +29,15 @@ const askLimiter = rateLimit({
   },
 });
 
-router.get('/messages', async (req, res) => {
+router.get('/messages', asyncHandler(async (req, res) => {
   const messages = await prisma.aiMessage.findMany({
     where: { userId: req.user.id },
     orderBy: { createdAt: 'asc' },
   });
   res.json(messages);
-});
+}));
 
-router.post('/messages', askLimiter, async (req, res) => {
+router.post('/messages', askLimiter, asyncHandler(async (req, res) => {
   const error = validateAskInput(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -69,11 +70,11 @@ router.post('/messages', askLimiter, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Failed to process your question' });
   }
-});
+}));
 
-router.delete('/messages', async (req, res) => {
+router.delete('/messages', asyncHandler(async (req, res) => {
   await prisma.aiMessage.deleteMany({ where: { userId: req.user.id } });
   res.status(204).end();
-});
+}));
 
 export default router;

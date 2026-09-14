@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../prismaClient.js';
 import { RECURRING_TYPES, RECURRING_FREQUENCIES } from '../constants/recurringTransactions.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -42,16 +43,16 @@ function validateRecurringTransactionInput({ description, amount, type, category
   return null;
 }
 
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const { status } = req.query;
   const recurringTransactions = await prisma.recurringTransaction.findMany({
     where: { userId: req.user.id, ...(status ? { status } : {}) },
     orderBy: { nextExecutionDate: 'asc' },
   });
   res.json(recurringTransactions);
-});
+}));
 
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
   const error = validateRecurringTransactionInput(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -74,10 +75,11 @@ router.post('/', async (req, res) => {
     },
   });
   res.status(201).json(recurringTransaction);
-});
+}));
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid recurring transaction id' });
   const error = validateRecurringTransactionInput(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -87,8 +89,8 @@ router.put('/:id', async (req, res) => {
   const { description, amount, type, category, account, frequency, startDate, endDate, nextExecutionDate } = req.body;
   const start = new Date(startDate);
 
-  const recurringTransaction = await prisma.recurringTransaction.update({
-    where: { id },
+  const result = await prisma.recurringTransaction.updateMany({
+    where: { id, userId: req.user.id },
     data: {
       description,
       amount: Number(amount),
@@ -104,47 +106,62 @@ router.put('/:id', async (req, res) => {
       nextExecutionDate: nextExecutionDate ? new Date(nextExecutionDate) : existing.nextExecutionDate,
     },
   });
+  if (result.count === 0) return res.status(404).json({ error: 'Recurring transaction not found' });
+
+  const recurringTransaction = await prisma.recurringTransaction.findUnique({ where: { id } });
   res.json(recurringTransaction);
-});
+}));
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid recurring transaction id' });
 
   const existing = await prisma.recurringTransaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Recurring transaction not found' });
 
-  await prisma.recurringTransaction.delete({ where: { id } });
+  const result = await prisma.recurringTransaction.deleteMany({ where: { id, userId: req.user.id } });
+  if (result.count === 0) return res.status(404).json({ error: 'Recurring transaction not found' });
+
   res.status(204).end();
-});
+}));
 
-router.patch('/:id/pause', async (req, res) => {
+router.patch('/:id/pause', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid recurring transaction id' });
 
   const existing = await prisma.recurringTransaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Recurring transaction not found' });
 
-  const recurringTransaction = await prisma.recurringTransaction.update({
-    where: { id },
+  const result = await prisma.recurringTransaction.updateMany({
+    where: { id, userId: req.user.id },
     data: { status: 'paused' },
   });
-  res.json(recurringTransaction);
-});
+  if (result.count === 0) return res.status(404).json({ error: 'Recurring transaction not found' });
 
-router.patch('/:id/resume', async (req, res) => {
+  const recurringTransaction = await prisma.recurringTransaction.findUnique({ where: { id } });
+  res.json(recurringTransaction);
+}));
+
+router.patch('/:id/resume', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid recurring transaction id' });
 
   const existing = await prisma.recurringTransaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Recurring transaction not found' });
 
-  const recurringTransaction = await prisma.recurringTransaction.update({
-    where: { id },
+  const result = await prisma.recurringTransaction.updateMany({
+    where: { id, userId: req.user.id },
     data: { status: 'active' },
   });
-  res.json(recurringTransaction);
-});
+  if (result.count === 0) return res.status(404).json({ error: 'Recurring transaction not found' });
 
-router.get('/:id/history', async (req, res) => {
+  const recurringTransaction = await prisma.recurringTransaction.findUnique({ where: { id } });
+  res.json(recurringTransaction);
+}));
+
+router.get('/:id/history', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid recurring transaction id' });
 
   const existing = await prisma.recurringTransaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Recurring transaction not found' });
@@ -155,6 +172,6 @@ router.get('/:id/history', async (req, res) => {
     include: { transaction: true },
   });
   res.json(history);
-});
+}));
 
 export default router;

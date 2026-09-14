@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../prismaClient.js';
 import { parsePartialDateRange } from '../utils/dateRange.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
 
@@ -43,7 +44,26 @@ function validateTransactionQuery(query) {
   return null;
 }
 
-router.get('/accounts', async (req, res) => {
+function validateTransactionInput({ description, amount, type, category, account }) {
+  if (!description || typeof description !== 'string' || !description.trim()) {
+    return 'description is required';
+  }
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return 'amount must be a positive number';
+  }
+  if (!['income', 'expense'].includes(String(type || '').toLowerCase())) {
+    return 'type must be one of: income, expense';
+  }
+  if (!category || typeof category !== 'string' || !category.trim()) {
+    return 'category is required';
+  }
+  if (account !== undefined && account !== null && typeof account !== 'string') {
+    return 'account must be a string';
+  }
+  return null;
+}
+
+router.get('/accounts', asyncHandler(async (req, res) => {
   const rows = await prisma.transaction.findMany({
     where: { userId: req.user.id, account: { not: null } },
     select: { account: true },
@@ -51,9 +71,9 @@ router.get('/accounts', async (req, res) => {
     orderBy: { account: 'asc' },
   });
   res.json(rows.map((r) => r.account).filter(Boolean));
-});
+}));
 
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const error = validateTransactionQuery(req.query);
   if (error) return res.status(400).json({ error });
 
@@ -90,38 +110,57 @@ router.get('/', async (req, res) => {
     limit,
     totalPages: total === 0 ? 0 : Math.ceil(total / limit),
   });
-});
+}));
 
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
+  const error = validateTransactionInput(req.body);
+  if (error) return res.status(400).json({ error });
+
   const { description, amount, type, category, account } = req.body;
   const transaction = await prisma.transaction.create({
-    data: { description, amount, type, category, account: account || null, userId: req.user.id },
+    data: {
+      description,
+      amount,
+      type: String(type).toLowerCase(),
+      category,
+      account: account || null,
+      userId: req.user.id,
+    },
   });
   res.status(201).json(transaction);
-});
+}));
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid transaction id' });
+  const error = validateTransactionInput(req.body);
+  if (error) return res.status(400).json({ error });
+
+  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.user.id } });
+  if (!existing) return res.status(404).json({ error: 'Transaction not found' });
+
   const { description, amount, type, category, account } = req.body;
-
-  const existing = await prisma.transaction.findFirst({ where: { id, userId: req.user.id } });
-  if (!existing) return res.status(404).json({ error: 'Transaction not found' });
-
-  const transaction = await prisma.transaction.update({
-    where: { id },
-    data: { description, amount, type, category, account: account || null },
+  const result = await prisma.transaction.updateMany({
+    where: { id, userId: req.user.id },
+    data: { description, amount, type: String(type).toLowerCase(), category, account: account || null },
   });
-  res.json(transaction);
-});
+  if (result.count === 0) return res.status(404).json({ error: 'Transaction not found' });
 
-router.delete('/:id', async (req, res) => {
+  const transaction = await prisma.transaction.findUnique({ where: { id } });
+  res.json(transaction);
+}));
+
+router.delete('/:id', asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'Invalid transaction id' });
 
   const existing = await prisma.transaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Transaction not found' });
 
-  await prisma.transaction.delete({ where: { id } });
+  const result = await prisma.transaction.deleteMany({ where: { id, userId: req.user.id } });
+  if (result.count === 0) return res.status(404).json({ error: 'Transaction not found' });
+
   res.status(204).end();
-});
+}));
 
 export default router;
