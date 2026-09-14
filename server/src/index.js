@@ -16,7 +16,12 @@ import { startRecurringTransactionScheduler } from './scheduler.js';
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
