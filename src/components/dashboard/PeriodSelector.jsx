@@ -1,6 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { DASHBOARD_PRESETS } from '../../constants/periodPresets'
 
 function PeriodSelector({ preset, customStart, customEnd, onChange, presets = DASHBOARD_PRESETS }) {
+  const { t } = useTranslation();
+
   return (
     <div className="period-selector">
       <div className="period-presets">
@@ -11,7 +14,7 @@ function PeriodSelector({ preset, customStart, customEnd, onChange, presets = DA
             className={preset === p.key ? 'active' : ''}
             onClick={() => onChange({ preset: p.key })}
           >
-            {p.label}
+            {t(`periods.${p.key}`)}
           </button>
         ))}
       </div>
@@ -22,7 +25,7 @@ function PeriodSelector({ preset, customStart, customEnd, onChange, presets = DA
             value={customStart}
             onChange={(e) => onChange({ preset: 'custom', customStart: e.target.value, customEnd })}
           />
-          <span>to</span>
+          <span>{t('common.to')}</span>
           <input
             type="date"
             value={customEnd}

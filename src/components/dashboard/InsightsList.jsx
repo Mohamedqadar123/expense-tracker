@@ -1,9 +1,13 @@
+import { useTranslation } from 'react-i18next'
+
 function InsightsList({ insights }) {
+  const { t } = useTranslation();
+
   return (
     <div className="list-card">
-      <h3>Financial Insights</h3>
+      <h3>{t('dashboard.financialInsights')}</h3>
       {insights.length === 0 ? (
-        <p className="list-empty">No insights yet.</p>
+        <p className="list-empty">{t('dashboard.noInsights')}</p>
       ) : (
         <ul className="insights-list">
           {insights.map(i => (

@@ -1,0 +1,107 @@
+.finance-ai-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.finance-ai-page h1 {
+  margin-bottom: 4px;
+}
+
+.finance-ai-page .subtitle {
+  margin-bottom: 20px;
+  color: var(--color-text-subtle);
+}
+
+.finance-ai-disclaimer {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.finance-ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.finance-ai-header h2 {
+  font-size: 16px;
+}
+
+.finance-ai-header button {
+  padding: 6px 12px;
+  background: var(--color-secondary-bg);
+  border: 1px solid var(--color-input-border);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-secondary-text);
+}
+
+.finance-ai-messages {
+  list-style: none;
+  margin-bottom: 16px;
+}
+
+.finance-ai-message {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.finance-ai-message-content {
+  display: inline-block;
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.finance-ai-message-user {
+  justify-content: flex-end;
+}
+
+.finance-ai-message-user .finance-ai-message-content {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.finance-ai-message-assistant {
+  justify-content: flex-start;
+}
+
+.finance-ai-message-assistant .finance-ai-message-content {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.finance-ai-message-pending .finance-ai-message-content {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.finance-ai-input-row {
+  flex-wrap: nowrap;
+}
+
+.finance-ai-input-row input {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .finance-ai-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .finance-ai-message-content {
+    max-width: 90%;
+  }
+}

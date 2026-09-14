@@ -1,0 +1,14 @@
+.budgets-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.budgets-page h1 {
+  margin-bottom: 4px;
+}
+
+.budgets-page .subtitle {
+  margin-bottom: 20px;
+  color: var(--color-text-subtle);
+}

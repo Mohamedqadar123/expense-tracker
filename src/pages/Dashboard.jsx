@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import '../styles/shared.css'
 import './Dashboard.css'
 import { getDashboardOverview } from '../api/dashboard'
 import { getPeriodRange } from '../utils/periodRange'
@@ -10,8 +12,6 @@ import SpendingByCategoryChart from '../components/dashboard/SpendingByCategoryC
 import RecentTransactionsList from '../components/dashboard/RecentTransactionsList.jsx'
 import InsightsList from '../components/dashboard/InsightsList.jsx'
 import BudgetAlertsBanner from '../components/dashboard/BudgetAlertsBanner.jsx'
-import BudgetsSection from '../components/dashboard/BudgetsSection.jsx'
-import SavingsGoalsSection from '../components/dashboard/SavingsGoalsSection.jsx'
 
 function todayString() {
   const today = new Date();
@@ -22,6 +22,7 @@ function todayString() {
 }
 
 function Dashboard() {
+  const { t } = useTranslation();
   const [preset, setPreset] = useState('month');
   const [customStart, setCustomStart] = useState(todayString());
   const [customEnd, setCustomEnd] = useState(todayString());
@@ -36,7 +37,7 @@ function Dashboard() {
   useEffect(() => {
     getDashboardOverview({ start, end })
       .then(setOverview)
-      .catch(() => setError('Failed to load dashboard data'))
+      .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setIsLoading(false));
   }, [start, end, retryKey]);
 
@@ -56,8 +57,8 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
-      <p className="subtitle">Your financial overview</p>
+      <h1>{t('dashboard.title')}</h1>
+      <p className="subtitle">{t('dashboard.subtitle')}</p>
 
       <PeriodSelector
         preset={preset}
@@ -67,11 +68,11 @@ function Dashboard() {
       />
 
       {isLoading ? (
-        <p className="dashboard-status">Loading dashboard...</p>
+        <p className="dashboard-status">{t('dashboard.loading')}</p>
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
-          <button onClick={handleRetry}>Retry</button>
+          <button onClick={handleRetry}>{t('common.retry')}</button>
         </div>
       ) : (
         <>
@@ -91,9 +92,6 @@ function Dashboard() {
           </div>
         </>
       )}
-
-      <BudgetsSection />
-      <SavingsGoalsSection />
     </div>
   );
 }

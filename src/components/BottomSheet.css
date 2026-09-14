@@ -1,0 +1,99 @@
+.bottom-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+}
+
+.bottom-sheet {
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  padding-bottom: calc(20px + var(--safe-bottom));
+}
+
+.bottom-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.bottom-sheet-header h2 {
+  font-size: 18px;
+}
+
+.bottom-sheet-close {
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.more-sheet-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.more-sheet-nav a,
+.more-sheet-logout {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 0 8px;
+  font-size: 16px;
+  color: var(--color-text);
+  text-decoration: none;
+  border: none;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.more-sheet-logout {
+  color: var(--color-danger);
+}
+
+.more-sheet-theme,
+.more-sheet-language {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px 4px;
+}
+
+.more-sheet-theme-label,
+.more-sheet-language-label {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.theme-toggle-full {
+  flex: 1;
+  max-width: 240px;
+}
+
+.theme-toggle-full button {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .bottom-sheet-backdrop {
+    display: none;
+  }
+}

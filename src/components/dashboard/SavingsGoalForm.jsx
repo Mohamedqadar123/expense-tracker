@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(initialValues?.name || '');
   const [targetAmount, setTargetAmount] = useState(initialValues?.targetAmount ?? '');
   const [savedAmount, setSavedAmount] = useState(initialValues?.savedAmount ?? 0);
@@ -25,12 +27,12 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
 
   return (
     <form className="inline-form" onSubmit={handleSubmit}>
-      <input type="text" placeholder="Goal name" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="number" placeholder="Target amount" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} />
-      <input type="number" placeholder="Saved so far" value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} />
+      <input type="text" placeholder={t('goals.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
+      <input type="number" placeholder={t('goals.targetAmountPlaceholder')} value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} />
+      <input type="number" placeholder={t('goals.savedSoFarPlaceholder')} value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} />
       <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
-      <button type="submit">{initialValues ? 'Save' : 'Add'}</button>
-      {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
+      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
+      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
     </form>
   );
 }

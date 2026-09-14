@@ -1,0 +1,14 @@
+.goals-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.goals-page h1 {
+  margin-bottom: 4px;
+}
+
+.goals-page .subtitle {
+  margin-bottom: 20px;
+  color: var(--color-text-subtle);
+}

@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { BUDGET_STATUS_TONE } from '../../utils/budgetStatus'
 
 function BudgetAlertsBanner({ budgets }) {
+  const { t } = useTranslation();
   const flagged = budgets.filter(b => b.status !== 'normal');
   if (flagged.length === 0) return null;
 
@@ -9,8 +11,8 @@ function BudgetAlertsBanner({ budgets }) {
       {flagged.map(b => (
         <li key={b.id} className={`insight-${BUDGET_STATUS_TONE[b.status]}`}>
           {b.status === 'exceeded'
-            ? `You're over budget for "${b.name}" ($${b.spent.toFixed(2)} of $${b.amount.toFixed(2)}).`
-            : `You've used ${b.percentUsed.toFixed(0)}% of your "${b.name}" budget.`}
+            ? t('alerts.overBudget', { name: b.name, spent: b.spent.toFixed(2), amount: b.amount.toFixed(2) })
+            : t('alerts.nearBudget', { name: b.name, percent: b.percentUsed.toFixed(0) })}
         </li>
       ))}
     </ul>

@@ -1,24 +1,29 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-
-const COLORS = ['#333', '#c62828', '#2e7d32', '#1565c0', '#f9a825', '#6a1b9a', '#00838f'];
+import { useTranslation } from 'react-i18next'
+import { useTheme } from '../../context/useTheme.js'
+import { getChartColors, getTooltipStyle } from '../../theme/chartColors.js'
 
 function CategoryPie({ title, data, emptyMessage }) {
+  const { resolvedTheme } = useTheme();
+  const colors = getChartColors(resolvedTheme);
   const hasData = data.length > 0;
   return (
     <div className="chart-card">
       <h3>{title}</h3>
       {hasData ? (
-        <ResponsiveContainer width="100%" height={240}>
-          <PieChart>
-            <Pie data={data} dataKey="amount" nameKey="category" outerRadius={80} label>
-              {data.map((entry, index) => (
-                <Cell key={entry.category} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="chart-container chart-container--pie">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={data} dataKey="amount" nameKey="category" outerRadius="70%" label={{ fill: colors.legendText }}>
+                {data.map((entry, index) => (
+                  <Cell key={entry.category} fill={colors.categorical[index % colors.categorical.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} {...getTooltipStyle(colors)} />
+              <Legend wrapperStyle={{ color: colors.legendText, fontSize: 13 }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       ) : (
         <p className="chart-empty">{emptyMessage}</p>
       )}
@@ -27,10 +32,12 @@ function CategoryPie({ title, data, emptyMessage }) {
 }
 
 function CategoryBreakdownCharts({ expenseByCategory, incomeByCategory }) {
+  const { t } = useTranslation();
+
   return (
     <div className="dashboard-charts-grid">
-      <CategoryPie title="Expense by Category" data={expenseByCategory} emptyMessage="No expenses in this period." />
-      <CategoryPie title="Income by Category" data={incomeByCategory} emptyMessage="No income in this period." />
+      <CategoryPie title={t('reports.expenseByCategory')} data={expenseByCategory} emptyMessage={t('dashboard.noExpensesPeriod')} />
+      <CategoryPie title={t('reports.incomeByCategory')} data={incomeByCategory} emptyMessage={t('reports.noIncomePeriod')} />
     </div>
   );
 }

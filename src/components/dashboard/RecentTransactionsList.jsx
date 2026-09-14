@@ -1,19 +1,23 @@
+import { useTranslation } from 'react-i18next'
+
 function RecentTransactionsList({ transactions }) {
+  const { t } = useTranslation();
+
   return (
     <div className="list-card">
-      <h3>Recent Transactions</h3>
+      <h3>{t('dashboard.recentTransactions')}</h3>
       {transactions.length === 0 ? (
-        <p className="list-empty">No transactions in this period.</p>
+        <p className="list-empty">{t('dashboard.noTransactionsPeriod')}</p>
       ) : (
         <ul className="recent-transactions">
-          {transactions.map(t => (
-            <li key={t.id}>
+          {transactions.map(tx => (
+            <li key={tx.id}>
               <div>
-                <span className="rt-description">{t.description}</span>
-                <span className="rt-date">{t.date.slice(0, 10)}</span>
+                <span className="rt-description">{tx.description}</span>
+                <span className="rt-date">{tx.date.slice(0, 10)}</span>
               </div>
-              <span className={t.type === 'income' ? 'income-amount' : 'expense-amount'}>
-                {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+              <span className={tx.type === 'income' ? 'income-amount' : 'expense-amount'}>
+                {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
               </span>
             </li>
           ))}

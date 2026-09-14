@@ -1,0 +1,20 @@
+.language-selector {
+  flex-shrink: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text-subtle);
+  padding: 8px 10px;
+  font-size: 12px;
+  min-height: var(--touch-target);
+  cursor: pointer;
+}
+
+.language-selector:hover {
+  background: var(--color-surface-hover);
+}
+
+.language-selector-full {
+  flex: 1;
+  max-width: 240px;
+}

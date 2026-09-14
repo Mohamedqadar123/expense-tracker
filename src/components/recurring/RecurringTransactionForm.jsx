@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FREQUENCIES, RECURRING_TYPES } from '../../constants/frequencies'
 import { CATEGORIES } from '../../constants/categories'
 
 function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
+  const { t } = useTranslation();
   const [description, setDescription] = useState(initialValues?.description || '');
   const [amount, setAmount] = useState(initialValues?.amount ?? '');
   const [type, setType] = useState(initialValues?.type || RECURRING_TYPES[1].value);
@@ -51,19 +53,19 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
     <form className="inline-form recurring-form" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Description"
+        placeholder={t('transactions.descriptionPlaceholder')}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
       <input
         type="number"
-        placeholder="Amount"
+        placeholder={t('transactions.amountPlaceholder')}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
       <select value={type} onChange={(e) => setType(e.target.value)}>
-        {RECURRING_TYPES.map(t => (
-          <option key={t.value} value={t.value}>{t.label}</option>
+        {RECURRING_TYPES.map(rt => (
+          <option key={rt.value} value={rt.value}>{t(`common.${rt.value}`)}</option>
         ))}
       </select>
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -73,13 +75,13 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
       </select>
       <input
         type="text"
-        placeholder="Account (optional)"
+        placeholder={t('transactions.accountOptionalPlaceholder')}
         value={account}
         onChange={(e) => setAccount(e.target.value)}
       />
       <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
         {FREQUENCIES.map(f => (
-          <option key={f.value} value={f.value}>{f.label}</option>
+          <option key={f.value} value={f.value}>{t(`frequencies.${f.value}`)}</option>
         ))}
       </select>
       <input
@@ -87,15 +89,15 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
       />
-      <span className="inline-form-to">to</span>
+      <span className="inline-form-to">{t('common.to')}</span>
       <input
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
-        placeholder="End date (optional)"
+        placeholder={t('recurring.endDateOptionalPlaceholder')}
       />
-      <button type="submit">{initialValues ? 'Save' : 'Add'}</button>
-      {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
+      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
+      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
       {error && <p className="auth-error">{error}</p>}
     </form>
   );

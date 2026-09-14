@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
-
-const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'amount_desc', label: 'Highest amount' },
-  { value: 'amount_asc', label: 'Lowest amount' },
-]
+import { useTranslation } from 'react-i18next'
 
 const DEBOUNCE_MS = 350
 
@@ -27,9 +21,17 @@ function useDebouncedCommit(value, onCommit) {
 }
 
 function TransactionFilters({ filters, onChange, categories, accounts }) {
+  const { t } = useTranslation();
   const [searchDraft, setSearchDraft] = useDebouncedCommit(filters.search, (v) => onChange({ search: v }));
   const [minDraft, setMinDraft] = useDebouncedCommit(filters.minAmount, (v) => onChange({ minAmount: v }));
   const [maxDraft, setMaxDraft] = useDebouncedCommit(filters.maxAmount, (v) => onChange({ maxAmount: v }));
+
+  const SORT_OPTIONS = [
+    { value: 'newest', label: t('transactions.sortNewest') },
+    { value: 'oldest', label: t('transactions.sortOldest') },
+    { value: 'amount_desc', label: t('transactions.sortAmountDesc') },
+    { value: 'amount_asc', label: t('transactions.sortAmountAsc') },
+  ]
 
   const handleClear = () => onChange({
     search: '',
@@ -47,23 +49,23 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
     <div className="transaction-filters">
       <input
         type="text"
-        placeholder="Search description..."
+        placeholder={t('transactions.searchPlaceholder')}
         value={searchDraft}
         onChange={(e) => setSearchDraft(e.target.value)}
       />
       <select value={filters.type} onChange={(e) => onChange({ type: e.target.value })}>
-        <option value="all">All Types</option>
-        <option value="income">Income</option>
-        <option value="expense">Expense</option>
+        <option value="all">{t('transactions.allTypes')}</option>
+        <option value="income">{t('common.income')}</option>
+        <option value="expense">{t('common.expense')}</option>
       </select>
       <select value={filters.category} onChange={(e) => onChange({ category: e.target.value })}>
-        <option value="all">All Categories</option>
+        <option value="all">{t('transactions.allCategories')}</option>
         {categories.map(c => (
           <option key={c} value={c}>{c}</option>
         ))}
       </select>
       <select value={filters.account} onChange={(e) => onChange({ account: e.target.value })}>
-        <option value="all">All Accounts</option>
+        <option value="all">{t('transactions.allAccounts')}</option>
         {accounts.map(a => (
           <option key={a} value={a}>{a}</option>
         ))}
@@ -74,7 +76,7 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
           value={filters.startDate}
           onChange={(e) => onChange({ startDate: e.target.value })}
         />
-        <span>to</span>
+        <span>{t('common.to')}</span>
         <input
           type="date"
           value={filters.endDate}
@@ -84,14 +86,14 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
       <div className="filter-amount-range">
         <input
           type="number"
-          placeholder="Min $"
+          placeholder={t('transactions.minAmountPlaceholder')}
           value={minDraft}
           onChange={(e) => setMinDraft(e.target.value)}
         />
-        <span>to</span>
+        <span>{t('common.to')}</span>
         <input
           type="number"
-          placeholder="Max $"
+          placeholder={t('transactions.maxAmountPlaceholder')}
           value={maxDraft}
           onChange={(e) => setMaxDraft(e.target.value)}
         />
@@ -101,7 +103,7 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
           <option key={s.value} value={s.value}>{s.label}</option>
         ))}
       </select>
-      <button type="button" className="clear-filters-btn" onClick={handleClear}>Clear filters</button>
+      <button type="button" className="clear-filters-btn" onClick={handleClear}>{t('transactions.clearFilters')}</button>
     </div>
   );
 }

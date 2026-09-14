@@ -1,24 +1,20 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import '../styles/shared.css'
 import '../App.css'
-import { getTransactions, getTransactionAccounts, createTransaction, deleteTransaction } from '../api/transactions'
+import { getTransactions, getTransactionAccounts, deleteTransaction } from '../api/transactions'
 import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
+import { mergeCategories } from '../utils/mergeCategories'
 import TransactionFilters from '../components/TransactionFilters.jsx'
 import Pagination from '../components/transactions/Pagination.jsx'
+import QuickAddTransactionForm from '../components/transactions/QuickAddTransactionForm.jsx'
 
 const DEFAULT_LIMIT = 25
 
-function mergeCategories(a, b) {
-  const seen = new Map();
-  for (const cat of [...a, ...b]) {
-    const key = cat.toLowerCase();
-    if (!seen.has(key)) seen.set(key, cat);
-  }
-  return [...seen.values()];
-}
-
 function Transactions() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [transactions, setTransactions] = useState([]);
   const [total, setTotal] = useState(0);
@@ -26,12 +22,6 @@ function Transactions() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [accounts, setAccounts] = useState([]);
-
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("food");
-  const [account, setAccount] = useState("");
 
   const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
@@ -91,82 +81,42 @@ function Transactions() {
           updateFilters({ page: filters.page - 1 });
         }
       })
-      .catch(() => setError('Failed to load transactions'))
+      .catch(() => setError(t('transactions.loadError')))
       .finally(() => setIsLoading(false));
-  }, [filters, updateFilters]);
+  }, [filters, updateFilters, t]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!description || !amount) return;
-
-    await createTransaction({
-      description,
-      amount: Number(amount),
-      type,
-      category,
-      account: account || undefined,
-    });
-
-    setDescription("");
-    setAmount("");
-    setType("expense");
-    setCategory("food");
-    setAccount("");
-    load();
-    loadAccounts();
-  };
+  useEffect(() => {
+    const handleCreated = () => { load(); loadAccounts(); };
+    window.addEventListener('transaction:created', handleCreated);
+    return () => window.removeEventListener('transaction:created', handleCreated);
+  }, [load, loadAccounts]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this transaction?")) return;
+    if (!window.confirm(t('transactions.deleteConfirm'))) return;
     await deleteTransaction(id);
     load();
   };
 
   return (
     <div className="app">
-      <h1>Finance Tracker</h1>
-      <p className="subtitle">Track your income and expenses</p>
+      <h1>{t('transactions.brand')}</h1>
+      <p className="subtitle">{t('transactions.subtitle')}</p>
 
       <div className="add-transaction">
-        <h2>Add Transaction</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-          <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Account (optional)"
-            value={account}
-            onChange={(e) => setAccount(e.target.value)}
-          />
-          <button type="submit">Add</button>
-        </form>
+        <h2>{t('transactions.addTransaction')}</h2>
+        <QuickAddTransactionForm
+          categories={categories}
+          onSuccess={() => { load(); loadAccounts(); }}
+          broadcast={false}
+        />
       </div>
 
       <div className="transactions">
-        <h2>Transactions</h2>
+        <h2>{t('transactions.heading')}</h2>
 
         <TransactionFilters
           filters={filters}
@@ -178,39 +128,39 @@ function Transactions() {
         {error && (
           <div className="dashboard-error">
             <p>{error}</p>
-            <button onClick={load}>Retry</button>
+            <button onClick={load}>{t('common.retry')}</button>
           </div>
         )}
         {isLoading ? (
-          <p>Loading transactions...</p>
+          <p>{t('transactions.loading')}</p>
         ) : transactions.length === 0 ? (
-          <p className="list-empty">No transactions match your filters.</p>
+          <p className="list-empty">{t('transactions.noMatch')}</p>
         ) : (
           <>
             <div className="table-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Account</th>
-                    <th>Amount</th>
-                    <th>Actions</th>
+                    <th>{t('transactions.date')}</th>
+                    <th>{t('transactions.description')}</th>
+                    <th>{t('transactions.category')}</th>
+                    <th>{t('transactions.account')}</th>
+                    <th>{t('transactions.amount')}</th>
+                    <th>{t('transactions.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map(t => (
-                    <tr key={t.id}>
-                      <td>{t.date.slice(0, 10)}</td>
-                      <td>{t.description}</td>
-                      <td>{t.category}</td>
-                      <td>{t.account || '—'}</td>
-                      <td className={t.type === "income" ? "income-amount" : "expense-amount"}>
-                        {t.type === "income" ? "+" : "-"}${t.amount}
+                  {transactions.map(tx => (
+                    <tr key={tx.id}>
+                      <td data-label={t('transactions.date')}>{tx.date.slice(0, 10)}</td>
+                      <td data-label={t('transactions.description')}>{tx.description}</td>
+                      <td data-label={t('transactions.category')}>{tx.category}</td>
+                      <td data-label={t('transactions.account')}>{tx.account || '—'}</td>
+                      <td data-label={t('transactions.amount')} className={tx.type === "income" ? "income-amount" : "expense-amount"}>
+                        {tx.type === "income" ? "+" : "-"}${tx.amount}
                       </td>
-                      <td>
-                        <button className="delete-btn" onClick={() => handleDelete(t.id)}>Delete</button>
+                      <td data-label={t('transactions.actions')}>
+                        <button className="delete-btn" onClick={() => handleDelete(tx.id)}>{t('common.delete')}</button>
                       </td>
                     </tr>
                   ))}

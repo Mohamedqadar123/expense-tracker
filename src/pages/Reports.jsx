@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import './Dashboard.css'
+import { useTranslation } from 'react-i18next'
+import '../styles/shared.css'
 import './Reports.css'
 import { getReportsOverview } from '../api/reports'
 import { getReportPeriodRange } from '../utils/reportPeriodRange'
@@ -21,6 +22,7 @@ function todayString() {
 }
 
 function Reports() {
+  const { t } = useTranslation();
   const [preset, setPreset] = useState('month');
   const [customStart, setCustomStart] = useState(todayString());
   const [customEnd, setCustomEnd] = useState(todayString());
@@ -35,8 +37,9 @@ function Reports() {
   useEffect(() => {
     getReportsOverview({ start, end })
       .then(setReport)
-      .catch(() => setError('Failed to load report data'))
+      .catch(() => setError(t('reports.loadError')))
       .finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [start, end, retryKey]);
 
   const handlePeriodChange = useCallback(({ preset: nextPreset, customStart: nextStart, customEnd: nextEnd }) => {
@@ -55,8 +58,8 @@ function Reports() {
 
   return (
     <div className="reports">
-      <h1>Financial Reports</h1>
-      <p className="subtitle">Complete overview of your finances</p>
+      <h1>{t('reports.title')}</h1>
+      <p className="subtitle">{t('reports.subtitle')}</p>
 
       <div className="reports-toolbar no-print">
         <PeriodSelector
@@ -70,11 +73,11 @@ function Reports() {
       </div>
 
       {isLoading ? (
-        <p className="dashboard-status">Loading report...</p>
+        <p className="dashboard-status">{t('reports.loading')}</p>
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
-          <button onClick={handleRetry}>Retry</button>
+          <button onClick={handleRetry}>{t('common.retry')}</button>
         </div>
       ) : (
         <div className="reports-content">

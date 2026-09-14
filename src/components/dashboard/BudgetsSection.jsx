@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getBudgets, createBudget, updateBudget, deleteBudget } from '../../api/budgets'
 import BudgetForm from './BudgetForm.jsx'
 import { BUDGET_STATUS_LABEL } from '../../utils/budgetStatus'
 
 function BudgetsSection() {
+  const { t } = useTranslation();
   const [budgets, setBudgets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,15 +16,16 @@ function BudgetsSection() {
     setError(null);
     getBudgets()
       .then(setBudgets)
-      .catch(() => setError('Failed to load budgets'))
+      .catch(() => setError(t('budgets.loadError')))
       .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
     getBudgets()
       .then(setBudgets)
-      .catch(() => setError('Failed to load budgets'))
+      .catch(() => setError(t('budgets.loadError')))
       .finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreate = async (data) => {
@@ -37,25 +40,25 @@ function BudgetsSection() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this budget?')) return;
+    if (!window.confirm(t('budgets.deleteConfirm'))) return;
     await deleteBudget(id);
     load();
   };
 
   return (
     <div className="section-card">
-      <h2>Budget Progress</h2>
+      <h2>{t('budgets.progress')}</h2>
       {isLoading ? (
-        <p className="list-empty">Loading budgets...</p>
+        <p className="list-empty">{t('budgets.loading')}</p>
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
-          <button onClick={load}>Retry</button>
+          <button onClick={load}>{t('common.retry')}</button>
         </div>
       ) : (
         <>
           {budgets.length === 0 ? (
-            <p className="list-empty">No budgets yet — add one below.</p>
+            <p className="list-empty">{t('budgets.empty')}</p>
           ) : (
             <ul className="budget-list">
               {budgets.map(b => (
@@ -71,15 +74,15 @@ function BudgetsSection() {
                       <div className="budget-row-header">
                         <div>
                           <span className="budget-name">{b.name}</span>
-                          <span className="budget-meta"> · {b.category} · {b.period}</span>
+                          <span className="budget-meta"> · {b.category} · {t(`frequencies.${b.period}`)}</span>
                         </div>
                         <span className={`budget-status-label status-${b.status}`}>
                           {BUDGET_STATUS_LABEL[b.status]}
                         </span>
                       </div>
                       <div className="budget-amounts">
-                        <span>${b.spent.toFixed(2)} spent of ${b.amount.toFixed(2)}</span>
-                        <span>${Math.max(b.remaining, 0).toFixed(2)} remaining</span>
+                        <span>{t('budgets.spentOf', { spent: b.spent.toFixed(2), amount: b.amount.toFixed(2) })}</span>
+                        <span>{t('budgets.remaining', { remaining: Math.max(b.remaining, 0).toFixed(2) })}</span>
                         <span>{b.percentUsed.toFixed(0)}%</span>
                       </div>
                       <div className="progress-bar">
@@ -92,8 +95,8 @@ function BudgetsSection() {
                         {b.startDate.slice(0, 10)} – {b.endDate.slice(0, 10)}
                       </p>
                       <div className="budget-actions">
-                        <button onClick={() => setEditingId(b.id)}>Edit</button>
-                        <button onClick={() => handleDelete(b.id)}>Delete</button>
+                        <button onClick={() => setEditingId(b.id)}>{t('common.edit')}</button>
+                        <button onClick={() => handleDelete(b.id)}>{t('common.delete')}</button>
                       </div>
                     </>
                   )}
@@ -101,7 +104,7 @@ function BudgetsSection() {
               ))}
             </ul>
           )}
-          <h3 className="section-subheading">Add Budget</h3>
+          <h3 className="section-subheading">{t('budgets.addBudget')}</h3>
           <BudgetForm onSubmit={handleCreate} />
         </>
       )}

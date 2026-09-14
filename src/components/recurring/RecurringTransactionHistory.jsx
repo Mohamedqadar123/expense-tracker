@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getRecurringTransactionHistory } from '../../api/recurring'
 
 function RecurringTransactionHistory({ recurringTransactionId }) {
+  const { t } = useTranslation();
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,13 +11,14 @@ function RecurringTransactionHistory({ recurringTransactionId }) {
   useEffect(() => {
     getRecurringTransactionHistory(recurringTransactionId)
       .then(setHistory)
-      .catch(() => setError('Failed to load history'))
+      .catch(() => setError(t('recurring.historyLoadError')))
       .finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recurringTransactionId]);
 
-  if (isLoading) return <p className="list-empty">Loading history...</p>;
+  if (isLoading) return <p className="list-empty">{t('recurring.loadingHistory')}</p>;
   if (error) return <p className="auth-error">{error}</p>;
-  if (history.length === 0) return <p className="list-empty">No occurrences generated yet.</p>;
+  if (history.length === 0) return <p className="list-empty">{t('recurring.noOccurrences')}</p>;
 
   return (
     <ul className="recurring-history">
@@ -27,7 +30,7 @@ function RecurringTransactionHistory({ recurringTransactionId }) {
               {entry.transaction.type === 'income' ? '+' : '-'}${entry.transaction.amount.toFixed(2)} — {entry.transaction.description}
             </span>
           ) : (
-            <span className="recurring-history-amount">transaction deleted</span>
+            <span className="recurring-history-amount">{t('recurring.transactionDeleted')}</span>
           )}
         </li>
       ))}

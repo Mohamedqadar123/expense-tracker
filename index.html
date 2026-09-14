@@ -3,8 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>finance-tracker</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = stored === 'light' || stored === 'dark' ? stored : null;
+          if (!theme) {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+
+        try {
+          var storedLang = localStorage.getItem('language');
+          var lang = ['en', 'so', 'ar'].indexOf(storedLang) !== -1 ? storedLang : 'en';
+          document.documentElement.setAttribute('lang', lang);
+          document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        } catch (e) {
+          document.documentElement.setAttribute('lang', 'en');
+          document.documentElement.setAttribute('dir', 'ltr');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -10,7 +10,7 @@
 
 .dashboard .subtitle {
   margin-bottom: 20px;
-  color: #666;
+  color: var(--color-text-subtle);
 }
 
 .dashboard h2 {
@@ -20,7 +20,7 @@
 
 .dashboard h3 {
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted);
   margin-bottom: 8px;
 }
 
@@ -38,17 +38,18 @@
 
 .period-presets button {
   padding: 8px 14px;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-surface);
+  color: var(--color-text);
   cursor: pointer;
   font-size: 13px;
   border-radius: 4px;
 }
 
 .period-presets button.active {
-  background: #333;
-  color: #fff;
-  border-color: #333;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border-color: var(--color-primary);
 }
 
 .period-custom-range {
@@ -61,32 +62,17 @@
 
 .period-custom-range input {
   padding: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  color: var(--color-text);
   font-size: 13px;
 }
 
-/* Status / error */
+/* Status */
 
 .dashboard-status {
-  color: #666;
+  color: var(--color-text-subtle);
   padding: 20px 0;
-}
-
-.dashboard-error {
-  padding: 16px;
-  border: 1px solid #f5c2c2;
-  background: #fdecea;
-  color: #c62828;
-  margin-bottom: 20px;
-}
-
-.dashboard-error button {
-  margin-top: 8px;
-  padding: 6px 14px;
-  border: 1px solid #c62828;
-  background: #fff;
-  color: #c62828;
-  cursor: pointer;
 }
 
 /* Stat cards */
@@ -99,8 +85,8 @@
 }
 
 .stat-card {
-  border: 1px solid #ddd;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   padding: 14px;
   border-radius: 6px;
 }
@@ -111,44 +97,11 @@
 }
 
 .stat-value.positive {
-  color: #2e7d32;
+  color: var(--color-success);
 }
 
 .stat-value.negative {
-  color: #c62828;
-}
-
-/* Chart / list / section cards */
-
-.dashboard-charts-grid,
-.dashboard-lists-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.chart-card,
-.list-card,
-.section-card {
-  border: 1px solid #ddd;
-  background: #fff;
-  padding: 16px;
-  border-radius: 6px;
-  margin-bottom: 16px;
-}
-
-.dashboard-charts-grid .chart-card,
-.dashboard-lists-grid .list-card {
-  margin-bottom: 0;
-}
-
-.chart-empty,
-.list-empty {
-  color: #888;
-  font-size: 13px;
-  padding: 20px 0;
-  text-align: center;
+  color: var(--color-danger);
 }
 
 /* Recent transactions */
@@ -162,7 +115,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
   font-size: 14px;
 }
 
@@ -177,16 +130,16 @@
 .rt-date {
   display: block;
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted);
 }
 
 .income-amount {
-  color: green;
+  color: var(--color-success);
   font-weight: bold;
 }
 
 .expense-amount {
-  color: red;
+  color: var(--color-danger);
   font-weight: bold;
 }
 
@@ -201,7 +154,7 @@
   border-radius: 4px;
   margin-bottom: 8px;
   font-size: 13px;
-  background: #f5f5f5;
+  background: var(--color-surface-alt);
 }
 
 .insights-list li:last-child {
@@ -209,216 +162,21 @@
 }
 
 .insight-positive {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .insight-negative {
-  background: #fdecea;
-  color: #c62828;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .insight-warning {
-  background: #fff8e1;
-  color: #f57f17;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .insight-neutral {
-  background: #f5f5f5;
-  color: #555;
-}
-
-/* Budgets / goals */
-
-.section-subheading {
-  font-size: 13px;
-  color: #888;
-  margin: 16px 0 8px;
-}
-
-.budget-list,
-.goal-list {
-  list-style: none;
-}
-
-.budget-list > li,
-.goal-list > li {
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.budget-row-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  font-size: 14px;
-  margin-bottom: 6px;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.budget-name {
-  font-weight: bold;
-}
-
-.budget-meta {
-  color: #888;
-  font-size: 12px;
-  text-transform: capitalize;
-}
-
-.budget-category {
-  font-weight: bold;
-  text-transform: capitalize;
-}
-
-.budget-status-label {
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 10px;
-  white-space: nowrap;
-}
-
-.budget-status-label.status-normal {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.budget-status-label.status-warning {
-  background: #fff8e1;
-  color: #f57f17;
-}
-
-.budget-status-label.status-near_limit {
-  background: #fff3e0;
-  color: #ef6c00;
-}
-
-.budget-status-label.status-exceeded {
-  background: #fdecea;
-  color: #c62828;
-}
-
-.budget-amounts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 6px;
-}
-
-.budget-dates {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 8px;
-}
-
-.progress-bar {
-  height: 8px;
-  background: #eee;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background: #2e7d32;
-}
-
-.progress-bar-fill.warning {
-  background: #f9a825;
-}
-
-.progress-bar-fill.near_limit {
-  background: #ef6c00;
-}
-
-.progress-bar-fill.exceeded {
-  background: #c62828;
-}
-
-.goal-target-date {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 8px;
-}
-
-.budget-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.budget-actions button {
-  padding: 4px 10px;
-  background: #eee;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 12px;
-  color: #333;
-}
-
-.inline-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.inline-form input,
-.inline-form select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  flex: 1;
-  min-width: 100px;
-}
-
-.inline-form button {
-  padding: 8px 16px;
-  background: #333;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.inline-form button[type="button"] {
-  background: #eee;
-  color: #333;
-}
-
-.inline-form-to {
-  align-self: center;
-  color: #888;
-  font-size: 13px;
-}
-
-.budget-alerts-banner {
-  margin-bottom: 20px;
-}
-
-.auth-error {
-  color: #c62828;
-  font-size: 13px;
-  width: 100%;
-}
-
-/* Breakpoints */
-
-@media (min-width: 640px) {
-  .dashboard-charts-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .dashboard-lists-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-charts-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral-text);
 }

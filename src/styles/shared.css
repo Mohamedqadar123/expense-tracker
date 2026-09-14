@@ -1,0 +1,305 @@
+/*
+  Shared cross-page primitives. Import this file in every page that needs
+  these classes instead of duplicating them or importing Dashboard.css for
+  side-effects.
+
+  Breakpoints used throughout this app (do not invent new ones):
+  - 640px  : intra-page field/grid wrapping (phone -> tablet/small)
+  - 1024px : structural shell swap (bottom-nav+FAB shell -> desktop top-nav shell)
+
+  Colors use the semantic tokens defined in src/index.css (:root / [data-theme="dark"])
+  — never hardcode a color literal here.
+*/
+
+/* Card / section containers */
+.chart-card,
+.list-card,
+.section-card {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.dashboard-charts-grid .chart-card,
+.dashboard-lists-grid .list-card {
+  margin-bottom: 0;
+}
+
+.chart-empty,
+.list-empty {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Canonical error banner */
+.dashboard-error {
+  padding: 16px;
+  border: 1px solid var(--color-danger-border);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  margin-bottom: 20px;
+}
+
+.dashboard-error button {
+  margin-top: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--color-danger);
+  background: var(--color-surface);
+  color: var(--color-danger);
+  cursor: pointer;
+}
+
+.section-subheading {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 16px 0 8px;
+}
+
+/* Charts / lists responsive grid */
+.dashboard-charts-grid,
+.dashboard-lists-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+  .dashboard-charts-grid { grid-template-columns: 1fr 1fr; }
+  .dashboard-lists-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-charts-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Budget / goal shared list UI */
+.budget-list,
+.goal-list {
+  list-style: none;
+}
+
+.budget-list > li,
+.goal-list > li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.budget-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 14px;
+  margin-bottom: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.budget-name { font-weight: bold; }
+.budget-meta { color: var(--color-text-muted); font-size: 12px; text-transform: capitalize; }
+.budget-category { font-weight: bold; text-transform: capitalize; }
+
+.budget-status-label {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.budget-status-label.status-normal { background: var(--color-success-bg); color: var(--color-success); }
+.budget-status-label.status-warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.budget-status-label.status-near_limit { background: var(--color-warning-strong-bg); color: var(--color-warning-strong); }
+.budget-status-label.status-exceeded { background: var(--color-danger-bg); color: var(--color-danger); }
+
+.budget-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  margin-bottom: 6px;
+}
+
+.budget-dates { font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px; }
+
+.progress-bar {
+  height: 8px;
+  background: var(--color-secondary-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-bar-fill { height: 100%; background: var(--color-success); }
+.progress-bar-fill.warning { background: var(--color-warning); }
+.progress-bar-fill.near_limit { background: var(--color-warning-strong); }
+.progress-bar-fill.exceeded { background: var(--color-danger); }
+
+.goal-target-date { font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px; }
+
+.budget-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.budget-actions button,
+.recurring-actions button,
+.finance-ai-header button,
+.delete-btn {
+  padding: 4px 10px;
+  background: var(--color-secondary-bg);
+  border: 1px solid var(--color-input-border);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-secondary-text);
+}
+
+.budget-alerts-banner { margin-bottom: 20px; }
+
+/* Forms */
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.inline-form input,
+.inline-form select {
+  padding: 8px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  flex: 1;
+  min-width: 100px;
+}
+.inline-form button {
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+.inline-form button[type="button"] {
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary-text);
+}
+.inline-form-to {
+  align-self: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.auth-error {
+  color: var(--color-danger);
+  font-size: 13px;
+  width: 100%;
+}
+
+/* Segmented toggle (used by QuickAddTransactionForm's Type field) */
+.segmented-toggle {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.segmented-toggle button {
+  flex: 1;
+  padding: 8px 14px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  color: var(--color-text);
+}
+.segmented-toggle button[aria-pressed="true"] {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border-color: var(--color-primary);
+}
+.segmented-toggle button[aria-pressed="true"].income-toggle {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-bg);
+}
+.segmented-toggle button[aria-pressed="true"].expense-toggle {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-bg);
+}
+
+.quick-add-form {
+  width: 100%;
+}
+.quick-add-submit {
+  width: 100%;
+  min-height: 48px;
+  font-size: 16px;
+}
+
+/* Responsive chart containers — give ResponsiveContainer a CSS-computed
+   height (height="100%") instead of a fixed pixel prop, with no JS. */
+.chart-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 220px;
+  max-height: 320px;
+}
+.chart-container--pie {
+  aspect-ratio: 4 / 3;
+  min-height: 240px;
+  max-height: 360px;
+}
+
+/* Mobile/tablet touch-target and stacking pass (shell breakpoint: 1024px) */
+@media screen and (max-width: 1023.98px) {
+  form,
+  .inline-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  form input,
+  form select,
+  form button,
+  .inline-form input,
+  .inline-form select,
+  .inline-form button {
+    width: 100%;
+    min-height: var(--touch-target);
+    font-size: 16px;
+  }
+
+  .delete-btn,
+  .budget-actions button,
+  .recurring-actions button,
+  .finance-ai-header button,
+  .pagination button,
+  .clear-filters-btn,
+  .period-presets button,
+  .reports-export-toolbar button {
+    min-height: var(--touch-target);
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .budget-actions,
+  .recurring-actions,
+  .finance-ai-header,
+  .reports-export-toolbar {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .budget-list > li {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-bottom: none;
+  }
+}
