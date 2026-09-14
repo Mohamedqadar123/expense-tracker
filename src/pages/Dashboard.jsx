@@ -39,7 +39,8 @@ function Dashboard() {
       .then(setOverview)
       .catch(() => setError(t('dashboard.loadError')))
       .finally(() => setIsLoading(false));
-  }, [start, end, retryKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preset, start, end, retryKey]);
 
   const handlePeriodChange = useCallback(({ preset: nextPreset, customStart: nextStart, customEnd: nextEnd }) => {
     setPreset(nextPreset);

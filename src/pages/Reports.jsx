@@ -40,7 +40,7 @@ function Reports() {
       .catch(() => setError(t('reports.loadError')))
       .finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [start, end, retryKey]);
+  }, [preset, start, end, retryKey]);
 
   const handlePeriodChange = useCallback(({ preset: nextPreset, customStart: nextStart, customEnd: nextEnd }) => {
     setPreset(nextPreset);
