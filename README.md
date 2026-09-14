@@ -1,8 +1,7 @@
 # Expense Tracker
 
-> This is the starter project used in my [Claude Code course](https://codewithmosh.com/p/claude-code).
 
-A basic expense tracker app built with React. It intentionally has a bug, poor UI, and messy code — all of which we fix together throughout the course.
+This a full expense tracker which will give you an insight about how you spend your income and will let you have the ability to do budgeting and saving goals.
 
 ## Getting Started
 
