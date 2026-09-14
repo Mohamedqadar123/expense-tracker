@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FREQUENCIES, RECURRING_TYPES } from '../../constants/frequencies'
 import { CATEGORIES } from '../../constants/categories'
+import { isIncomeCategory } from '../../constants/incomeCategories'
 
 function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
+  const incomeCategories = CATEGORIES.filter((c) => isIncomeCategory(c));
+  const expenseCategories = CATEGORIES.filter((c) => !isIncomeCategory(c));
   const [description, setDescription] = useState(initialValues?.description || '');
   const [amount, setAmount] = useState(initialValues?.amount ?? '');
   const [type, setType] = useState(initialValues?.type || RECURRING_TYPES[1].value);
-  const [category, setCategory] = useState(initialValues?.category || CATEGORIES[0]);
+  const [category, setCategory] = useState(initialValues?.category || expenseCategories[0]);
   const [account, setAccount] = useState(initialValues?.account || '');
   const [frequency, setFrequency] = useState(initialValues?.frequency || FREQUENCIES[2].value);
   const [startDate, setStartDate] = useState(
@@ -18,6 +21,7 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
     initialValues?.endDate ? initialValues.endDate.slice(0, 10) : ''
   );
   const [error, setError] = useState(null);
+  const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         setDescription('');
         setAmount('');
         setType(RECURRING_TYPES[1].value);
-        setCategory(CATEGORIES[0]);
+        setCategory(expenseCategories[0]);
         setAccount('');
         setFrequency(FREQUENCIES[2].value);
         setStartDate('');
@@ -63,13 +67,17 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
-      <select value={type} onChange={(e) => setType(e.target.value)}>
+      <select value={type} onChange={(e) => {
+        const newType = e.target.value;
+        setType(newType);
+        setCategory((newType === 'income' ? incomeCategories : expenseCategories)[0] || CATEGORIES[0]);
+      }}>
         {RECURRING_TYPES.map(rt => (
-          <option key={rt.value} value={rt.value}>{t(`common.${rt.value}`)}</option>
+          <option key={rt.value} value={rt.value}>{t(`common.${rt.value === 'income' ? 'credit' : 'debit'}`)}</option>
         ))}
       </select>
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {CATEGORIES.map(cat => (
+        {visibleCategories.map(cat => (
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>

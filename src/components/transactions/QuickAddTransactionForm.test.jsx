@@ -40,4 +40,17 @@ describe('QuickAddTransactionForm', () => {
     expect(spy).not.toHaveBeenCalled();
     window.removeEventListener('transaction:created', spy);
   });
+
+  it('filters the category dropdown to income categories when Credit is selected', async () => {
+    render(<QuickAddTransactionForm categories={['Food', 'Salary']} onSuccess={vi.fn()} />);
+
+    const select = screen.getByRole('combobox');
+    expect(select).toHaveValue('Food');
+
+    await userEvent.click(screen.getByRole('button', { name: /credit/i }));
+
+    expect(select).toHaveValue('Salary');
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(screen.getByRole('option', { name: 'Salary' })).toBeInTheDocument();
+  });
 });

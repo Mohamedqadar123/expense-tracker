@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../prismaClient.js';
 import { RECURRING_TYPES, RECURRING_FREQUENCIES } from '../constants/recurringTransactions.js';
+import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
@@ -18,6 +19,9 @@ function validateRecurringTransactionInput({ description, amount, type, category
   }
   if (!category || typeof category !== 'string' || !category.trim()) {
     return 'category is required';
+  }
+  if (isIncomeCategory(category) !== (canonicalType === 'income')) {
+    return `category "${category}" is not valid for type "${canonicalType}"`;
   }
   if (account !== undefined && account !== null && typeof account !== 'string') {
     return 'account must be a string';

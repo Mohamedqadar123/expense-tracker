@@ -75,6 +75,21 @@ describe('Recurring transaction validation', () => {
     expect(res.status).toBe(400);
   });
 
+  it('rejects an income type paired with a non-income category', async () => {
+    const res = await agent.post('/api/recurring-transactions').send(recurringPayload({ type: 'income', category: 'Utilities' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects an expense type paired with an income category', async () => {
+    const res = await agent.post('/api/recurring-transactions').send(recurringPayload({ type: 'expense', category: 'Salary' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('accepts an income type paired with an income category', async () => {
+    const res = await agent.post('/api/recurring-transactions').send(recurringPayload({ type: 'income', category: 'Salary' }));
+    expect(res.status).toBe(201);
+  });
+
   it('rejects an invalid frequency', async () => {
     const res = await agent.post('/api/recurring-transactions').send(recurringPayload({ frequency: 'hourly' }));
     expect(res.status).toBe(400);

@@ -42,8 +42,8 @@ describe('Transaction amount boundary matrix', () => {
   it('sums multiple decimal transactions correctly (float precision)', async () => {
     const { agent } = await signupAndLogin();
     const today = new Date().toISOString().slice(0, 10);
-    await agent.post('/api/transactions').send(transactionPayload({ amount: 0.1, type: 'income' }));
-    await agent.post('/api/transactions').send(transactionPayload({ amount: 0.2, type: 'income' }));
+    await agent.post('/api/transactions').send(transactionPayload({ amount: 0.1, type: 'income', category: 'Salary' }));
+    await agent.post('/api/transactions').send(transactionPayload({ amount: 0.2, type: 'income', category: 'Salary' }));
 
     const res = await agent.get(`/api/dashboard/overview?start=${today}&end=${today}`);
     expect(res.status).toBe(200);
@@ -70,6 +70,24 @@ describe('Transaction field validation', () => {
     const { agent } = await signupAndLogin();
     const res = await agent.post('/api/transactions').send(transactionPayload({ type: 'transfer' }));
     expect(res.status).toBe(400);
+  });
+
+  it('rejects an income type paired with a non-income category', async () => {
+    const { agent } = await signupAndLogin();
+    const res = await agent.post('/api/transactions').send(transactionPayload({ type: 'income', category: 'Food' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects an expense type paired with an income category', async () => {
+    const { agent } = await signupAndLogin();
+    const res = await agent.post('/api/transactions').send(transactionPayload({ type: 'expense', category: 'Salary' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('accepts an income type paired with an income category', async () => {
+    const { agent } = await signupAndLogin();
+    const res = await agent.post('/api/transactions').send(transactionPayload({ type: 'income', category: 'Salary' }));
+    expect(res.status).toBe(201);
   });
 
   it('rejects a non-string account', async () => {

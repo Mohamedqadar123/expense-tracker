@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../prismaClient.js';
 import { parsePartialDateRange } from '../utils/dateRange.js';
+import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 
 const router = Router();
@@ -56,6 +57,10 @@ function validateTransactionInput({ description, amount, type, category, account
   }
   if (!category || typeof category !== 'string' || !category.trim()) {
     return 'category is required';
+  }
+  const normalizedType = String(type || '').toLowerCase();
+  if (isIncomeCategory(category) !== (normalizedType === 'income')) {
+    return `category "${category}" is not valid for type "${normalizedType}"`;
   }
   if (account !== undefined && account !== null && typeof account !== 'string') {
     return 'account must be a string';

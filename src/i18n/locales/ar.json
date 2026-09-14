@@ -11,6 +11,8 @@
     "loading": "جارٍ التحميل...",
     "income": "دخل",
     "expense": "مصروف",
+    "credit": "دائن",
+    "debit": "مدين",
     "to": "إلى",
     "notAvailable": "غير متاح"
   },

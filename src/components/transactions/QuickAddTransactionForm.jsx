@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createTransaction } from '../../api/transactions'
+import { isIncomeCategory } from '../../constants/incomeCategories'
 
 function QuickAddTransactionForm({ categories, onSuccess, broadcast = true }) {
   const { t } = useTranslation();
+  const incomeCategories = categories.filter((c) => isIncomeCategory(c));
+  const expenseCategories = categories.filter((c) => !isIncomeCategory(c));
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [type, setType] = useState('expense');
-  const [category, setCategory] = useState(categories[0] || 'food');
+  const [category, setCategory] = useState(expenseCategories[0] || 'food');
   const [account, setAccount] = useState('');
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +33,7 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true }) {
       setDescription('');
       setAmount('');
       setType('expense');
-      setCategory(categories[0] || 'food');
+      setCategory(expenseCategories[0] || 'food');
       setAccount('');
 
       if (broadcast) {
@@ -63,21 +67,21 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true }) {
           type="button"
           className="expense-toggle"
           aria-pressed={type === 'expense'}
-          onClick={() => setType('expense')}
+          onClick={() => { setType('expense'); setCategory(expenseCategories[0] || 'food'); }}
         >
-          {t('common.expense')}
+          {t('common.debit')}
         </button>
         <button
           type="button"
           className="income-toggle"
           aria-pressed={type === 'income'}
-          onClick={() => setType('income')}
+          onClick={() => { setType('income'); setCategory(incomeCategories[0] || 'salary'); }}
         >
-          {t('common.income')}
+          {t('common.credit')}
         </button>
       </div>
       <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {categories.map(cat => (
+        {visibleCategories.map(cat => (
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>

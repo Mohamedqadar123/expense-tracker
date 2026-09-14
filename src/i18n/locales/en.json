@@ -11,6 +11,8 @@
     "loading": "Loading...",
     "income": "Income",
     "expense": "Expense",
+    "credit": "Credit",
+    "debit": "Debit",
     "to": "to",
     "notAvailable": "N/A"
   },
