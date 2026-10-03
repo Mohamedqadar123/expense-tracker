@@ -6,10 +6,12 @@ import Signup from './pages/Signup.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Transactions from './pages/Transactions.jsx'
 import Budgets from './pages/Budgets.jsx'
+import Accounts from './pages/Accounts.jsx'
 import Goals from './pages/Goals.jsx'
 import Reports from './pages/Reports.jsx'
 import Recurring from './pages/Recurring.jsx'
 import FinanceAI from './pages/FinanceAI.jsx'
+import Calculator from './pages/Calculator.jsx'
 
 function App() {
   return (
@@ -22,10 +24,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/budgets" element={<Budgets />} />
+          <Route path="/accounts" element={<Accounts />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/recurring" element={<Recurring />} />
           <Route path="/finance-ai" element={<FinanceAI />} />
+          <Route path="/calculator" element={<Calculator />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Route>

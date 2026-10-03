@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createTransaction } from '../../api/transactions'
+import { getAccounts } from '../../api/accounts'
 import { isIncomeCategory } from '../../constants/incomeCategories'
 
 function todayAsDateInputValue() {
@@ -23,7 +24,23 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true, init
   const [date, setDate] = useState(initialValues?.date ? initialValues.date.slice(0, 10) : todayAsDateInputValue());
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accounts, setAccounts] = useState([]);
   const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
+
+  // Real accounts (e.g. "Bank", "EVC") the user set up on the Accounts page —
+  // picking one here is what ties a transaction to that account's balance.
+  // Falls back to the old free-text field for users with none set up yet.
+  useEffect(() => {
+    getAccounts()
+      .then((data) => setAccounts(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
+
+  // Keeps a legacy/custom account value (e.g. from editing an older
+  // transaction) selectable even if it no longer matches a real account.
+  const accountOptions = accounts.some((a) => a.name.toLowerCase() === account.toLowerCase()) || !account
+    ? accounts
+    : [{ id: 'custom', name: account }, ...accounts];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,12 +121,21 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true, init
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
-      <input
-        type="text"
-        placeholder={t('transactions.accountOptionalPlaceholder')}
-        value={account}
-        onChange={(e) => setAccount(e.target.value)}
-      />
+      {accounts.length > 0 ? (
+        <select value={account} onChange={(e) => setAccount(e.target.value)}>
+          <option value="">{t('accounts.noAccount')}</option>
+          {accountOptions.map((a) => (
+            <option key={a.id} value={a.name}>{a.name}</option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type="text"
+          placeholder={t('transactions.accountOptionalPlaceholder')}
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+        />
+      )}
       <input
         type="date"
         value={date}

@@ -41,6 +41,9 @@ function Layout() {
           <NavLink to="/budgets" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.budgets')}
           </NavLink>
+          <NavLink to="/accounts" className={({ isActive }) => isActive ? 'active' : ''}>
+            {t('nav.accounts')}
+          </NavLink>
           <NavLink to="/goals" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.goals')}
           </NavLink>
@@ -52,6 +55,9 @@ function Layout() {
           </NavLink>
           <NavLink to="/finance-ai" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.financeAI')}
+          </NavLink>
+          <NavLink to="/calculator" className={({ isActive }) => isActive ? 'active' : ''}>
+            {t('nav.calculator')}
           </NavLink>
         </nav>
         <div className="layout-user">
@@ -71,9 +77,11 @@ function Layout() {
 
       <BottomSheet isOpen={isMoreOpen} onClose={() => setIsMoreOpen(false)} title={t('nav.more')}>
         <nav className="more-sheet-nav">
+          <NavLink to="/accounts" onClick={() => setIsMoreOpen(false)}>{t('nav.accounts')}</NavLink>
           <NavLink to="/reports" onClick={() => setIsMoreOpen(false)}>{t('nav.reports')}</NavLink>
           <NavLink to="/recurring" onClick={() => setIsMoreOpen(false)}>{t('nav.recurring')}</NavLink>
           <NavLink to="/finance-ai" onClick={() => setIsMoreOpen(false)}>{t('nav.financeAI')}</NavLink>
+          <NavLink to="/calculator" onClick={() => setIsMoreOpen(false)}>{t('nav.calculator')}</NavLink>
           <button type="button" className="more-sheet-logout" onClick={handleLogout}>{t('common.logOut')}</button>
         </nav>
         <div className="more-sheet-theme">

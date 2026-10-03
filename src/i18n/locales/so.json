@@ -20,10 +20,12 @@
     "home": "Guriga",
     "transactions": "Dhaqdhaqaaqyada",
     "budgets": "Miisaaniyadaha",
+    "accounts": "Xisaabaha",
     "goals": "Hadafyada",
     "reports": "Warbixinnada",
     "recurring": "Soo Noqnoqda",
     "financeAI": "AI Maaliyadeed",
+    "calculator": "Xisaabiye",
     "more": "Kale",
     "addTransaction": "Ku dar Dhaqdhaqaaq"
   },
@@ -193,5 +195,28 @@
     "inputPlaceholder": "Weydii tusaale ahaan \"Immisa ayaan bishan kharash ku bixiyay?\"",
     "send": "Dir",
     "thinking": "Waa fikirayaa…"
+  },
+  "calculator": {
+    "title": "Xisaabiye",
+    "subtitle": "Xisaabinta degdega ah, halkaad lacagtaada ku socoto",
+    "historyHeading": "Taariikhda",
+    "historyEmpty": "Xisaabinnadaada halkan ayay ka muuqan doonaan.",
+    "clearHistory": "Tirtir Taariikhda",
+    "clearHistoryConfirm": "Ma doonaysaa inaad tirtirto taariikhda xisaabinta?",
+    "error": "Khalad"
+  },
+  "accounts": {
+    "title": "Xisaabaha",
+    "subtitle": "La soco hadhaaga sida xisaabtaada bangiga ama lacagta mobilaha (tusaale EVC), kuna dooro mid markaad diiwaan gelinayso dhaqdhaqaaq",
+    "heading": "Xisaabahaaga",
+    "loading": "Xisaabaha ayaa soo raraya...",
+    "loadError": "Xisaabaha lama soo rari karin",
+    "empty": "Wali xisaab ma jirto — hoos ku dar mid, tusaale \"Bangiga\" ama \"EVC\".",
+    "deleteConfirm": "Ma doonaysaa inaad tirtirto xisaabtan? Dhaqdhaqaaqyadeedii hore lama saameyn doono.",
+    "startingBalance": "Hadhaaga bilowga: ${{amount}}",
+    "addAccount": "Ku dar Xisaab",
+    "namePlaceholder": "Magaca xisaabta (tusaale Bangiga, EVC)",
+    "startingBalancePlaceholder": "Hadhaaga bilowga",
+    "noAccount": "Xisaab lama doorin"
   }
 }

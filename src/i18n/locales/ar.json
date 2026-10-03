@@ -20,10 +20,12 @@
     "home": "الرئيسية",
     "transactions": "المعاملات",
     "budgets": "الميزانيات",
+    "accounts": "الحسابات",
     "goals": "الأهداف",
     "reports": "التقارير",
     "recurring": "المتكررة",
     "financeAI": "المساعد المالي الذكي",
+    "calculator": "الحاسبة",
     "more": "المزيد",
     "addTransaction": "إضافة معاملة"
   },
@@ -193,5 +195,28 @@
     "inputPlaceholder": "مثال: \"كم أنفقت هذا الشهر؟\"",
     "send": "إرسال",
     "thinking": "جارٍ التفكير…"
+  },
+  "calculator": {
+    "title": "الحاسبة",
+    "subtitle": "حسابات سريعة، في نفس مكان تتبع أموالك",
+    "historyHeading": "السجل",
+    "historyEmpty": "ستظهر حساباتك هنا.",
+    "clearHistory": "مسح السجل",
+    "clearHistoryConfirm": "هل تريد مسح سجل الحسابات؟",
+    "error": "خطأ"
+  },
+  "accounts": {
+    "title": "الحسابات",
+    "subtitle": "تابع أرصدتك مثل حسابك البنكي أو محفظتك عبر الهاتف (مثل EVC)، واخترها عند تسجيل معاملة",
+    "heading": "حساباتك",
+    "loading": "جارٍ تحميل الحسابات...",
+    "loadError": "تعذّر تحميل الحسابات",
+    "empty": "لا توجد حسابات بعد — أضف واحدًا أدناه، مثل \"البنك\" أو \"EVC\".",
+    "deleteConfirm": "هل تريد حذف هذا الحساب؟ لن تتأثر معاملاته السابقة.",
+    "startingBalance": "الرصيد الابتدائي: ${{amount}}",
+    "addAccount": "إضافة حساب",
+    "namePlaceholder": "اسم الحساب (مثل البنك، EVC)",
+    "startingBalancePlaceholder": "الرصيد الابتدائي",
+    "noAccount": "بدون حساب"
   }
 }

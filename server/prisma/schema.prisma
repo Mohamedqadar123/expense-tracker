@@ -20,6 +20,7 @@ model User {
   savingsGoals          SavingsGoal[]
   recurringTransactions RecurringTransaction[]
   aiMessages            AiMessage[]
+  accounts              Account[]
 }
 
 model Transaction {
@@ -42,6 +43,7 @@ model Transaction {
   @@index([userId])
   @@index([userId, date])
   @@index([userId, amount])
+  @@index([userId, account])
   @@index([recurringTransactionId])
 }
 
@@ -110,6 +112,25 @@ model AiMessage {
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+// A named money pool (e.g. "Bank", "EVC") with a starting balance the user
+// saves once. Transactions reference it by name via Transaction.account
+// (a plain string, not a foreign key, to stay backward-compatible with
+// pre-existing free-text account values) — a transaction's current balance
+// is startingBalance + sum(its income) - sum(its expenses), computed in
+// accountBalances.js rather than stored, so it never drifts out of sync.
+model Account {
+  id              Int      @id @default(autoincrement())
+  name            String
+  startingBalance Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+  @@index([userId])
 }
 
 model SavingsGoal {

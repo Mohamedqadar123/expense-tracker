@@ -20,10 +20,12 @@
     "home": "Home",
     "transactions": "Transactions",
     "budgets": "Budgets",
+    "accounts": "Accounts",
     "goals": "Goals",
     "reports": "Reports",
     "recurring": "Recurring",
     "financeAI": "Finance AI",
+    "calculator": "Calculator",
     "more": "More",
     "addTransaction": "Add Transaction"
   },
@@ -193,5 +195,28 @@
     "inputPlaceholder": "Ask e.g. \"How much did I spend this month?\"",
     "send": "Send",
     "thinking": "Thinking…"
+  },
+  "calculator": {
+    "title": "Calculator",
+    "subtitle": "Quick calculations, right where you track your money",
+    "historyHeading": "History",
+    "historyEmpty": "Your calculations will appear here.",
+    "clearHistory": "Clear history",
+    "clearHistoryConfirm": "Clear your calculation history?",
+    "error": "Error"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "subtitle": "Track balances like your bank account or mobile wallet (e.g. EVC), and pick one when you log a transaction",
+    "heading": "Your Accounts",
+    "loading": "Loading accounts...",
+    "loadError": "Failed to load accounts",
+    "empty": "No accounts yet — add one below, e.g. \"Bank\" or \"EVC\".",
+    "deleteConfirm": "Delete this account? Its past transactions will not be affected.",
+    "startingBalance": "Starting balance: ${{amount}}",
+    "addAccount": "Add Account",
+    "namePlaceholder": "Account name (e.g. Bank, EVC)",
+    "startingBalancePlaceholder": "Starting balance",
+    "noAccount": "No account"
   }
 }

@@ -12,7 +12,9 @@ import goalsRouter from './routes/goals.js';
 import reportsRouter from './routes/reports.js';
 import recurringTransactionsRouter from './routes/recurringTransactions.js';
 import aiRouter from './routes/ai.js';
+import accountsRouter from './routes/accounts.js';
 import requireAuth from './middleware/requireAuth.js';
+import { createRateLimitStore } from './rateLimitStore.js';
 
 const app = express();
 
@@ -33,6 +35,7 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   skip: () => process.env.NODE_ENV === 'test',
   keyGenerator: (req) => (req.user ? String(req.user.id) : ipKeyGenerator(req.ip)),
+  store: createRateLimitStore('api:'),
   handler: (req, res) => {
     res.status(429).json({ error: 'Too many requests. Please slow down and try again shortly.' });
   },
@@ -46,6 +49,7 @@ app.use('/api/goals', requireAuth, apiLimiter, goalsRouter);
 app.use('/api/reports', requireAuth, apiLimiter, reportsRouter);
 app.use('/api/recurring-transactions', requireAuth, apiLimiter, recurringTransactionsRouter);
 app.use('/api/ai', requireAuth, apiLimiter, aiRouter);
+app.use('/api/accounts', requireAuth, apiLimiter, accountsRouter);
 
 // Final safety net: never leak stack traces to the client, regardless of
 // whether individual routes remembered to catch their own errors.

@@ -5,6 +5,7 @@ import { buildFinancialSummary } from '../services/financialAnalysisService.js';
 import { askFinancialQuestion, AiServiceError } from '../services/anthropicClient.js';
 import { MAX_QUESTION_LENGTH, CONVERSATION_CONTEXT_LIMIT } from '../constants/ai.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { createRateLimitStore } from '../rateLimitStore.js';
 
 const router = Router();
 
@@ -24,6 +25,7 @@ const askLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => String(req.user.id),
+  store: createRateLimitStore('ai:'),
   handler: (req, res) => {
     res.status(429).json({ error: 'Too many questions. Please wait a few minutes before asking again.' });
   },

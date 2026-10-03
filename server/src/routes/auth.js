@@ -5,6 +5,7 @@ import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import prisma from '../prismaClient.js';
 import requireAuth from '../middleware/requireAuth.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { createRateLimitStore } from '../rateLimitStore.js';
 
 const router = Router();
 
@@ -57,6 +58,7 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
   skip: () => process.env.NODE_ENV === 'test',
   keyGenerator: (req) => ipKeyGenerator(req.ip),
+  store: createRateLimitStore('auth:'),
   handler: (req, res) => {
     res.status(429).json({ error: 'Too many attempts. Please wait a few minutes and try again.' });
   },
