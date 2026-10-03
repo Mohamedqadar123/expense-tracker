@@ -1,17 +1,10 @@
-import { API_BASE } from './config';
+import { API_BASE, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/auth`;
 
-async function parseJsonOrThrow(res, fallbackMessage) {
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.error || fallbackMessage);
-  return data;
-}
-
 export async function getMe() {
   const res = await fetch(`${BASE_URL}/me`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Not authenticated');
-  return res.json();
+  return parseJsonOrThrow(res, 'Not authenticated');
 }
 
 export async function login(email, password) {

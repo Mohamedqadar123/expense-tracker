@@ -66,6 +66,8 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         placeholder={t('transactions.amountPlaceholder')}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        min="0.01"
+        step="0.01"
       />
       <select value={type} onChange={(e) => {
         const newType = e.target.value;

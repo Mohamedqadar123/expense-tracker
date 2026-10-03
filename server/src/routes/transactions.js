@@ -45,7 +45,7 @@ function validateTransactionQuery(query) {
   return null;
 }
 
-function validateTransactionInput({ description, amount, type, category, account }) {
+function validateTransactionInput({ description, amount, type, category, account, date }) {
   if (!description || typeof description !== 'string' || !description.trim()) {
     return 'description is required';
   }
@@ -64,6 +64,9 @@ function validateTransactionInput({ description, amount, type, category, account
   }
   if (account !== undefined && account !== null && typeof account !== 'string') {
     return 'account must be a string';
+  }
+  if (date !== undefined && date !== null && date !== '' && isNaN(new Date(date).getTime())) {
+    return 'date must be a valid date';
   }
   return null;
 }
@@ -121,7 +124,7 @@ router.post('/', asyncHandler(async (req, res) => {
   const error = validateTransactionInput(req.body);
   if (error) return res.status(400).json({ error });
 
-  const { description, amount, type, category, account } = req.body;
+  const { description, amount, type, category, account, date } = req.body;
   const transaction = await prisma.transaction.create({
     data: {
       description,
@@ -129,6 +132,7 @@ router.post('/', asyncHandler(async (req, res) => {
       type: String(type).toLowerCase(),
       category,
       account: account || null,
+      date: date ? new Date(date) : undefined,
       userId: req.user.id,
     },
   });
@@ -144,10 +148,17 @@ router.put('/:id', asyncHandler(async (req, res) => {
   const existing = await prisma.transaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Transaction not found' });
 
-  const { description, amount, type, category, account } = req.body;
+  const { description, amount, type, category, account, date } = req.body;
   const result = await prisma.transaction.updateMany({
     where: { id, userId: req.user.id },
-    data: { description, amount, type: String(type).toLowerCase(), category, account: account || null },
+    data: {
+      description,
+      amount,
+      type: String(type).toLowerCase(),
+      category,
+      account: account || null,
+      date: date ? new Date(date) : undefined,
+    },
   });
   if (result.count === 0) return res.status(404).json({ error: 'Transaction not found' });
 

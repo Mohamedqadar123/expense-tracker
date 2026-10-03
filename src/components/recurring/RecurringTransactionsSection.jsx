@@ -46,18 +46,30 @@ function RecurringTransactionsSection() {
 
   const handleDelete = async (id) => {
     if (!window.confirm(t('recurring.deleteConfirm'))) return;
-    await deleteRecurringTransaction(id);
-    load();
+    try {
+      await deleteRecurringTransaction(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handlePause = async (id) => {
-    await pauseRecurringTransaction(id);
-    load();
+    try {
+      await pauseRecurringTransaction(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleResume = async (id) => {
-    await resumeRecurringTransaction(id);
-    load();
+    try {
+      await resumeRecurringTransaction(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (

@@ -26,8 +26,8 @@ describe('QuickAddTransactionForm', () => {
     window.removeEventListener('transaction:created', spy);
   });
 
-  it('surfaces a server error without dispatching transaction:created', async () => {
-    mockFetchOnce({ error: 'amount must be a positive number' }, { status: 400 });
+  it('blocks submission client-side for a non-positive amount, without calling the API', async () => {
+    const fetchMock = mockFetchOnce({ id: 1 }, { status: 201 });
     const spy = vi.fn();
     window.addEventListener('transaction:created', spy);
 
@@ -36,7 +36,22 @@ describe('QuickAddTransactionForm', () => {
     await userEvent.type(screen.getByPlaceholderText(/amount/i), '0');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
-    expect(await screen.findByText(/failed to create transaction/i)).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(spy).not.toHaveBeenCalled();
+    window.removeEventListener('transaction:created', spy);
+  });
+
+  it("surfaces the backend's specific error message without dispatching transaction:created", async () => {
+    mockFetchOnce({ error: 'Too many requests, please slow down' }, { status: 429 });
+    const spy = vi.fn();
+    window.addEventListener('transaction:created', spy);
+
+    render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
+    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByPlaceholderText(/amount/i), '5');
+    await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
+
+    expect(await screen.findByText(/too many requests, please slow down/i)).toBeInTheDocument();
     expect(spy).not.toHaveBeenCalled();
     window.removeEventListener('transaction:created', spy);
   });
