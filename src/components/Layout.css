@@ -7,6 +7,18 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.layout-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* On small screens the theme toggle lives in the "More" sheet instead */
+.layout-top .theme-toggle {
+  display: none;
+}
+
 .layout-brand {
   font-weight: bold;
   font-size: 18px;
@@ -40,7 +52,7 @@
   font-size: 13px;
 }
 
-.layout-user-email {
+.layout-user-name {
   color: var(--color-text-subtle);
 }
 
@@ -54,6 +66,65 @@
   border-radius: 4px;
 }
 
+.account-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 20px;
+  font-size: 13px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.account-banner-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.account-banner a,
+.account-banner button {
+  padding: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.upgrade-gate {
+  max-width: 480px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.upgrade-gate h2 {
+  font-size: 18px;
+  color: var(--color-heading);
+  margin-bottom: 8px;
+}
+
+.upgrade-gate p {
+  font-size: 14px;
+  color: var(--color-text-subtle);
+  margin-bottom: 16px;
+}
+
+.upgrade-gate-link {
+  display: inline-block;
+  padding: 10px 16px;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 .layout-main {
   padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px);
 }
@@ -64,6 +135,14 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+  }
+
+  .layout-top {
+    flex-basis: 100%;
+  }
+
+  .layout-top .theme-toggle {
+    display: flex;
   }
 
   .layout-nav {

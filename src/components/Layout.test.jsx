@@ -37,8 +37,14 @@ describe('Layout', () => {
     expect(await screen.findByText('Login page')).toBeInTheDocument();
   });
 
-  it('renders the current user\'s email in the header', () => {
+  it('renders the current user\'s name, not their email, in the header', () => {
+    renderLayout({ user: { email: 'a@test.com', name: 'Moha' }, isLoading: false, logout: vi.fn(), login: vi.fn(), signup: vi.fn() });
+    expect(screen.getByText('Moha')).toBeInTheDocument();
+    expect(screen.queryByText('a@test.com')).not.toBeInTheDocument();
+  });
+
+  it('never falls back to the email when the user has no name', () => {
     renderLayout({ user: { email: 'a@test.com' }, isLoading: false, logout: vi.fn(), login: vi.fn(), signup: vi.fn() });
-    expect(screen.getByText('a@test.com')).toBeInTheDocument();
+    expect(screen.queryByText('a@test.com')).not.toBeInTheDocument();
   });
 });

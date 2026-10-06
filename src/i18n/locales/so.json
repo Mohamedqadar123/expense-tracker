@@ -27,7 +27,9 @@
     "financeAI": "AI Maaliyadeed",
     "calculator": "Xisaabiye",
     "more": "Kale",
-    "addTransaction": "Ku dar Dhaqdhaqaaq"
+    "addTransaction": "Ku dar Dhaqdhaqaaq",
+    "billing": "Rukunka",
+    "admin": "Maamulka"
   },
   "theme": {
     "label": "Muuqaalka",
@@ -218,5 +220,40 @@
     "namePlaceholder": "Magaca xisaabta (tusaale Bangiga, EVC)",
     "startingBalancePlaceholder": "Hadhaaga bilowga",
     "noAccount": "Xisaab lama doorin"
+  },
+  "billing": {
+    "title": "Rukunka",
+    "planTrial": "Tijaabo bilaash ah",
+    "planStandard": "Standard",
+    "planPro": "Pro",
+    "planExpired": "Qorshe firfircoon ma jiro",
+    "trialEnds": "Tijaabadaada bilaashka ah waxay dhammaanaysaa {{date}}.",
+    "paidUntil": "Qorshahaaga {{plan}} wuxuu shaqaynayaa ilaa {{date}}.",
+    "expired": "Tijaabadaadii bilaashka ahayd way dhammaatay. Dooro qorshe si aad u sii isticmaasho Finance Tracker.",
+    "choosePlan": "Dooro qorshe",
+    "perPeriod": "{{price}} / {{days}} maalmood",
+    "standardFeatures": "Wax kasta marka laga reebo AI Maaliyadeed",
+    "proFeatures": "Wax kasta, oo ay ku jirto AI Maaliyadeed",
+    "switchNote": "Cusboonaysiinta isla qorshaha waxay ku daraysaa {{days}} maalmood. U beddelashada qorshe kale wuxuu bilaabmayaa maanta wuxuuna beddelayaa maalmaha ka haray qorshahaaga hadda.",
+    "phoneLabel": "Lambarka lacagta mobilka (EVC Plus, Zaad, Sahal)",
+    "payButton": "Bixi {{price}}",
+    "paying": "Fiiri taleefankaaga oo geli PIN-kaaga si aad u oggolaato lacag bixinta.",
+    "success": "Lacagta waa la helay. Qorshahaagu wuu shaqaynayaa.",
+    "notConfigured": "Lacag bixintu weli ma diyaarsana.",
+    "history": "Taariikhda lacag bixinta",
+    "noPayments": "Weli lacag lama bixin.",
+    "status": {
+      "approved": "La bixiyay",
+      "failed": "Fashilmay",
+      "pending": "Sugaya",
+      "unknown": "Aan la xaqiijin"
+    },
+    "subscribe": "Dooro qorshe",
+    "upgrade": "U kor u qaad Pro",
+    "gateTitle": "AI Maaliyadeed waa adeeg Pro ah",
+    "gateBody": "U kor u qaad qorshaha Pro si aad AI Maaliyadeed wax uga weydiiso lacagtaada.",
+    "verifyBanner": "Fadlan xaqiiji iimaylkaaga. Ka eeg sanduuqaaga linkiga.",
+    "resend": "Dib u dir iimaylka",
+    "resent": "Iimaylka xaqiijinta waa la diray."
   }
 }

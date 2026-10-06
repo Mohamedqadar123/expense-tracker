@@ -1,0 +1,174 @@
+.billing-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.billing-page h1 {
+  font-size: 20px;
+  color: var(--color-heading);
+  margin-bottom: 16px;
+}
+
+.billing-page h2 {
+  font-size: 16px;
+  color: var(--color-heading);
+  margin-bottom: 12px;
+}
+
+.billing-page p {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.billing-plan {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral-text);
+}
+
+.billing-plan-pro,
+.billing-plan-standard {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.billing-plan-expired {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.billing-plans {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.billing-form .billing-plan-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.billing-form .billing-plan-option.selected {
+  border-color: var(--color-primary);
+  background: var(--color-surface-alt);
+}
+
+.billing-form .billing-plan-option input {
+  align-self: flex-start;
+  min-height: 0;
+  padding: 0;
+}
+
+.billing-plan-name {
+  font-weight: bold;
+  color: var(--color-heading);
+}
+
+.billing-plan-price {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+@media (min-width: 640px) {
+  .billing-plans {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.billing-plan-trial {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.billing-note {
+  color: var(--color-text-muted);
+}
+
+.billing-error {
+  color: var(--color-danger);
+}
+
+.billing-success {
+  color: var(--color-success);
+}
+
+.billing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.billing-form label {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+.billing-form input {
+  padding: 10px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font-size: 16px;
+  border-radius: 4px;
+  min-height: var(--touch-target);
+}
+
+.billing-form button {
+  padding: 10px;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+  min-height: var(--touch-target);
+}
+
+.billing-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.billing-history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.billing-history li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.billing-history li:last-child {
+  border-bottom: none;
+}
+
+.billing-status-approved {
+  color: var(--color-success);
+}
+
+.billing-status-failed {
+  color: var(--color-danger);
+}
+
+.billing-status-pending,
+.billing-status-unknown {
+  color: var(--color-warning);
+}

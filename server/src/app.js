@@ -13,7 +13,12 @@ import reportsRouter from './routes/reports.js';
 import recurringTransactionsRouter from './routes/recurringTransactions.js';
 import aiRouter from './routes/ai.js';
 import accountsRouter from './routes/accounts.js';
+import billingRouter from './routes/billing.js';
+import adminRouter from './routes/admin.js';
 import requireAuth from './middleware/requireAuth.js';
+import requireSubscription from './middleware/requireSubscription.js';
+import requirePro from './middleware/requirePro.js';
+import requireAdmin from './middleware/requireAdmin.js';
 import { createRateLimitStore } from './rateLimitStore.js';
 
 const app = express();
@@ -42,14 +47,21 @@ const apiLimiter = rateLimit({
 });
 
 app.use('/api/auth', authRouter);
-app.use('/api/transactions', requireAuth, apiLimiter, transactionsRouter);
-app.use('/api/dashboard', requireAuth, apiLimiter, dashboardRouter);
-app.use('/api/budgets', requireAuth, apiLimiter, budgetsRouter);
-app.use('/api/goals', requireAuth, apiLimiter, goalsRouter);
-app.use('/api/reports', requireAuth, apiLimiter, reportsRouter);
-app.use('/api/recurring-transactions', requireAuth, apiLimiter, recurringTransactionsRouter);
-app.use('/api/ai', requireAuth, apiLimiter, aiRouter);
-app.use('/api/accounts', requireAuth, apiLimiter, accountsRouter);
+// Everything in the app itself needs the free trial or a paid plan; auth and
+// billing stay reachable so an expired account can still log in and pay.
+const subscribed = [requireAuth, apiLimiter, requireSubscription];
+
+app.use('/api/transactions', subscribed, transactionsRouter);
+app.use('/api/dashboard', subscribed, dashboardRouter);
+app.use('/api/budgets', subscribed, budgetsRouter);
+app.use('/api/goals', subscribed, goalsRouter);
+app.use('/api/reports', subscribed, reportsRouter);
+app.use('/api/recurring-transactions', subscribed, recurringTransactionsRouter);
+app.use('/api/ai', subscribed, requirePro, aiRouter);
+app.use('/api/accounts', subscribed, accountsRouter);
+// Applies requireAuth per route: /plans is public so the landing page can show pricing.
+app.use('/api/billing', billingRouter);
+app.use('/api/admin', requireAuth, apiLimiter, requireAdmin, adminRouter);
 
 // Final safety net: never leak stack traces to the client, regardless of
 // whether individual routes remembered to catch their own errors.

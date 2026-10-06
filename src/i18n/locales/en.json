@@ -27,7 +27,9 @@
     "financeAI": "Finance AI",
     "calculator": "Calculator",
     "more": "More",
-    "addTransaction": "Add Transaction"
+    "addTransaction": "Add Transaction",
+    "billing": "Billing",
+    "admin": "Admin"
   },
   "theme": {
     "label": "Theme",
@@ -218,5 +220,40 @@
     "namePlaceholder": "Account name (e.g. Bank, EVC)",
     "startingBalancePlaceholder": "Starting balance",
     "noAccount": "No account"
+  },
+  "billing": {
+    "title": "Subscription",
+    "planTrial": "Free trial",
+    "planStandard": "Standard",
+    "planPro": "Pro",
+    "planExpired": "No active plan",
+    "trialEnds": "Your free trial ends on {{date}}.",
+    "paidUntil": "Your {{plan}} plan is active until {{date}}.",
+    "expired": "Your free trial has ended. Choose a plan to keep using Finance Tracker.",
+    "choosePlan": "Choose a plan",
+    "perPeriod": "{{price}} / {{days}} days",
+    "standardFeatures": "Everything except Finance AI",
+    "proFeatures": "Everything, including Finance AI",
+    "switchNote": "Renewing the same plan adds {{days}} days. Switching to a different plan starts it today and replaces the days left on your current plan.",
+    "phoneLabel": "Mobile money number (EVC Plus, Zaad, Sahal)",
+    "payButton": "Pay {{price}}",
+    "paying": "Check your phone and enter your PIN to approve the payment.",
+    "success": "Payment received. Your plan is active.",
+    "notConfigured": "Payments are not available yet.",
+    "history": "Payment history",
+    "noPayments": "No payments yet.",
+    "status": {
+      "approved": "Paid",
+      "failed": "Failed",
+      "pending": "Pending",
+      "unknown": "Unconfirmed"
+    },
+    "subscribe": "Choose a plan",
+    "upgrade": "Upgrade to Pro",
+    "gateTitle": "Finance AI is a Pro feature",
+    "gateBody": "Upgrade to the Pro plan to ask Finance AI about your money.",
+    "verifyBanner": "Please verify your email address. Check your inbox for the link.",
+    "resend": "Resend email",
+    "resent": "Verification email sent."
   }
 }

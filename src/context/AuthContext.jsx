@@ -30,8 +30,16 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  // Re-reads the account after something changes it server-side (a payment
+  // extending Pro access, an email being verified).
+  const refreshUser = useCallback(async () => {
+    const freshUser = await getMe();
+    setUser(freshUser);
+    return freshUser;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

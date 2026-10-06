@@ -30,7 +30,7 @@ function Signup() {
     <div className="auth-page">
       <div className="auth-card">
         <h1>Sign Up</h1>
-        <p className="subtitle">Create your Finance Tracker account</p>
+        <p className="subtitle">Create your Finance Tracker account and try everything free for 7 days</p>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
