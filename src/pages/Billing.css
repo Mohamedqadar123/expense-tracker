@@ -1,24 +1,86 @@
 .billing-page {
-  max-width: 560px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px 40px;
+  animation: fade-up 0.35s ease-out backwards;
 }
 
-.billing-page h1 {
-  font-size: 20px;
+.billing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.billing-brand {
+  font-weight: bold;
+  font-size: 18px;
   color: var(--color-heading);
-  margin-bottom: 16px;
+  text-decoration: none;
+}
+
+.billing-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.billing-header-actions a {
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+.billing-logout {
+  padding: 8px 12px;
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary-text);
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.billing-intro {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.billing-intro h1 {
+  font-size: 30px;
+  color: var(--color-heading);
+  margin-bottom: 8px;
+}
+
+.billing-intro p {
+  color: var(--color-text-subtle);
+  font-size: 16px;
+}
+
+.billing-page .section-card {
+  max-width: 680px;
+  margin-inline: auto;
+}
+
+.billing-page .plan-slides {
+  margin-bottom: 20px;
 }
 
 .billing-page h2 {
   font-size: 16px;
   color: var(--color-heading);
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
-.billing-page p {
+.billing-current {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   font-size: 14px;
-  margin-top: 8px;
 }
 
 .billing-plan {
@@ -37,70 +99,28 @@
   color: var(--color-success);
 }
 
-.billing-plan-expired {
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
-}
-
-.billing-plans {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.billing-form .billing-plan-option {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--color-text);
-}
-
-.billing-form .billing-plan-option.selected {
-  border-color: var(--color-primary);
-  background: var(--color-surface-alt);
-}
-
-.billing-form .billing-plan-option input {
-  align-self: flex-start;
-  min-height: 0;
-  padding: 0;
-}
-
-.billing-plan-name {
-  font-weight: bold;
-  color: var(--color-heading);
-}
-
-.billing-plan-price {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-@media (min-width: 640px) {
-  .billing-plans {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .billing-plan-trial {
   background: var(--color-warning-bg);
   color: var(--color-warning);
 }
 
+.billing-plan-expired {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
 .billing-note {
+  font-size: 14px;
   color: var(--color-text-muted);
 }
 
 .billing-error {
+  font-size: 14px;
   color: var(--color-danger);
 }
 
 .billing-success {
+  font-size: 14px;
   color: var(--color-success);
 }
 
@@ -111,6 +131,7 @@
 }
 
 .billing-form label {
+  margin-top: 6px;
   font-size: 13px;
   color: var(--color-text-subtle);
 }
@@ -144,7 +165,7 @@
 .billing-history {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 8px 0 0;
 }
 
 .billing-history li {

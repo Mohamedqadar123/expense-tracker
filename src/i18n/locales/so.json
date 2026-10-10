@@ -14,7 +14,8 @@
     "credit": "Credit",
     "debit": "Debit",
     "to": "ilaa",
-    "notAvailable": "Ma jiro"
+    "notAvailable": "Ma jiro",
+    "welcome": "Soo dhawoow, {{name}}"
   },
   "nav": {
     "home": "Guriga",
@@ -107,7 +108,6 @@
     "clearFilters": "Tirtir Shaandhooyinka",
     "descriptionPlaceholder": "Sharaxaad",
     "amountPlaceholder": "Lacagta",
-    "accountOptionalPlaceholder": "Xisaabta (ikhtiyaari)",
     "adding": "Waa la darayaa…",
     "prev": "Hore",
     "next": "Xiga",
@@ -141,7 +141,8 @@
     "addGoal": "Ku dar Hadaf Keydin",
     "namePlaceholder": "Magaca Hadafka",
     "targetAmountPlaceholder": "Lacagta Bartilmaameedka",
-    "savedSoFarPlaceholder": "Lacagta la keydiyay ilaa hadda"
+    "savedSoFarPlaceholder": "Lacagta la keydiyay ilaa hadda",
+    "accountHint": "Lacagta la kaydiyay waxaa laga jarayaa xisaabta la doortay. Haddii aad yarayso lacagta la kaydiyay, dib ayaa loogu celinayaa."
   },
   "reports": {
     "title": "Warbixinnada Maaliyadda",
@@ -209,17 +210,18 @@
   },
   "accounts": {
     "title": "Xisaabaha",
-    "subtitle": "La soco hadhaaga sida xisaabtaada bangiga ama lacagta mobilaha (tusaale EVC), kuna dooro mid markaad diiwaan gelinayso dhaqdhaqaaq",
+    "subtitle": "Dhaqdhaqaaq kasta, lacag-bixin soo noqnoqota iyo kayd kasta wuxuu lacag gelinayaa (credit) ama ka saarayaa (debit) mid ka mid ah xisaabahan, tusaale bangigaaga ama EVC.",
     "heading": "Xisaabahaaga",
     "loading": "Xisaabaha ayaa soo raraya...",
     "loadError": "Xisaabaha lama soo rari karin",
     "empty": "Wali xisaab ma jirto — hoos ku dar mid, tusaale \"Bangiga\" ama \"EVC\".",
-    "deleteConfirm": "Ma doonaysaa inaad tirtirto xisaabtan? Dhaqdhaqaaqyadeedii hore lama saameyn doono.",
+    "deleteConfirm": "Ma tirtirtaa xisaabtan? Xisaab leh dhaqdhaqaaqyo lama tirtiri karo.",
     "startingBalance": "Hadhaaga bilowga: ${{amount}}",
     "addAccount": "Ku dar Xisaab",
-    "namePlaceholder": "Magaca xisaabta (tusaale Bangiga, EVC)",
+    "namePlaceholder": "Magaca xisaabta (tusaale Salam Bank, EVC Plus)",
     "startingBalancePlaceholder": "Hadhaaga bilowga",
-    "noAccount": "Xisaab lama doorin"
+    "yourAccounts": "Xisaabahaaga",
+    "presetAccounts": "Bangiyada iyo lacagta mobilka"
   },
   "billing": {
     "title": "Rukunka",
@@ -230,10 +232,8 @@
     "trialEnds": "Tijaabadaada bilaashka ah waxay dhammaanaysaa {{date}}.",
     "paidUntil": "Qorshahaaga {{plan}} wuxuu shaqaynayaa ilaa {{date}}.",
     "expired": "Tijaabadaadii bilaashka ahayd way dhammaatay. Dooro qorshe si aad u sii isticmaasho Finance Tracker.",
-    "choosePlan": "Dooro qorshe",
+    "choosePlan": "Dooro qorshahaaga",
     "perPeriod": "{{price}} / {{days}} maalmood",
-    "standardFeatures": "Wax kasta marka laga reebo AI Maaliyadeed",
-    "proFeatures": "Wax kasta, oo ay ku jirto AI Maaliyadeed",
     "switchNote": "Cusboonaysiinta isla qorshaha waxay ku daraysaa {{days}} maalmood. U beddelashada qorshe kale wuxuu bilaabmayaa maanta wuxuuna beddelayaa maalmaha ka haray qorshahaaga hadda.",
     "phoneLabel": "Lambarka lacagta mobilka (EVC Plus, Zaad, Sahal)",
     "payButton": "Bixi {{price}}",
@@ -254,6 +254,21 @@
     "gateBody": "U kor u qaad qorshaha Pro si aad AI Maaliyadeed wax uga weydiiso lacagtaada.",
     "verifyBanner": "Fadlan xaqiiji iimaylkaaga. Ka eeg sanduuqaaga linkiga.",
     "resend": "Dib u dir iimaylka",
-    "resent": "Iimaylka xaqiijinta waa la diray."
+    "resent": "Iimaylka xaqiijinta waa la diray.",
+    "trialPrice": "{{days}} maalmood oo bilaash ah",
+    "freeDesc": "Tijaabi adeeg kasta si bilaash ah muddo {{days}} maalmood ah. Lacag looma baahna.",
+    "standardDesc": "Wax kasta oo aad u baahan tahay si aad ula socoto ugana qorshayso lacagtaada.",
+    "proDesc": "Wax kasta oo ku jira Standard, oo lagu daray AI Maaliyadeed oo ka jawaaba su'aalahaaga lacagta.",
+    "startTrial": "Bilow tijaabada bilaashka ah",
+    "signUpFor": "Isku diiwaangeli {{plan}}",
+    "payFor": "Bixi qorshaha {{plan}}",
+    "trialUsed": "Tijaabadaada bilaashka ah hore ayaa loo isticmaalay.",
+    "pickPaidPlan": "Tag bogga Standard ama Pro si aad lacag u bixiso.",
+    "included": "Wuu ku jiraa",
+    "notIncluded": "Kuma jiro",
+    "previous": "Qorshihii hore",
+    "next": "Qorshaha xiga",
+    "logIn": "Gal",
+    "intro": "Akoon kasta wuxuu ku bilaabmaa tijaabo bilaash ah oo {{days}} maalmood ah. Ku bixi EVC Plus, Zaad ama Sahal."
   }
 }

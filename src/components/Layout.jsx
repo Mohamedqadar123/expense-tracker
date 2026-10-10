@@ -13,6 +13,8 @@ import AccountBanners from './AccountBanners.jsx'
 import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
 import { mergeCategories } from '../utils/mergeCategories'
+import { getUsername, isNewUser } from '../utils/username'
+import { UserIcon } from './icons/Icons.jsx'
 
 const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
@@ -22,6 +24,17 @@ function Layout() {
   const { t } = useTranslation();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const username = getUsername(user?.email);
+  // Greets accounts on their first day.
+  const isWelcome = isNewUser(user?.createdAt);
+  const userLabel = username && (
+    <span className={`layout-username ${isWelcome ? 'layout-username-welcome' : ''}`}>
+      <UserIcon />
+      <span className="layout-username-text">
+        {isWelcome ? t('common.welcome', { name: username }) : username}
+      </span>
+    </span>
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -33,7 +46,14 @@ function Layout() {
       <header className="layout-header">
         <div className="layout-top">
           <span className="layout-brand">Finance Tracker</span>
-          <ThemeToggle />
+          <div className="layout-user">
+            <LanguageSelector />
+            <ThemeToggle />
+            <div className="layout-account">
+              {userLabel}
+              <button type="button" className="layout-logout" onClick={handleLogout}>{t('common.logOut')}</button>
+            </div>
+          </div>
         </div>
         <nav className="layout-nav">
           <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
@@ -72,11 +92,6 @@ function Layout() {
             </NavLink>
           )}
         </nav>
-        <div className="layout-user">
-          <LanguageSelector />
-          {user?.name && <span className="layout-user-name">{user.name}</span>}
-          <button type="button" onClick={handleLogout}>{t('common.logOut')}</button>
-        </div>
       </header>
 
       <AccountBanners />
@@ -100,6 +115,7 @@ function Layout() {
             <NavLink to="/admin" onClick={() => setIsMoreOpen(false)}>{t('nav.admin')}</NavLink>
           )}
           <button type="button" className="more-sheet-logout" onClick={handleLogout}>{t('common.logOut')}</button>
+          {userLabel}
         </nav>
         <div className="more-sheet-theme">
           <span className="more-sheet-theme-label">{t('theme.label')}</span>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import './Auth.css'
+import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { useAuth } from '../context/useAuth.js'
 import { verifyEmail } from '../api/auth'
 
@@ -28,6 +29,7 @@ function VerifyEmail() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <SavingsIllustration />
         <h1>Email Verification</h1>
         {state === 'verifying' && <p className="subtitle">Verifying your email...</p>}
         {state === 'verified' && <p className="subtitle">Your email is verified. Thank you!</p>}

@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getAccounts, createAccount, updateAccount, deleteAccount } from '../../api/accounts'
 import AccountForm from './AccountForm.jsx'
+import QuickAddTransactionForm from '../transactions/QuickAddTransactionForm.jsx'
+import { CATEGORIES } from '../../constants/categories'
+import { BUDGET_CATEGORIES } from '../../constants/budgetCategories'
+import { mergeCategories } from '../../utils/mergeCategories'
+
+const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
 function AccountsSection() {
   const { t } = useTranslation();
@@ -9,6 +15,8 @@ function AccountsSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  // Which account has its credit/debit form open: { id, type } or null.
+  const [moving, setMoving] = useState(null);
 
   const load = () => {
     setIsLoading(true);
@@ -81,9 +89,25 @@ function AccountsSection() {
                         {t('accounts.startingBalance', { amount: a.startingBalance.toFixed(2) })}
                       </div>
                       <div className="budget-actions">
+                        <button onClick={() => setMoving({ id: a.id, type: 'income' })}>{t('common.credit')}</button>
+                        <button onClick={() => setMoving({ id: a.id, type: 'expense' })}>{t('common.debit')}</button>
                         <button onClick={() => setEditingId(a.id)}>{t('common.edit')}</button>
                         <button onClick={() => handleDelete(a.id)}>{t('common.delete')}</button>
                       </div>
+                      {moving?.id === a.id && (
+                        <>
+                          <QuickAddTransactionForm
+                            key={moving.type}
+                            categories={categories}
+                            defaultAccount={a.name}
+                            defaultType={moving.type}
+                            onSuccess={() => { setMoving(null); load(); }}
+                          />
+                          <div className="budget-actions">
+                            <button onClick={() => setMoving(null)}>{t('common.cancel')}</button>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </li>

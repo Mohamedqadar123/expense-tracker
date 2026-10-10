@@ -1,0 +1,133 @@
+/*
+  App-wide motion. Everything here is decorative: content is fully usable
+  without it, and it is switched off for people who ask their system for
+  reduced motion (see the bottom of this file).
+*/
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Each page fades up as it is opened (the page root remounts on navigation) */
+.layout-main > *,
+.auth-card,
+.landing-hero,
+.landing-section {
+  animation: fade-up 0.35s ease-out backwards;
+}
+
+.landing-header,
+.layout-header {
+  animation: fade-in 0.3s ease-out backwards;
+}
+
+.account-banner {
+  animation: slide-down 0.3s ease-out backwards;
+}
+
+/* Cards arrive one after another instead of all at once */
+.stat-card,
+.landing-card,
+.admin-stat,
+.billing-plan-option {
+  animation: fade-up 0.4s ease-out backwards;
+}
+
+.stat-card:nth-child(2),
+.landing-card:nth-child(2),
+.admin-stat:nth-child(2),
+.billing-plan-option:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.stat-card:nth-child(3),
+.landing-card:nth-child(3),
+.admin-stat:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.stat-card:nth-child(4),
+.landing-card:nth-child(4),
+.admin-stat:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+.landing-card:nth-child(5) {
+  animation-delay: 0.24s;
+}
+
+.landing-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+/* Cards lift slightly under the pointer */
+.stat-card,
+.landing-card,
+.admin-stat,
+.billing-plan-option {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.stat-card:hover,
+.landing-card:hover,
+.admin-stat:hover,
+.billing-plan-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow-color);
+}
+
+/* Buttons and links respond to hover and press */
+button,
+.landing-button,
+.upgrade-gate-link {
+  transition: transform 0.12s ease, background-color 0.15s ease, opacity 0.15s ease;
+}
+
+button:active:not(:disabled),
+.landing-button:active,
+.upgrade-gate-link:active {
+  transform: scale(0.97);
+}
+
+.landing-button:hover,
+.upgrade-gate-link:hover {
+  transform: translateY(-1px);
+}
+
+.layout-nav a {
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

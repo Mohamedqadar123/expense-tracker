@@ -2,19 +2,24 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './Landing.css'
 import ThemeToggle from '../components/ThemeToggle.jsx'
+import { HeroIllustration, FeatureIcon } from '../components/illustrations/Illustrations.jsx'
+import PlanSlides from '../components/PlanSlides.jsx'
 import { getPlans } from '../api/billing'
 
+const PLAN_LABELS = { standard: 'Standard', pro: 'Pro' };
+
 const FEATURES = [
-  { title: 'Track every shilling and dollar', body: 'Log income and expenses in seconds, across all your accounts: bank, EVC, cash.' },
-  { title: 'Budgets that warn you early', body: 'Set a budget per category and get alerted before you overspend, not after.' },
-  { title: 'Savings goals', body: 'Put a target and a date on what you are saving for and watch the progress.' },
-  { title: 'Recurring transactions', body: 'Rent, salary and subscriptions are recorded automatically on schedule.' },
-  { title: 'Finance AI', body: 'Ask questions about your own money in plain language and get answers from your data.', pro: true },
-  { title: 'Reports and exports', body: 'Cash-flow and category reports you can export to Excel or CSV.' },
+  { icon: 'wallet', tone: 'info', title: 'Track every shilling and dollar', body: 'Log income and expenses in seconds, across all your accounts: bank, EVC, cash.' },
+  { icon: 'bell', tone: 'warning', title: 'Budgets that warn you early', body: 'Set a budget per category and get alerted before you overspend, not after.' },
+  { icon: 'target', tone: 'success', title: 'Savings goals', body: 'Put a target and a date on what you are saving for and watch the progress.' },
+  { icon: 'repeat', tone: 'info', title: 'Recurring transactions', body: 'Rent, salary and subscriptions are recorded automatically on schedule.' },
+  { icon: 'sparkles', tone: 'warning', title: 'Finance AI', body: 'Ask questions about your own money in plain language and get answers from your data.', pro: true },
+  { icon: 'chart', tone: 'success', title: 'Reports and exports', body: 'Cash-flow and category reports you can export to Excel or CSV.' },
 ];
 
 function Landing() {
   const [pricing, setPricing] = useState(null);
+  const [activePlan, setActivePlan] = useState('free');
 
   useEffect(() => {
     // The server is the source of truth for prices; the defaults below only
@@ -23,12 +28,6 @@ function Landing() {
   }, []);
 
   const trialDays = pricing?.trialDays ?? 7;
-  const periodDays = pricing?.periodDays ?? 30;
-  const currency = pricing?.currency ?? 'USD';
-  const priceOf = (planId, fallback) => {
-    const price = pricing?.plans.find((plan) => plan.id === planId)?.price ?? fallback;
-    return `${price} ${currency} / ${periodDays} days`;
-  };
 
   return (
     <div className="landing">
@@ -37,17 +36,20 @@ function Landing() {
         <div className="landing-header-actions">
           <ThemeToggle />
           <Link to="/login">Log in</Link>
-          <Link to="/signup" className="landing-button">Start free trial</Link>
+          <Link to="/billing" className="landing-button">Start free trial</Link>
         </div>
       </header>
 
       <section className="landing-hero">
+        <div className="landing-hero-text">
         <h1>Know where your money goes.</h1>
         <p>
           Track spending, set budgets and reach your savings goals in English, Somali or Arabic.
           Try everything free for {trialDays} days. No payment needed to start.
         </p>
-        <Link to="/signup" className="landing-button landing-button-large">Start your {trialDays}-day free trial</Link>
+        <Link to="/billing" className="landing-button landing-button-large">Start your {trialDays}-day free trial</Link>
+        </div>
+        <HeroIllustration />
       </section>
 
       <section className="landing-section">
@@ -55,6 +57,7 @@ function Landing() {
         <div className="landing-features">
           {FEATURES.map((feature) => (
             <div key={feature.title} className="landing-card">
+              <FeatureIcon name={feature.icon} tone={feature.tone} />
               <h3>
                 {feature.title}
                 {feature.pro && <span className="landing-pro-tag">Pro</span>}
@@ -67,38 +70,16 @@ function Landing() {
 
       <section className="landing-section" id="pricing">
         <h2>Simple pricing</h2>
-        <div className="landing-pricing">
-          <div className="landing-card">
-            <h3>Free</h3>
-            <p className="landing-price">{trialDays}-day trial</p>
-            <ul>
-              <li>Every feature, including Finance AI</li>
-              <li>No payment details needed</li>
-              <li>Ends after {trialDays} days, then choose a plan</li>
-            </ul>
-            <Link to="/signup" className="landing-button">Start free trial</Link>
-          </div>
-          <div className="landing-card">
-            <h3>Standard</h3>
-            <p className="landing-price">{priceOf('standard', 5)}</p>
-            <ul>
-              <li>Transactions, accounts and budgets</li>
-              <li>Savings goals and recurring transactions</li>
-              <li>Reports and exports</li>
-            </ul>
-            <Link to="/signup" className="landing-button">Get Standard</Link>
-          </div>
-          <div className="landing-card landing-card-highlight">
-            <h3>Pro</h3>
-            <p className="landing-price">{priceOf('pro', 10)}</p>
-            <ul>
-              <li>Everything in Standard</li>
-              <li>Finance AI assistant</li>
-              <li>Ask questions about your own money</li>
-            </ul>
-            <Link to="/signup" className="landing-button">Get Pro</Link>
-          </div>
-        </div>
+        <PlanSlides
+          pricing={pricing}
+          activePlan={activePlan}
+          onActivePlanChange={setActivePlan}
+          renderAction={(planId) => (
+            <Link to={`/billing?plan=${planId}`}>
+              {planId === 'free' ? 'Start free trial' : `Choose ${PLAN_LABELS[planId]}`}
+            </Link>
+          )}
+        />
         <p className="landing-pricing-note">
           Every plan starts with the {trialDays}-day free trial. Pay with EVC Plus, Zaad or Sahal.
         </p>

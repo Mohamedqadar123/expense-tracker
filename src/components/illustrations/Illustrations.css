@@ -1,0 +1,211 @@
+.illustration {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.illustration-hero {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.illustration-savings {
+  max-width: 150px;
+  margin: 0 auto 12px;
+}
+
+.illustration-lock {
+  max-width: 120px;
+  margin: 0 auto 12px;
+}
+
+/* Fills and strokes, all from the theme tokens */
+.ill-card {
+  fill: var(--color-surface);
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+
+.ill-shadow { fill: var(--color-surface-alt); }
+.ill-fill-surface { fill: var(--color-surface); }
+.ill-fill-muted { fill: var(--color-border); }
+.ill-fill-track { fill: var(--color-surface-alt); }
+.ill-fill-heading { fill: var(--color-text-subtle); }
+.ill-fill-info { fill: var(--color-info); }
+.ill-fill-success { fill: var(--color-success); }
+.ill-fill-success-bg { fill: var(--color-success-bg); }
+.ill-fill-warning { fill: var(--color-warning); }
+.ill-fill-danger { fill: var(--color-danger); }
+
+.ill-axis {
+  stroke: var(--color-border);
+  stroke-width: 1.5;
+}
+
+.ill-line,
+.ill-arrow,
+.ill-check,
+.ill-shackle {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ill-line,
+.ill-arrow {
+  stroke: var(--color-warning);
+  stroke-width: 4;
+}
+
+.ill-check {
+  stroke: var(--color-success);
+  stroke-width: 3;
+}
+
+.ill-shackle {
+  stroke: var(--color-text-subtle);
+  stroke-width: 7;
+}
+
+.ill-dot {
+  fill: var(--color-warning);
+  stroke: var(--color-surface);
+  stroke-width: 3;
+}
+
+.ill-coin-face { fill: var(--color-warning); }
+
+.ill-coin-ring {
+  fill: var(--color-warning-bg);
+  stroke: var(--color-warning-strong);
+  stroke-width: 1.5;
+}
+
+.ill-coin-text {
+  fill: var(--color-warning-strong);
+  font-size: 22px;
+  font-weight: bold;
+  font-family: inherit;
+}
+
+/* Motion. transform-box makes each shape scale and move around its own box
+   rather than the corner of the whole drawing. */
+@keyframes ill-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes ill-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ill-fill-up {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(0.72); }
+}
+
+@keyframes ill-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes ill-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ill-twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.ill-bar,
+.ill-progress,
+.ill-coin,
+.ill-twinkle,
+.ill-stack-coin {
+  transform-box: fill-box;
+}
+
+.ill-bar {
+  transform-origin: bottom;
+  animation: ill-grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ill-line {
+  stroke-dasharray: 1;
+  animation: ill-draw 1.2s ease-out 0.7s both;
+}
+
+.ill-arrow,
+.ill-dot {
+  animation: fade-in 0.3s ease-out 1.7s both;
+}
+
+.ill-progress {
+  transform-origin: left;
+  animation: ill-fill-up 1.2s ease-out 0.9s both;
+}
+
+.ill-float-slow { animation: ill-float 6s ease-in-out infinite; }
+.ill-float-fast { animation: ill-float 4.5s ease-in-out 0.6s infinite; }
+
+.ill-coin { animation: ill-float 3.6s ease-in-out infinite; }
+.ill-coin-b { animation-delay: 0.8s; }
+.ill-coin-c { animation-delay: 1.6s; }
+
+.ill-stack-coin {
+  animation: ill-pop 0.4s ease-out both;
+}
+
+.ill-twinkle {
+  transform-origin: center;
+  animation: ill-twinkle 2.4s ease-in-out infinite;
+}
+
+.ill-twinkle-late { animation-delay: 1.2s; }
+
+/* Feature icons */
+.feature-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease;
+}
+
+.landing-card:hover .feature-icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.feature-icon-glyph {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.feature-icon-info .feature-icon-tile { fill: var(--color-surface-alt); }
+.feature-icon-info .feature-icon-glyph { stroke: var(--color-info); }
+
+.feature-icon-success .feature-icon-tile { fill: var(--color-success-bg); }
+.feature-icon-success .feature-icon-glyph { stroke: var(--color-success); }
+
+.feature-icon-warning .feature-icon-tile { fill: var(--color-warning-bg); }
+.feature-icon-warning .feature-icon-glyph { stroke: var(--color-warning-strong); }
+
+.feature-icon-danger .feature-icon-tile { fill: var(--color-danger-bg); }
+.feature-icon-danger .feature-icon-glyph { stroke: var(--color-danger); }

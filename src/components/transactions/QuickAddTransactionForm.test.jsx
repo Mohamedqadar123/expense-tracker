@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mockFetchOnce } from '../../testUtils/mockFetch.js';
 import QuickAddTransactionForm from './QuickAddTransactionForm.jsx';
@@ -66,14 +66,16 @@ describe('QuickAddTransactionForm', () => {
     mockFetchOnce([]);
     render(<QuickAddTransactionForm categories={['Food', 'Salary']} onSuccess={vi.fn()} />);
 
-    const select = screen.getByRole('combobox');
+    // The category picker comes first; the account picker (always present,
+    // since it offers the preset banks) is the second combobox.
+    const select = screen.getAllByRole('combobox')[0];
     expect(select).toHaveValue('Food');
 
     await userEvent.click(screen.getByRole('button', { name: /credit/i }));
 
     expect(select).toHaveValue('Salary');
-    expect(screen.getAllByRole('option')).toHaveLength(1);
-    expect(screen.getByRole('option', { name: 'Salary' })).toBeInTheDocument();
+    expect(within(select).getAllByRole('option')).toHaveLength(1);
+    expect(within(select).getByRole('option', { name: 'Salary' })).toBeInTheDocument();
   });
 
   it('offers a dropdown of the user\'s real accounts instead of free text once any exist', async () => {
@@ -87,5 +89,18 @@ describe('QuickAddTransactionForm', () => {
     await waitFor(() => expect(screen.getByRole('option', { name: 'Bank' })).toBeInTheDocument());
     expect(screen.getByRole('option', { name: 'EVC' })).toBeInTheDocument();
     expect(screen.queryByPlaceholderText(/account \(optional\)/i)).not.toBeInTheDocument();
+  });
+
+  it('offers the preset banks and EVC Plus alongside the accounts the user already has', async () => {
+    mockFetchOnce([{ id: 1, name: 'salam bank', startingBalance: 0, income: 0, expense: 0, balance: 0 }]);
+
+    render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
+
+    await waitFor(() => expect(screen.getByRole('option', { name: 'salam bank' })).toBeInTheDocument());
+    for (const name of ['Premier Bank', 'IBS Bank', 'Bulsho Bank', 'My Bank', 'Dahabshil Bank', 'EVC Plus']) {
+      expect(screen.getByRole('option', { name })).toBeInTheDocument();
+    }
+    // Already one of the user's accounts, so it isn't offered a second time.
+    expect(screen.queryByRole('option', { name: 'Salam Bank' })).not.toBeInTheDocument();
   });
 });

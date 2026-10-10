@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import './Auth.css'
+import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { resetPassword } from '../api/auth'
 
 function ResetPassword() {
@@ -55,6 +56,7 @@ function ResetPassword() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <SavingsIllustration />
         <h1>Reset Password</h1>
         {content}
         <p className="auth-switch">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createTransaction } from '../../api/transactions'
 import { getAccounts } from '../../api/accounts'
+import AccountSelect from '../accounts/AccountSelect.jsx'
 import { isIncomeCategory } from '../../constants/incomeCategories'
 
 function todayAsDateInputValue() {
@@ -11,36 +12,43 @@ function todayAsDateInputValue() {
 // Used both as the quick-add form (self-submits via createTransaction) and,
 // when `initialValues` + `onSubmit` are passed, as the inline edit form for
 // an existing transaction (mirrors BudgetForm/SavingsGoalForm/RecurringTransactionForm).
-function QuickAddTransactionForm({ categories, onSuccess, broadcast = true, initialValues, onSubmit, onCancel }) {
+// `defaultAccount` / `defaultType` preset a new transaction, e.g. the Credit
+// and Debit buttons on an account.
+function QuickAddTransactionForm({
+  categories, onSuccess, broadcast = true, initialValues, onSubmit, onCancel, defaultAccount = '', defaultType = 'expense',
+}) {
   const { t } = useTranslation();
   const incomeCategories = categories.filter((c) => isIncomeCategory(c));
   const expenseCategories = categories.filter((c) => !isIncomeCategory(c));
   const isEditing = Boolean(initialValues);
   const [description, setDescription] = useState(initialValues?.description || '');
   const [amount, setAmount] = useState(initialValues?.amount ?? '');
-  const [type, setType] = useState(initialValues?.type || 'expense');
-  const [category, setCategory] = useState(initialValues?.category || expenseCategories[0] || 'food');
-  const [account, setAccount] = useState(initialValues?.account || '');
+  const [type, setType] = useState(initialValues?.type || defaultType);
+  const [category, setCategory] = useState(
+    initialValues?.category || (defaultType === 'income' ? incomeCategories[0] : expenseCategories[0]) || 'food'
+  );
+  const [account, setAccount] = useState(initialValues?.account || defaultAccount);
   const [date, setDate] = useState(initialValues?.date ? initialValues.date.slice(0, 10) : todayAsDateInputValue());
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accounts, setAccounts] = useState([]);
-  const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
+  const typeCategories = type === 'income' ? incomeCategories : expenseCategories;
+  // Keeps the current category selectable when editing a transaction whose
+  // category isn't in the normal list (e.g. a savings-goal transfer).
+  const visibleCategories = typeCategories.includes(category) ? typeCategories : [category, ...typeCategories];
 
-  // Real accounts (e.g. "Bank", "EVC") the user set up on the Accounts page —
-  // picking one here is what ties a transaction to that account's balance.
-  // Falls back to the old free-text field for users with none set up yet.
+  // Every transaction moves money into or out of one of the user's accounts
+  // (e.g. "Bank", "EVC"), so one is always selected: the first account by
+  // default, until the user picks another.
   useEffect(() => {
     getAccounts()
-      .then((data) => setAccounts(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setAccounts(list);
+        setAccount((current) => current || list[0]?.name || '');
+      })
       .catch(() => {});
   }, []);
-
-  // Keeps a legacy/custom account value (e.g. from editing an older
-  // transaction) selectable even if it no longer matches a real account.
-  const accountOptions = accounts.some((a) => a.name.toLowerCase() === account.toLowerCase()) || !account
-    ? accounts
-    : [{ id: 'custom', name: account }, ...accounts];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,9 +72,9 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true, init
 
         setDescription('');
         setAmount('');
-        setType('expense');
-        setCategory(expenseCategories[0] || 'food');
-        setAccount('');
+        setType(defaultType);
+        setCategory((defaultType === 'income' ? incomeCategories[0] : expenseCategories[0]) || 'food');
+        setAccount(defaultAccount || accounts[0]?.name || '');
         setDate(todayAsDateInputValue());
 
         if (broadcast) {
@@ -121,21 +129,7 @@ function QuickAddTransactionForm({ categories, onSuccess, broadcast = true, init
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
-      {accounts.length > 0 ? (
-        <select value={account} onChange={(e) => setAccount(e.target.value)}>
-          <option value="">{t('accounts.noAccount')}</option>
-          {accountOptions.map((a) => (
-            <option key={a.id} value={a.name}>{a.name}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type="text"
-          placeholder={t('transactions.accountOptionalPlaceholder')}
-          value={account}
-          onChange={(e) => setAccount(e.target.value)}
-        />
-      )}
+      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
       <input
         type="date"
         value={date}

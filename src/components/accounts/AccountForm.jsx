@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PRESET_ACCOUNTS } from '../../constants/presetAccounts'
 
 function AccountForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -32,7 +33,11 @@ function AccountForm({ initialValues, onSubmit, onCancel }) {
         placeholder={t('accounts.namePlaceholder')}
         value={name}
         onChange={(e) => setName(e.target.value)}
+        list="preset-account-names"
       />
+      <datalist id="preset-account-names">
+        {PRESET_ACCOUNTS.map((preset) => <option key={preset} value={preset} />)}
+      </datalist>
       <input
         type="number"
         placeholder={t('accounts.startingBalancePlaceholder')}

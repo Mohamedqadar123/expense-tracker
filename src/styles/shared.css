@@ -53,6 +53,12 @@
   cursor: pointer;
 }
 
+.form-hint {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 .section-subheading {
   font-size: 13px;
   color: var(--color-text-muted);

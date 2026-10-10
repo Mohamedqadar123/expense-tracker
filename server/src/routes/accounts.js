@@ -51,10 +51,18 @@ router.put('/:id', asyncHandler(async (req, res) => {
   });
   if (nameConflict) return res.status(409).json({ error: `An account named "${name.trim()}" already exists` });
 
-  await prisma.account.updateMany({
-    where: { id, userId: req.user.id },
-    data: { name: name.trim(), startingBalance: startingBalance ?? 0 },
-  });
+  // Transactions point at their account by name, so a rename has to be
+  // applied to them too or they would silently fall out of the balance.
+  const newName = name.trim();
+  const usesOldName = { userId: req.user.id, account: { equals: existing.name, mode: 'insensitive' } };
+  await prisma.$transaction([
+    prisma.account.updateMany({
+      where: { id, userId: req.user.id },
+      data: { name: newName, startingBalance: startingBalance ?? 0 },
+    }),
+    prisma.transaction.updateMany({ where: usesOldName, data: { account: newName } }),
+    prisma.recurringTransaction.updateMany({ where: usesOldName, data: { account: newName } }),
+  ]);
 
   const [account] = await getAccountBalances(prisma, req.user.id).then((accounts) =>
     accounts.filter((a) => a.id === id)
@@ -68,6 +76,23 @@ router.delete('/:id', asyncHandler(async (req, res) => {
 
   const existing = await prisma.account.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Account not found' });
+
+  // Deleting an account that money has moved through would leave those
+  // transactions belonging to nothing.
+  const usesAccount = { userId: req.user.id, account: { equals: existing.name, mode: 'insensitive' } };
+  const [transactionCount, recurringCount, accountCount] = await Promise.all([
+    prisma.transaction.count({ where: usesAccount }),
+    prisma.recurringTransaction.count({ where: usesAccount }),
+    prisma.account.count({ where: { userId: req.user.id } }),
+  ]);
+  if (transactionCount > 0 || recurringCount > 0) {
+    return res.status(409).json({
+      error: `"${existing.name}" has transactions, so it can't be deleted. Move or delete them first.`,
+    });
+  }
+  if (accountCount <= 1) {
+    return res.status(409).json({ error: 'You need at least one account to record transactions.' });
+  }
 
   const result = await prisma.account.deleteMany({ where: { id, userId: req.user.id } });
   if (result.count === 0) return res.status(404).json({ error: 'Account not found' });

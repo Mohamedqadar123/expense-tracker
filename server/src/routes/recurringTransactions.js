@@ -3,6 +3,7 @@ import prisma from '../prismaClient.js';
 import { RECURRING_TYPES, RECURRING_FREQUENCIES } from '../constants/recurringTransactions.js';
 import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { ensureAccountName } from '../utils/accounts.js';
 
 const router = Router();
 
@@ -69,7 +70,7 @@ router.post('/', asyncHandler(async (req, res) => {
       amount: Number(amount),
       type: type.toLowerCase(),
       category,
-      account: account || null,
+      account: await ensureAccountName(prisma, req.user.id, account),
       frequency: frequency.toLowerCase(),
       status: 'active',
       startDate: start,
@@ -100,7 +101,7 @@ router.put('/:id', asyncHandler(async (req, res) => {
       amount: Number(amount),
       type: type.toLowerCase(),
       category,
-      account: account || null,
+      account: await ensureAccountName(prisma, req.user.id, account),
       frequency: frequency.toLowerCase(),
       startDate: start,
       endDate: endDate ? new Date(endDate) : null,

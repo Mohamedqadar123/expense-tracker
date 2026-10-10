@@ -1,33 +1,56 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import '../styles/shared.css'
 import './Billing.css'
 import { useAuth } from '../context/useAuth.js'
-import { getBillingStatus, subscribe } from '../api/billing'
+import { getBillingStatus, getPlans, subscribe } from '../api/billing'
+import PlanSlides from '../components/PlanSlides.jsx'
+import { PLAN_ORDER } from '../constants/plans'
+import ThemeToggle from '../components/ThemeToggle.jsx'
+import LanguageSelector from '../components/LanguageSelector.jsx'
 
+// Public page: visitors pick a plan here and are sent on to sign up with it;
+// signed-in users see their current plan here and pay for the next period.
 function Billing() {
-  const { refreshUser } = useAuth();
+  const { user, isLoading: isAuthLoading, logout, refreshUser } = useAuth();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const requestedPlan = searchParams.get('plan');
+  const [activePlan, setActivePlan] = useState(PLAN_ORDER.includes(requestedPlan) ? requestedPlan : 'free');
+  const [pricing, setPricing] = useState(null);
   const [status, setStatus] = useState(null);
-  const [loadError, setLoadError] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState('pro');
   const [phone, setPhone] = useState('');
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState(null);
   const [paid, setPaid] = useState(false);
+  const phoneInput = useRef(null);
+  const userId = user?.id;
 
-  const load = useCallback(async () => {
-    setLoadError(null);
-    try {
-      setStatus(await getBillingStatus());
-    } catch (err) {
-      setLoadError(err.message);
+  // Visitors only need the public price list; members also get their own
+  // subscription and payment history. Failing to load either still leaves
+  // the slides usable with the default prices.
+  const load = useCallback(() => {
+    if (!userId) {
+      return getPlans().then(setPricing).catch(() => {});
     }
-  }, []);
+    return getBillingStatus()
+      .then((result) => {
+        setStatus(result);
+        setPricing(result.pricing);
+      })
+      .catch(() => {});
+  }, [userId]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (!isAuthLoading) load();
+  }, [isAuthLoading, load]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/billing');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +58,7 @@ function Billing() {
     setPaid(false);
     setIsPaying(true);
     try {
-      await subscribe(selectedPlan, phone);
+      await subscribe(activePlan, phone);
       setPaid(true);
       setPhone('');
       await refreshUser();
@@ -47,118 +70,140 @@ function Billing() {
     }
   };
 
-  if (loadError) {
-    return (
-      <div className="dashboard-error">
-        <p>{loadError}</p>
-        <button type="button" onClick={load}>{t('common.retry')}</button>
-      </div>
-    );
-  }
-
-  if (!status) {
+  if (isAuthLoading) {
     return <p className="dashboard-status">{t('common.loading')}</p>;
   }
 
-  const { access, pricing, paymentsEnabled, payments } = status;
+  const access = user?.access;
   const formatDate = (value) => new Date(value).toLocaleDateString(i18n.language);
-  const formatPrice = (amount) => `${amount} ${pricing.currency}`;
   const planNames = {
+    free: t('billing.planTrial'),
     trial: t('billing.planTrial'),
     standard: t('billing.planStandard'),
     pro: t('billing.planPro'),
     expired: t('billing.planExpired'),
   };
-  const isPaidPlan = access.plan === 'standard' || access.plan === 'pro';
-  const chosen = pricing.plans.find((plan) => plan.id === selectedPlan);
+  const isPaidSlide = activePlan !== 'free';
+  const chosen = pricing?.plans.find((plan) => plan.id === activePlan);
+  const chosenPrice = chosen ? `${chosen.price} ${pricing.currency}` : '';
+  const trialDays = pricing?.trialDays ?? 7;
+
+  const renderAction = (planId) => {
+    if (!user) {
+      return planId === 'free'
+        ? <Link to="/signup">{t('billing.startTrial')}</Link>
+        : <Link to={`/signup?plan=${planId}`}>{t('billing.signUpFor', { plan: planNames[planId] })}</Link>;
+    }
+    if (planId === 'free') {
+      return access.plan === 'trial'
+        ? t('billing.trialEnds', { date: formatDate(access.trialEndsAt) })
+        : t('billing.trialUsed');
+    }
+    return (
+      <button type="button" onClick={() => phoneInput.current?.focus()}>
+        {t('billing.payFor', { plan: planNames[planId] })}
+      </button>
+    );
+  };
 
   return (
     <div className="billing-page">
-      <h1>{t('billing.title')}</h1>
-
-      <div className="section-card">
-        <span className={`billing-plan billing-plan-${access.plan}`}>{planNames[access.plan]}</span>
-        {access.plan === 'trial' && <p>{t('billing.trialEnds', { date: formatDate(access.trialEndsAt) })}</p>}
-        {isPaidPlan && (
-          <p>{t('billing.paidUntil', { plan: planNames[access.plan], date: formatDate(access.paidUntil) })}</p>
-        )}
-        {access.plan === 'expired' && <p>{t('billing.expired')}</p>}
-      </div>
-
-      <div className="section-card">
-        <h2>{t('billing.choosePlan')}</h2>
-        <form className="billing-form" onSubmit={handleSubmit}>
-          <div className="billing-plans">
-            {pricing.plans.map((plan) => (
-              <label
-                key={plan.id}
-                className={`billing-plan-option ${selectedPlan === plan.id ? 'selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="plan"
-                  value={plan.id}
-                  checked={selectedPlan === plan.id}
-                  onChange={() => setSelectedPlan(plan.id)}
-                  disabled={isPaying}
-                />
-                <span className="billing-plan-name">{planNames[plan.id]}</span>
-                <span className="billing-plan-price">
-                  {t('billing.perPeriod', { price: formatPrice(plan.price), days: pricing.periodDays })}
-                </span>
-                <span className="billing-note">
-                  {plan.financeAI ? t('billing.proFeatures') : t('billing.standardFeatures')}
-                </span>
-              </label>
-            ))}
-          </div>
-          <p className="billing-note">{t('billing.switchNote', { days: pricing.periodDays })}</p>
-
-          {paymentsEnabled ? (
+      <header className="billing-header">
+        <Link to="/" className="billing-brand">Finance Tracker</Link>
+        <div className="billing-header-actions">
+          <LanguageSelector />
+          <ThemeToggle />
+          {user ? (
             <>
-              <label htmlFor="billing-phone">{t('billing.phoneLabel')}</label>
-              <input
-                id="billing-phone"
-                type="tel"
-                inputMode="tel"
-                placeholder="61 5551234"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                disabled={isPaying}
-                required
-              />
-              {isPaying && <p className="billing-note">{t('billing.paying')}</p>}
-              {payError && <p className="billing-error">{payError}</p>}
-              {paid && <p className="billing-success">{t('billing.success')}</p>}
-              <button type="submit" disabled={isPaying}>
-                {t('billing.payButton', { price: formatPrice(chosen.price) })}
-              </button>
+              {access.hasAccess && <Link to="/dashboard">{t('nav.home')}</Link>}
+              <button type="button" className="billing-logout" onClick={handleLogout}>{t('common.logOut')}</button>
             </>
           ) : (
-            <p className="billing-error">{t('billing.notConfigured')}</p>
+            <Link to="/login">{t('billing.logIn')}</Link>
           )}
-        </form>
+        </div>
+      </header>
+
+      <div className="billing-intro">
+        <h1>{t('billing.choosePlan')}</h1>
+        <p>{t('billing.intro', { days: trialDays })}</p>
       </div>
 
-      <div className="section-card">
-        <h2>{t('billing.history')}</h2>
-        {payments.length === 0 ? (
-          <p className="list-empty">{t('billing.noPayments')}</p>
-        ) : (
-          <ul className="billing-history">
-            {payments.map((payment) => (
-              <li key={payment.id}>
-                <span>{formatDate(payment.createdAt)}</span>
-                <span>{planNames[payment.plan]}</span>
-                <span>{payment.amount} {payment.currency}</span>
-                <span className={`billing-status billing-status-${payment.status}`}>
-                  {t(`billing.status.${payment.status}`)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {user && (
+        <div className="section-card billing-current">
+          <span className={`billing-plan billing-plan-${access.plan}`}>{planNames[access.plan]}</span>
+          {access.plan === 'trial' && <span>{t('billing.trialEnds', { date: formatDate(access.trialEndsAt) })}</span>}
+          {(access.plan === 'standard' || access.plan === 'pro') && (
+            <span>{t('billing.paidUntil', { plan: planNames[access.plan], date: formatDate(access.paidUntil) })}</span>
+          )}
+          {access.plan === 'expired' && <span>{t('billing.expired')}</span>}
+        </div>
+      )}
+
+      <PlanSlides
+        pricing={pricing}
+        activePlan={activePlan}
+        onActivePlanChange={setActivePlan}
+        renderAction={renderAction}
+      />
+
+      {user && (
+        <div className="section-card billing-pay">
+          {!isPaidSlide && <p className="billing-note">{t('billing.pickPaidPlan')}</p>}
+          {isPaidSlide && (
+            <form className="billing-form" onSubmit={handleSubmit}>
+              <h2>{t('billing.payFor', { plan: planNames[activePlan] })}</h2>
+              <p className="billing-note">{t('billing.switchNote', { days: pricing?.periodDays ?? 30 })}</p>
+              {status?.paymentsEnabled === false ? (
+                <p className="billing-error">{t('billing.notConfigured')}</p>
+              ) : (
+                <>
+                  <label htmlFor="billing-phone">{t('billing.phoneLabel')}</label>
+                  <input
+                    id="billing-phone"
+                    ref={phoneInput}
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="61 5551234"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={isPaying}
+                    required
+                  />
+                  {isPaying && <p className="billing-note">{t('billing.paying')}</p>}
+                  {payError && <p className="billing-error">{payError}</p>}
+                  {paid && <p className="billing-success">{t('billing.success')}</p>}
+                  <button type="submit" disabled={isPaying || !chosen}>
+                    {t('billing.payButton', { price: chosenPrice })}
+                  </button>
+                </>
+              )}
+            </form>
+          )}
+        </div>
+      )}
+
+      {user && status && (
+        <div className="section-card">
+          <h2>{t('billing.history')}</h2>
+          {status.payments.length === 0 ? (
+            <p className="list-empty">{t('billing.noPayments')}</p>
+          ) : (
+            <ul className="billing-history">
+              {status.payments.map((payment) => (
+                <li key={payment.id}>
+                  <span>{formatDate(payment.createdAt)}</span>
+                  <span>{planNames[payment.plan]}</span>
+                  <span>{payment.amount} {payment.currency}</span>
+                  <span className={`billing-status billing-status-${payment.status}`}>
+                    {t(`billing.status.${payment.status}`)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

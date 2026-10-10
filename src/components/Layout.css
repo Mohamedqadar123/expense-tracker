@@ -14,9 +14,35 @@
   gap: 10px;
 }
 
-/* On small screens the theme toggle lives in the "More" sheet instead */
-.layout-top .theme-toggle {
-  display: none;
+.layout-username {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 200px;
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+.layout-username svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.layout-username-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layout-username-welcome {
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+.more-sheet-nav .layout-username {
+  padding: 0 8px;
+  font-size: 14px;
 }
 
 .layout-brand {
@@ -45,6 +71,8 @@
   border-bottom-color: var(--color-primary);
 }
 
+/* Account controls: username, language, theme and log out as one row at the
+   end of the top bar. On small screens they live in the "More" sheet instead. */
 .layout-user {
   display: none;
   align-items: center;
@@ -52,18 +80,38 @@
   font-size: 13px;
 }
 
-.layout-user-name {
-  color: var(--color-text-subtle);
+/* Same compact height for every control in the group */
+.layout-user .language-selector,
+.layout-user .theme-toggle button,
+.layout-user .layout-logout {
+  min-height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.layout-user button {
+/* The username and Log Out read as one unit: a single bordered box with a
+   divider between who is signed in and the button that signs them out. */
+.layout-account {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.layout-account .layout-username {
+  padding: 0 10px;
+  background: var(--color-surface);
+}
+
+.layout-logout {
   padding: 6px 12px;
   background: var(--color-secondary-bg);
   color: var(--color-secondary-text);
-  border: 1px solid var(--color-input-border);
+  border: none;
+  border-inline-start: 1px solid var(--color-border-strong);
   cursor: pointer;
   font-size: 13px;
-  border-radius: 4px;
 }
 
 .account-banner {
@@ -139,10 +187,6 @@
 
   .layout-top {
     flex-basis: 100%;
-  }
-
-  .layout-top .theme-toggle {
-    display: flex;
   }
 
   .layout-nav {

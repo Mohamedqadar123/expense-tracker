@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Auth.css'
+import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { forgotPassword } from '../api/auth'
 
 function ForgotPassword() {
@@ -26,6 +27,7 @@ function ForgotPassword() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <SavingsIllustration />
         <h1>Reset Password</h1>
         {isSent ? (
           <p className="subtitle">

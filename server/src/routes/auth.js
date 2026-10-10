@@ -8,6 +8,7 @@ import asyncHandler from '../middleware/asyncHandler.js';
 import { createRateLimitStore } from '../rateLimitStore.js';
 import { getAccess, newTrialEnd } from '../services/subscription.js';
 import { isAdmin } from '../utils/admin.js';
+import { DEFAULT_ACCOUNT_NAME } from '../utils/accounts.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
 import { issueAuthToken, findValidAuthToken, VERIFY_EMAIL, RESET_PASSWORD } from '../utils/authTokens.js';
 
@@ -117,7 +118,15 @@ router.post('/signup', authLimiter, asyncHandler(async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
   const user = await prisma.user.create({
-    data: { email, passwordHash, name: name || null, trialEndsAt: newTrialEnd() },
+    data: {
+      email,
+      passwordHash,
+      name: name || null,
+      trialEndsAt: newTrialEnd(),
+      // Every transaction belongs to an account, so a new user gets one
+      // straight away and can start recording money coming in.
+      accounts: { create: { name: DEFAULT_ACCOUNT_NAME } },
+    },
   });
   await sendVerification(user);
 

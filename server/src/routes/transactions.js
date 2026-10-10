@@ -3,6 +3,7 @@ import prisma from '../prismaClient.js';
 import { parsePartialDateRange } from '../utils/dateRange.js';
 import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { ensureAccountName, isSavingsCategory } from '../utils/accounts.js';
 
 const router = Router();
 
@@ -59,7 +60,7 @@ function validateTransactionInput({ description, amount, type, category, account
     return 'category is required';
   }
   const normalizedType = String(type || '').toLowerCase();
-  if (isIncomeCategory(category) !== (normalizedType === 'income')) {
+  if (!isSavingsCategory(category) && isIncomeCategory(category) !== (normalizedType === 'income')) {
     return `category "${category}" is not valid for type "${normalizedType}"`;
   }
   if (account !== undefined && account !== null && typeof account !== 'string') {
@@ -131,7 +132,7 @@ router.post('/', asyncHandler(async (req, res) => {
       amount,
       type: String(type).toLowerCase(),
       category,
-      account: account || null,
+      account: await ensureAccountName(prisma, req.user.id, account),
       date: date ? new Date(date) : undefined,
       userId: req.user.id,
     },
@@ -156,7 +157,7 @@ router.put('/:id', asyncHandler(async (req, res) => {
       amount,
       type: String(type).toLowerCase(),
       category,
-      account: account || null,
+      account: await ensureAccountName(prisma, req.user.id, account),
       date: date ? new Date(date) : undefined,
     },
   });

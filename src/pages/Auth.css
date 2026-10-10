@@ -60,6 +60,15 @@
   cursor: default;
 }
 
+.auth-plan {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-size: 13px;
+}
+
 .auth-error {
   color: var(--color-danger);
   font-size: 13px;

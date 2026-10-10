@@ -60,6 +60,14 @@
   --color-input-border: #cccccc;
   --color-overlay: rgba(0, 0, 0, 0.4);
   --shadow-color: rgba(0, 0, 0, 0.25);
+
+  /* Page backdrop: a photo washed with the page colour (--bg-image-tint) so
+     it stays in the background, plus soft colour glows and a dot texture */
+  --bg-image-tint: rgba(255, 255, 255, 0.8);
+  --bg-glow-blue: rgba(21, 101, 192, 0.16);
+  --bg-glow-green: rgba(46, 125, 50, 0.13);
+  --bg-glow-amber: rgba(245, 127, 23, 0.13);
+  --bg-dot: rgba(17, 17, 17, 0.07);
 }
 
 :root[data-theme="dark"] {
@@ -100,6 +108,12 @@
   --color-input-border: #4d4d4d;
   --color-overlay: rgba(0, 0, 0, 0.6);
   --shadow-color: rgba(0, 0, 0, 0.6);
+
+  --bg-image-tint: rgba(18, 18, 18, 0.62);
+  --bg-glow-blue: rgba(100, 181, 246, 0.17);
+  --bg-glow-green: rgba(102, 187, 106, 0.12);
+  --bg-glow-amber: rgba(255, 167, 38, 0.11);
+  --bg-dot: rgba(255, 255, 255, 0.06);
 }
 
 html {
@@ -115,6 +129,45 @@ body {
   color: var(--color-text);
   line-height: var(--line-height-base);
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Decorative backdrop, fixed behind the page so content scrolls over it.
+   Cards keep their solid surface colour, so text contrast is unchanged. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Oversized so the slow drift never exposes an edge. The photo is small, so
+   it is blurred on purpose: a soft wash of colour rather than a stretched,
+   pixelated picture. */
+body::before {
+  inset: -20%;
+  filter: blur(14px);
+  background:
+    linear-gradient(var(--bg-image-tint), var(--bg-image-tint)),
+    radial-gradient(circle at 18% 22%, var(--bg-glow-blue), transparent 38%),
+    radial-gradient(circle at 84% 16%, var(--bg-glow-amber), transparent 34%),
+    radial-gradient(circle at 72% 82%, var(--bg-glow-green), transparent 40%),
+    radial-gradient(circle at 12% 88%, var(--bg-glow-blue), transparent 32%),
+    url('./assets/images/finance-tracker.jpg') center / cover no-repeat;
+  animation: backdrop-drift 36s ease-in-out infinite alternate;
+}
+
+/* Dot grid that fades out towards the bottom of the screen */
+body::after {
+  inset: 0;
+  background-image: radial-gradient(var(--bg-dot) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, #000, transparent 85%);
+}
+
+@keyframes backdrop-drift {
+  from { transform: translate3d(-3%, -2%, 0) scale(1); }
+  to { transform: translate3d(3%, 2%, 0) scale(1.08); }
 }
 
 img, svg {
