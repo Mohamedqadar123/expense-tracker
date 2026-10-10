@@ -17,12 +17,14 @@ export async function login(email, password) {
   return parseJsonOrThrow(res, 'Failed to log in');
 }
 
-export async function signup(email, password, name) {
+// Does not sign the person in: the account only exists once they open the
+// link emailed to them. `plan` is the paid plan they picked beforehand, if any.
+export async function signup(email, password, name, plan) {
   const res = await fetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, name, plan }),
   });
   return parseJsonOrThrow(res, 'Failed to sign up');
 }

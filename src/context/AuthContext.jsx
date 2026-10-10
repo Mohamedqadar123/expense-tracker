@@ -19,11 +19,9 @@ export function AuthProvider({ children }) {
     return loggedInUser;
   }, []);
 
-  const signup = useCallback(async (email, password, name) => {
-    const newUser = await apiSignup(email, password, name);
-    setUser(newUser);
-    return newUser;
-  }, []);
+  // Signing up only sends a confirmation email; there is no user to sign in
+  // until the link in it is opened (see the VerifyEmail page).
+  const signup = useCallback((email, password, name, plan) => apiSignup(email, password, name, plan), []);
 
   const logout = useCallback(async () => {
     await apiLogout();

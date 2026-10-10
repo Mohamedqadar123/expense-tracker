@@ -6,9 +6,10 @@ import prisma from '../prismaClient.js';
 import requireAuth from '../middleware/requireAuth.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { createRateLimitStore } from '../rateLimitStore.js';
-import { getAccess, newTrialEnd } from '../services/subscription.js';
+import { getAccess, PLAN_IDS as PAID_PLAN_IDS } from '../services/subscription.js';
 import { isAdmin } from '../utils/admin.js';
-import { DEFAULT_ACCOUNT_NAME } from '../utils/accounts.js';
+import { getEmailDomainError } from '../utils/emailDomain.js';
+import { savePendingSignup, findValidPendingSignup, registerPendingSignup } from '../utils/pendingSignups.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
 import { issueAuthToken, findValidAuthToken, VERIFY_EMAIL, RESET_PASSWORD } from '../utils/authTokens.js';
 
@@ -101,8 +102,12 @@ const emailLimiter = rateLimit({
   },
 });
 
-router.post('/signup', authLimiter, asyncHandler(async (req, res) => {
-  const { email, password, name } = req.body;
+// Does not create the account. It checks the address can receive mail,
+// stores the sign-up as pending and emails a link; the account is created
+// by /verify-email once that link is opened, which is the only reliable
+// proof that the mailbox exists and belongs to this person.
+router.post('/signup', authLimiter, emailLimiter, asyncHandler(async (req, res) => {
+  const { email, password, name, plan } = req.body;
   if (!email || !EMAIL_REGEX.test(email)) {
     return res.status(400).json({ error: 'A valid email is required' });
   }
@@ -116,22 +121,27 @@ router.post('/signup', authLimiter, asyncHandler(async (req, res) => {
     return res.status(409).json({ error: 'An account with this email already exists' });
   }
 
-  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      name: name || null,
-      trialEndsAt: newTrialEnd(),
-      // Every transaction belongs to an account, so a new user gets one
-      // straight away and can start recording money coming in.
-      accounts: { create: { name: DEFAULT_ACCOUNT_NAME } },
-    },
-  });
-  await sendVerification(user);
+  // Skipped under test, like the rate limiters: the suite must not depend on
+  // live DNS, and getEmailDomainError has its own unit tests.
+  if (process.env.NODE_ENV !== 'test') {
+    const domainError = await getEmailDomainError(email);
+    if (domainError) {
+      return res.status(400).json({ error: domainError });
+    }
+  }
 
-  setAuthCookie(res, user);
-  res.status(201).json(sanitize(user));
+  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+  const token = await savePendingSignup({ email, passwordHash, name });
+  try {
+    await sendVerificationEmail(email, token, PAID_PLAN_IDS.includes(plan) ? plan : null);
+  } catch (err) {
+    console.error(err);
+    return res.status(502).json({
+      error: 'We could not send a verification email to that address. Check it and try again.',
+    });
+  }
+
+  res.status(202).json({ message: 'Check your email to finish creating your account', email });
 }));
 
 router.post('/login', authLimiter, asyncHandler(async (req, res) => {
@@ -162,6 +172,16 @@ router.get('/me', requireAuth, asyncHandler(async (req, res) => {
 }));
 
 router.post('/verify-email', emailLimiter, asyncHandler(async (req, res) => {
+  // A link from signing up: this is the moment the account is created, and
+  // the person is signed straight in.
+  const pending = await findValidPendingSignup(req.body.token);
+  if (pending) {
+    const user = await registerPendingSignup(pending);
+    setAuthCookie(res, user);
+    return res.status(201).json(sanitize(user));
+  }
+
+  // Otherwise a link re-sent to an account that predates sign-up confirmation.
   const record = await findValidAuthToken(req.body.token, VERIFY_EMAIL);
   if (!record) {
     return res.status(400).json({ error: 'This verification link is invalid or has expired' });

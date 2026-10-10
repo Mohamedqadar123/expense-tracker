@@ -56,12 +56,14 @@ async function sendEmail({ to, subject, text }) {
   }
 }
 
-export function sendVerificationEmail(email, token) {
-  const link = `${getAppUrl()}/verify-email?token=${token}`;
+// `plan` is the paid plan picked before signing up, if any; it rides along in
+// the link so the person lands on the right plan once their account exists.
+export function sendVerificationEmail(email, token, plan = null) {
+  const link = `${getAppUrl()}/verify-email?token=${token}${plan ? `&plan=${plan}` : ''}`;
   return sendEmail({
     to: email,
-    subject: 'Verify your Finance Tracker email',
-    text: `Welcome to Finance Tracker!\n\nConfirm your email address by opening this link:\n${link}\n\nThe link expires in 24 hours.`,
+    subject: 'Confirm your email to create your Finance Tracker account',
+    text: `Welcome to Finance Tracker!\n\nYour account is created when you confirm this email address. Open this link to finish signing up:\n${link}\n\nThe link expires in 24 hours. If you didn't sign up, you can ignore this email and no account will be created.`,
   });
 }
 

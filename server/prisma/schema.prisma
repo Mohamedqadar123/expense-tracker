@@ -36,6 +36,19 @@ model User {
   payments              Payment[]
 }
 
+// A sign-up waiting for its email address to be confirmed. No User exists
+// until the link sent to the address is opened; see utils/pendingSignups.js.
+// Only the SHA-256 hash of the emailed token is stored.
+model PendingSignup {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  tokenHash    String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
 // Single-use, expiring tokens emailed to the user for email verification and
 // password reset. Only the SHA-256 hash is stored, so a database leak does
 // not expose usable links.
