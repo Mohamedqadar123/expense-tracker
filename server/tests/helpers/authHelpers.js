@@ -7,7 +7,7 @@ import prisma from '../../src/prismaClient.js';
 // with plenty of money in their default account and in "Checking" (the
 // account the transaction fixtures use). Pass { funded: false } to test the
 // balance rule itself.
-const TEST_STARTING_BALANCE = 1_000_000;
+const TEST_STARTING_BALANCE = 1_000_000_000_000;
 
 let counter = 0;
 
