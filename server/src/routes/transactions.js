@@ -4,6 +4,7 @@ import { parsePartialDateRange } from '../utils/dateRange.js';
 import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { ensureAccountName, isSavingsCategory } from '../utils/accounts.js';
+import { getDebitError } from '../utils/accountBalances.js';
 
 const router = Router();
 
@@ -126,13 +127,20 @@ router.post('/', asyncHandler(async (req, res) => {
   if (error) return res.status(400).json({ error });
 
   const { description, amount, type, category, account, date } = req.body;
+  const normalizedType = String(type).toLowerCase();
+  const accountName = await ensureAccountName(prisma, req.user.id, account);
+  if (normalizedType === 'expense') {
+    const debitError = await getDebitError(prisma, req.user.id, accountName, amount);
+    if (debitError) return res.status(400).json({ error: debitError });
+  }
+
   const transaction = await prisma.transaction.create({
     data: {
       description,
       amount,
-      type: String(type).toLowerCase(),
+      type: normalizedType,
       category,
-      account: await ensureAccountName(prisma, req.user.id, account),
+      account: accountName,
       date: date ? new Date(date) : undefined,
       userId: req.user.id,
     },
@@ -150,14 +158,24 @@ router.put('/:id', asyncHandler(async (req, res) => {
   if (!existing) return res.status(404).json({ error: 'Transaction not found' });
 
   const { description, amount, type, category, account, date } = req.body;
+  const normalizedType = String(type).toLowerCase();
+  const accountName = await ensureAccountName(prisma, req.user.id, account);
+  if (normalizedType === 'expense') {
+    // Checked against the balance without this transaction's old value, so
+    // lowering or correcting an existing debit is never refused for the
+    // money that debit itself took out.
+    const debitError = await getDebitError(prisma, req.user.id, accountName, amount, { excludeTransactionId: id });
+    if (debitError) return res.status(400).json({ error: debitError });
+  }
+
   const result = await prisma.transaction.updateMany({
     where: { id, userId: req.user.id },
     data: {
       description,
       amount,
-      type: String(type).toLowerCase(),
+      type: normalizedType,
       category,
-      account: await ensureAccountName(prisma, req.user.id, account),
+      account: accountName,
       date: date ? new Date(date) : undefined,
     },
   });

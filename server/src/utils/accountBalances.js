@@ -36,3 +36,37 @@ export async function getAccountBalances(prisma, userId) {
     };
   });
 }
+
+// Current balance of a single account, by name. `excludeTransactionId` leaves
+// one transaction out of the sum, which is how an edit is checked: the
+// balance is worked out as if the transaction being edited didn't exist yet.
+export async function getAccountBalance(prisma, userId, accountName, { excludeTransactionId } = {}) {
+  const account = await prisma.account.findFirst({
+    where: { userId, name: { equals: accountName, mode: 'insensitive' } },
+  });
+  const sums = await prisma.transaction.groupBy({
+    by: ['type'],
+    where: {
+      userId,
+      account: { equals: accountName, mode: 'insensitive' },
+      ...(excludeTransactionId ? { id: { not: excludeTransactionId } } : {}),
+    },
+    _sum: { amount: true },
+  });
+  const income = sums.find((s) => s.type === 'income')?._sum.amount ?? 0;
+  const expense = sums.find((s) => s.type === 'expense')?._sum.amount ?? 0;
+  return (account?.startingBalance ?? 0) + income - expense;
+}
+
+// An account can only pay out money it actually holds. Returns the reason a
+// debit of `amount` must be refused, or null if the account can cover it.
+export async function getDebitError(prisma, userId, accountName, amount, options) {
+  const balance = await getAccountBalance(prisma, userId, accountName, options);
+  // Compared in whole cents so float noise (0.1 + 0.2) never blocks a debit
+  // of exactly the available balance.
+  if (Math.round(amount * 100) <= Math.round(balance * 100)) return null;
+  if (balance <= 0) {
+    return `"${accountName}" has no balance to debit. Credit the account first.`;
+  }
+  return `"${accountName}" only has $${balance.toFixed(2)} available. Credit the account first or debit a smaller amount.`;
+}

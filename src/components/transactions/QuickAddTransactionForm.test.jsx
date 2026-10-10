@@ -86,8 +86,8 @@ describe('QuickAddTransactionForm', () => {
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
 
-    await waitFor(() => expect(screen.getByRole('option', { name: 'Bank' })).toBeInTheDocument());
-    expect(screen.getByRole('option', { name: 'EVC' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('option', { name: 'Bank ($100.00)' })).toBeInTheDocument());
+    expect(screen.getByRole('option', { name: 'EVC ($20.00)' })).toBeInTheDocument();
     expect(screen.queryByPlaceholderText(/account \(optional\)/i)).not.toBeInTheDocument();
   });
 
@@ -96,7 +96,7 @@ describe('QuickAddTransactionForm', () => {
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
 
-    await waitFor(() => expect(screen.getByRole('option', { name: 'salam bank' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('option', { name: 'salam bank ($0.00)' })).toBeInTheDocument());
     for (const name of ['Premier Bank', 'IBS Bank', 'Bulsho Bank', 'My Bank', 'Dahabshil Bank', 'EVC Plus']) {
       expect(screen.getByRole('option', { name })).toBeInTheDocument();
     }
