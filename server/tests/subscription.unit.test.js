@@ -46,6 +46,18 @@ describe('getAccess', () => {
     expect(access).toMatchObject({ plan: 'expired', hasAccess: false, hasFinanceAI: false });
   });
 
+  it('reports an unsubscribed plan as cancelled while it is still running', () => {
+    const user = { trialEndsAt: daysFromNow(-9), paidPlan: 'pro', paidUntil: daysFromNow(5), cancelledAt: daysFromNow(-1) };
+    expect(getAccess(user, now)).toMatchObject({ plan: 'pro', hasAccess: true, cancelled: true });
+  });
+
+  it('does not report cancelled once the plan has ended, or when it never was', () => {
+    const ended = { trialEndsAt: daysFromNow(-40), paidPlan: 'pro', paidUntil: daysFromNow(-1), cancelledAt: daysFromNow(-5) };
+    expect(getAccess(ended, now)).toMatchObject({ plan: 'expired', cancelled: false });
+    const active = { trialEndsAt: daysFromNow(-9), paidPlan: 'pro', paidUntil: daysFromNow(5), cancelledAt: null };
+    expect(getAccess(active, now).cancelled).toBe(false);
+  });
+
   it('locks an account with no trial or payment', () => {
     expect(getAccess({ trialEndsAt: null, paidPlan: null, paidUntil: null }, now).hasAccess).toBe(false);
   });

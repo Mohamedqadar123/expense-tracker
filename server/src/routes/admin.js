@@ -31,6 +31,7 @@ router.get('/overview', asyncHandler(async (req, res) => {
         trialEndsAt: true,
         paidPlan: true,
         paidUntil: true,
+        cancelledAt: true,
       },
     }),
     prisma.payment.findMany({
@@ -71,6 +72,7 @@ router.get('/overview', asyncHandler(async (req, res) => {
       registeredAt: user.createdAt,
       emailVerified: Boolean(user.emailVerifiedAt),
       plan: access.plan,
+      cancelled: access.cancelled,
       accessEndsAt,
       daysLeft: daysLeft(accessEndsAt, now),
       totalPaid: paidByUser.get(user.id) || 0,

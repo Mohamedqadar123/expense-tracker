@@ -122,7 +122,10 @@ function Admin() {
                       </span>
                     </td>
                     <td>{formatDate(user.registeredAt)}</td>
-                    <td><span className={`admin-plan admin-plan-${user.plan}`}>{PLAN_LABELS[user.plan]}</span></td>
+                    <td>
+                      <span className={`admin-plan admin-plan-${user.plan}`}>{PLAN_LABELS[user.plan]}</span>
+                      {user.cancelled && <span className="admin-user-email">Unsubscribed</span>}
+                    </td>
                     <td>{formatDate(user.accessEndsAt)}</td>
                     <td>{user.daysLeft}</td>
                     <td>{money(user.totalPaid)}</td>

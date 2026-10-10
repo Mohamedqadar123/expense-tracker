@@ -269,6 +269,10 @@
     "previous": "Qorshihii hore",
     "next": "Qorshaha xiga",
     "logIn": "Gal",
-    "intro": "Akoon kasta wuxuu ku bilaabmaa tijaabo bilaash ah oo {{days}} maalmood ah. Ku bixi EVC Plus, Zaad ama Sahal."
+    "intro": "Akoon kasta wuxuu ku bilaabmaa tijaabo bilaash ah oo {{days}} maalmood ah. Ku bixi EVC Plus, Zaad ama Sahal.",
+    "unsubscribe": "Ka bax rukunka",
+    "unsubscribeConfirm": "Ma rabtaa inaad ka baxdo qorshahaaga? Waxaad haysan doontaa adeegga oo dhan ilaa {{date}}, taas oo aad hore u bixisay. Intaa ka dib qorshahaagu wuu dhammaanayaa waxaadna u baahan doontaa inaad mar kale rukunto si aad u sii isticmaasho app-ka.",
+    "unsubscribed": "Waad ka baxday rukunka. Qorshahaaga {{plan}} wuxuu shaqaynayaa ilaa {{date}}, ka dibna wuu dhammaanayaa.",
+    "keepPlan": "Sii hayso qorshahayga"
   }
 }

@@ -269,6 +269,10 @@
     "previous": "Previous plan",
     "next": "Next plan",
     "logIn": "Log in",
-    "intro": "Every account starts with a {{days}}-day free trial. Pay with EVC Plus, Zaad or Sahal."
+    "intro": "Every account starts with a {{days}}-day free trial. Pay with EVC Plus, Zaad or Sahal.",
+    "unsubscribe": "Unsubscribe",
+    "unsubscribeConfirm": "Unsubscribe from your plan? You keep full access until {{date}}, which you have already paid for. After that your plan ends and you will need to subscribe again to keep using the app.",
+    "unsubscribed": "You have unsubscribed. Your {{plan}} plan stays active until {{date}}, then ends.",
+    "keepPlan": "Keep my plan"
   }
 }

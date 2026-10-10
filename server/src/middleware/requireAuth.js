@@ -24,6 +24,7 @@ export default async function requireAuth(req, res, next) {
       trialEndsAt: true,
       paidPlan: true,
       paidUntil: true,
+      cancelledAt: true,
     },
   });
 

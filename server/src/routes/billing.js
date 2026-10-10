@@ -118,10 +118,36 @@ router.post('/subscribe', requireAuth, paymentLimiter, asyncHandler(async (req, 
     }),
     prisma.user.update({
       where: { id: user.id },
-      data: { paidPlan: plan.id, paidUntil: extendPaidUntil(user, plan.id) },
+      // Paying again is a fresh decision to subscribe, so it undoes an
+      // earlier unsubscribe.
+      data: { paidPlan: plan.id, paidUntil: extendPaidUntil(user, plan.id), cancelledAt: null },
     }),
   ]);
 
+  res.json({ access: getAccess(updated) });
+}));
+
+// Plans are prepaid and never renew by themselves, so unsubscribing takes
+// nothing away: the user keeps the days they paid for (there is no refund to
+// give back) and the plan simply ends on paidUntil. What this records is
+// their decision, which the app then shows instead of prompting to renew.
+router.post('/unsubscribe', requireAuth, asyncHandler(async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  const access = getAccess(user);
+  if (access.plan !== 'standard' && access.plan !== 'pro') {
+    return res.status(400).json({ error: "You don't have a paid plan to unsubscribe from." });
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: user.id },
+    data: { cancelledAt: user.cancelledAt || new Date() },
+  });
+  res.json({ access: getAccess(updated) });
+}));
+
+// Undoes an unsubscribe while the paid period is still running.
+router.post('/resubscribe', requireAuth, asyncHandler(async (req, res) => {
+  const updated = await prisma.user.update({ where: { id: req.user.id }, data: { cancelledAt: null } });
   res.json({ access: getAccess(updated) });
 }));
 

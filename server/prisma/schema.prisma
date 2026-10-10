@@ -25,6 +25,10 @@ model User {
   trialEndsAt DateTime?
   paidPlan    String?
   paidUntil   DateTime?
+  // Set when the user unsubscribes. They keep what they paid for until
+  // paidUntil; this records that they have ended the plan. Cleared if they
+  // change their mind or pay again.
+  cancelledAt DateTime?
 
   transactions          Transaction[]
   budgets               Budget[]

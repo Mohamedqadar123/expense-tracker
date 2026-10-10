@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import '../styles/shared.css'
 import './Billing.css'
 import { useAuth } from '../context/useAuth.js'
-import { getBillingStatus, getPlans, subscribe } from '../api/billing'
+import { getBillingStatus, getPlans, subscribe, unsubscribe, resubscribe } from '../api/billing'
 import PlanSlides from '../components/PlanSlides.jsx'
 import { PLAN_ORDER } from '../constants/plans'
 import ThemeToggle from '../components/ThemeToggle.jsx'
@@ -25,6 +25,7 @@ function Billing() {
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState(null);
   const [paid, setPaid] = useState(false);
+  const [planError, setPlanError] = useState(null);
   const phoneInput = useRef(null);
   const userId = user?.id;
 
@@ -67,6 +68,30 @@ function Billing() {
     } finally {
       setIsPaying(false);
       load();
+    }
+  };
+
+  // Unsubscribing never cuts access short, so the confirmation says exactly
+  // what will happen: the plan runs to the date already paid for, then ends.
+  const handleUnsubscribe = async () => {
+    const until = new Date(user.access.paidUntil).toLocaleDateString(i18n.language);
+    if (!window.confirm(t('billing.unsubscribeConfirm', { date: until }))) return;
+    setPlanError(null);
+    try {
+      await unsubscribe();
+      await refreshUser();
+    } catch (err) {
+      setPlanError(err.message);
+    }
+  };
+
+  const handleResubscribe = async () => {
+    setPlanError(null);
+    try {
+      await resubscribe();
+      await refreshUser();
+    } catch (err) {
+      setPlanError(err.message);
     }
   };
 
@@ -133,10 +158,24 @@ function Billing() {
         <div className="section-card billing-current">
           <span className={`billing-plan billing-plan-${access.plan}`}>{planNames[access.plan]}</span>
           {access.plan === 'trial' && <span>{t('billing.trialEnds', { date: formatDate(access.trialEndsAt) })}</span>}
-          {(access.plan === 'standard' || access.plan === 'pro') && (
-            <span>{t('billing.paidUntil', { plan: planNames[access.plan], date: formatDate(access.paidUntil) })}</span>
+          {(access.plan === 'standard' || access.plan === 'pro') && !access.cancelled && (
+            <>
+              <span>{t('billing.paidUntil', { plan: planNames[access.plan], date: formatDate(access.paidUntil) })}</span>
+              <button type="button" className="billing-unsubscribe" onClick={handleUnsubscribe}>
+                {t('billing.unsubscribe')}
+              </button>
+            </>
+          )}
+          {access.cancelled && (
+            <>
+              <span>{t('billing.unsubscribed', { plan: planNames[access.plan], date: formatDate(access.paidUntil) })}</span>
+              <button type="button" className="billing-unsubscribe" onClick={handleResubscribe}>
+                {t('billing.keepPlan')}
+              </button>
+            </>
           )}
           {access.plan === 'expired' && <span>{t('billing.expired')}</span>}
+          {planError && <p className="billing-error">{planError}</p>}
         </div>
       )}
 

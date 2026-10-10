@@ -36,6 +36,8 @@ export function getAccess(user, now = new Date()) {
     plan: paidPlan || (inTrial ? 'trial' : 'expired'),
     hasAccess: Boolean(paidPlan) || inTrial,
     hasFinanceAI: paidPlan === 'pro' || inTrial,
+    // Unsubscribed, but still inside the period they paid for.
+    cancelled: Boolean(paidPlan && user.cancelledAt),
     trialEndsAt,
     paidUntil,
   };
