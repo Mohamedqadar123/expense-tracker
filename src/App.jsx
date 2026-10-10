@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Layout from './components/Layout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -35,6 +35,18 @@ function Home() {
   return user ? <Navigate to="/dashboard" replace /> : <Landing />;
 }
 
+// Members manage their plan inside the app like any other page; visitors
+// comparing plans before signing up get the page on its own.
+function BillingShell() {
+  const { user, isLoading } = useAuth();
+  const { t } = useTranslation();
+
+  if (isLoading) {
+    return <p className="dashboard-status">{t('common.loading')}</p>;
+  }
+  return user ? <Layout /> : <Outlet />;
+}
+
 function App() {
   return (
     <Routes>
@@ -45,7 +57,9 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       {/* Public on purpose: visitors choose a plan here before signing up */}
-      <Route path="/billing" element={<Billing />} />
+      <Route path="/billing" element={<BillingShell />}>
+        <Route index element={<Billing />} />
+      </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route element={<AdminRoute />}>

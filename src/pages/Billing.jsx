@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import '../styles/shared.css'
 import './Billing.css'
@@ -10,12 +10,12 @@ import { PLAN_ORDER } from '../constants/plans'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 import LanguageSelector from '../components/LanguageSelector.jsx'
 
-// Public page: visitors pick a plan here and are sent on to sign up with it;
-// signed-in users see their current plan here and pay for the next period.
+// Visitors pick a plan here and are sent on to sign up with it. Signed-in
+// users reach it from the account menu, inside the app, to see their current
+// plan and pay for the next period.
 function Billing() {
-  const { user, isLoading: isAuthLoading, logout, refreshUser } = useAuth();
+  const { user, isLoading: isAuthLoading, refreshUser } = useAuth();
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const requestedPlan = searchParams.get('plan');
   const [activePlan, setActivePlan] = useState(PLAN_ORDER.includes(requestedPlan) ? requestedPlan : 'free');
@@ -47,11 +47,6 @@ function Billing() {
   useEffect(() => {
     if (!isAuthLoading) load();
   }, [isAuthLoading, load]);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/billing');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -133,24 +128,20 @@ function Billing() {
 
   return (
     <div className="billing-page">
-      <header className="billing-header">
-        <Link to="/" className="billing-brand">Finance Tracker</Link>
-        <div className="billing-header-actions">
-          <LanguageSelector />
-          <ThemeToggle />
-          {user ? (
-            <>
-              {access.hasAccess && <Link to="/dashboard">{t('nav.home')}</Link>}
-              <button type="button" className="billing-logout" onClick={handleLogout}>{t('common.logOut')}</button>
-            </>
-          ) : (
+      {/* Members already have the app's own header around this page. */}
+      {!user && (
+        <header className="billing-header">
+          <Link to="/" className="billing-brand">Finance Tracker</Link>
+          <div className="billing-header-actions">
+            <LanguageSelector />
+            <ThemeToggle />
             <Link to="/login">{t('billing.logIn')}</Link>
-          )}
-        </div>
-      </header>
+          </div>
+        </header>
+      )}
 
       <div className="billing-intro">
-        <h1>{t('billing.choosePlan')}</h1>
+        <h1>{user ? t('nav.billing') : t('billing.choosePlan')}</h1>
         <p>{t('billing.intro', { days: trialDays })}</p>
       </div>
 

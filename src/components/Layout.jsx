@@ -10,6 +10,7 @@ import QuickAddTransactionForm from './transactions/QuickAddTransactionForm.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import LanguageSelector from './LanguageSelector.jsx'
 import AccountBanners from './AccountBanners.jsx'
+import AccountMenu from './AccountMenu.jsx'
 import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
 import { mergeCategories } from '../utils/mergeCategories'
@@ -49,10 +50,7 @@ function Layout() {
           <div className="layout-user">
             <LanguageSelector />
             <ThemeToggle />
-            <div className="layout-account">
-              {userLabel}
-              <button type="button" className="layout-logout" onClick={handleLogout}>{t('common.logOut')}</button>
-            </div>
+            <AccountMenu onLogout={handleLogout}>{userLabel}</AccountMenu>
           </div>
         </div>
         <nav className="layout-nav">
@@ -82,9 +80,6 @@ function Layout() {
           </NavLink>
           <NavLink to="/calculator" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.calculator')}
-          </NavLink>
-          <NavLink to="/billing" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.billing')}
           </NavLink>
           {user?.isAdmin && (
             <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : ''}>

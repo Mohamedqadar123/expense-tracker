@@ -29,7 +29,7 @@
     "calculator": "Calculator",
     "more": "More",
     "addTransaction": "Add Transaction",
-    "billing": "Billing",
+    "billing": "Plan & billing",
     "admin": "Admin"
   },
   "theme": {
@@ -229,6 +229,7 @@
     "planStandard": "Standard",
     "planPro": "Pro",
     "planExpired": "No active plan",
+    "currentPlan": "Current plan",
     "trialEnds": "Your free trial ends on {{date}}.",
     "paidUntil": "Your {{plan}} plan is active until {{date}}.",
     "expired": "Your free trial has ended. Choose a plan to keep using Finance Tracker.",
@@ -252,9 +253,6 @@
     "upgrade": "Upgrade to Pro",
     "gateTitle": "Finance AI is a Pro feature",
     "gateBody": "Upgrade to the Pro plan to ask Finance AI about your money.",
-    "verifyBanner": "Please verify your email address. Check your inbox for the link.",
-    "resend": "Resend email",
-    "resent": "Verification email sent.",
     "trialPrice": "{{days}} days free",
     "freeDesc": "Try every service free for {{days}} days. No payment needed.",
     "standardDesc": "Everything you need to track and plan your money.",

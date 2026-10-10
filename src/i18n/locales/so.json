@@ -29,7 +29,7 @@
     "calculator": "Xisaabiye",
     "more": "Kale",
     "addTransaction": "Ku dar Dhaqdhaqaaq",
-    "billing": "Rukunka",
+    "billing": "Qorshaha iyo rukunka",
     "admin": "Maamulka"
   },
   "theme": {
@@ -229,6 +229,7 @@
     "planStandard": "Standard",
     "planPro": "Pro",
     "planExpired": "Qorshe firfircoon ma jiro",
+    "currentPlan": "Qorshaha hadda",
     "trialEnds": "Tijaabadaada bilaashka ah waxay dhammaanaysaa {{date}}.",
     "paidUntil": "Qorshahaaga {{plan}} wuxuu shaqaynayaa ilaa {{date}}.",
     "expired": "Tijaabadaadii bilaashka ahayd way dhammaatay. Dooro qorshe si aad u sii isticmaasho Finance Tracker.",
@@ -252,9 +253,6 @@
     "upgrade": "U kor u qaad Pro",
     "gateTitle": "AI Maaliyadeed waa adeeg Pro ah",
     "gateBody": "U kor u qaad qorshaha Pro si aad AI Maaliyadeed wax uga weydiiso lacagtaada.",
-    "verifyBanner": "Fadlan xaqiiji iimaylkaaga. Ka eeg sanduuqaaga linkiga.",
-    "resend": "Dib u dir iimaylka",
-    "resent": "Iimaylka xaqiijinta waa la diray.",
     "trialPrice": "{{days}} maalmood oo bilaash ah",
     "freeDesc": "Tijaabi adeeg kasta si bilaash ah muddo {{days}} maalmood ah. Lacag looma baahna.",
     "standardDesc": "Wax kasta oo aad u baahan tahay si aad ula socoto ugana qorshayso lacagtaada.",
