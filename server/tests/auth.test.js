@@ -28,7 +28,8 @@ describe('POST /api/auth/signup', () => {
 
   it('cannot log in before the email is confirmed', async () => {
     const email = uniqueEmail();
-    await registerUser(email);
+    const signup = await request(app).post('/api/auth/signup').send({ email, password: 'password123' });
+    expect(signup.status).toBe(202);
 
     const res = await request(app).post('/api/auth/login').send({ email, password: 'password123' });
     expect(res.status).toBe(401);
