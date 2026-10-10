@@ -1,4 +1,4 @@
-import { API_BASE } from './config';
+import { API_BASE, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/transactions`;
 
@@ -11,14 +11,12 @@ export async function getTransactions(params = {}) {
   });
   const qs = searchParams.toString();
   const res = await fetch(`${BASE_URL}${qs ? `?${qs}` : ''}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch transactions');
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to fetch transactions');
 }
 
 export async function getTransactionAccounts() {
   const res = await fetch(`${BASE_URL}/accounts`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch accounts');
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to fetch accounts');
 }
 
 export async function createTransaction(data) {
@@ -28,11 +26,20 @@ export async function createTransaction(data) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create transaction');
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to create transaction');
+}
+
+export async function updateTransaction(id, data) {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+  return parseJsonOrThrow(res, 'Failed to update transaction');
 }
 
 export async function deleteTransaction(id) {
   const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to delete transaction');
+  return parseJsonOrThrow(res, 'Failed to delete transaction');
 }

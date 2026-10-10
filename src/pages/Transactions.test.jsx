@@ -12,7 +12,8 @@ function listPage(data, overrides = {}) {
 describe('Transactions page', () => {
   it('renders a list of transactions from the API', async () => {
     mockFetchSequence([
-      { body: [] }, // accounts
+      { body: [] }, // QuickAddTransactionForm's account picker (GET /accounts)
+      { body: [] }, // transaction-filter account options (GET /transactions/accounts)
       { body: listPage([{ id: 1, description: 'Groceries', category: 'Food', account: 'Checking', amount: 50, type: 'expense', date: '2024-01-05T00:00:00.000Z' }]) },
     ]);
 
@@ -22,7 +23,7 @@ describe('Transactions page', () => {
   });
 
   it('shows an empty state when there are no matching transactions', async () => {
-    mockFetchSequence([{ body: [] }, { body: listPage([]) }]);
+    mockFetchSequence([{ body: [] }, { body: [] }, { body: listPage([]) }]);
     renderWithProviders(<Transactions />);
 
     expect(await screen.findByText(/no.*match/i)).toBeInTheDocument();
@@ -33,7 +34,8 @@ describe('Transactions page', () => {
     window.confirm = vi.fn().mockReturnValue(true);
 
     const fetchMock = mockFetchSequence([
-      { body: [] },
+      { body: [] }, // QuickAddTransactionForm's account picker (GET /accounts)
+      { body: [] }, // transaction-filter account options (GET /transactions/accounts)
       { body: listPage([{ id: 1, description: 'Groceries', category: 'Food', account: 'Checking', amount: 50, type: 'expense', date: '2024-01-05T00:00:00.000Z' }]) },
       { body: null, status: 204 },
       { body: listPage([]) },

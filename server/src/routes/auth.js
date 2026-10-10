@@ -5,6 +5,13 @@ import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import prisma from '../prismaClient.js';
 import requireAuth from '../middleware/requireAuth.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { createRateLimitStore } from '../rateLimitStore.js';
+import { getAccess, PLAN_IDS as PAID_PLAN_IDS } from '../services/subscription.js';
+import { isAdmin } from '../utils/admin.js';
+import { getEmailDomainError } from '../utils/emailDomain.js';
+import { savePendingSignup, findValidPendingSignup, registerPendingSignup } from '../utils/pendingSignups.js';
+import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
+import { issueAuthToken, findValidAuthToken, RESET_PASSWORD } from '../utils/authTokens.js';
 
 const router = Router();
 
@@ -42,7 +49,13 @@ function clearAuthCookie(res) {
 
 function sanitize(user) {
   const { passwordHash, tokenVersion, ...rest } = user;
-  return rest;
+  return { ...rest, access: getAccess(user), isAdmin: isAdmin(user) };
+}
+
+function validatePassword(password) {
+  if (!password || password.length < 8) return 'Password must be at least 8 characters';
+  if (password.length > MAX_PASSWORD_LENGTH) return `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer`;
+  return null;
 }
 
 const authLimiter = rateLimit({
@@ -57,21 +70,39 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
   skip: () => process.env.NODE_ENV === 'test',
   keyGenerator: (req) => ipKeyGenerator(req.ip),
+  store: createRateLimitStore('auth:'),
   handler: (req, res) => {
     res.status(429).json({ error: 'Too many attempts. Please wait a few minutes and try again.' });
   },
 });
 
-router.post('/signup', authLimiter, asyncHandler(async (req, res) => {
-  const { email, password, name } = req.body;
+// Unlike authLimiter this counts every request: these endpoints succeed by
+// design (to avoid leaking which emails exist) and each one can send mail.
+const emailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
+  keyGenerator: (req) => ipKeyGenerator(req.ip),
+  store: createRateLimitStore('email:'),
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many requests. Please wait a few minutes and try again.' });
+  },
+});
+
+// Does not create the account. It checks the address can receive mail,
+// stores the sign-up as pending and emails a link; the account is created
+// by /verify-email once that link is opened, which is the only reliable
+// proof that the mailbox exists and belongs to this person.
+router.post('/signup', authLimiter, emailLimiter, asyncHandler(async (req, res) => {
+  const { email, password, name, plan } = req.body;
   if (!email || !EMAIL_REGEX.test(email)) {
     return res.status(400).json({ error: 'A valid email is required' });
   }
-  if (!password || password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters' });
-  }
-  if (password.length > MAX_PASSWORD_LENGTH) {
-    return res.status(400).json({ error: `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer` });
+  const passwordError = validatePassword(password);
+  if (passwordError) {
+    return res.status(400).json({ error: passwordError });
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -79,11 +110,27 @@ router.post('/signup', authLimiter, asyncHandler(async (req, res) => {
     return res.status(409).json({ error: 'An account with this email already exists' });
   }
 
-  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
-  const user = await prisma.user.create({ data: { email, passwordHash, name: name || null } });
+  // Skipped under test, like the rate limiters: the suite must not depend on
+  // live DNS, and getEmailDomainError has its own unit tests.
+  if (process.env.NODE_ENV !== 'test') {
+    const domainError = await getEmailDomainError(email);
+    if (domainError) {
+      return res.status(400).json({ error: domainError });
+    }
+  }
 
-  setAuthCookie(res, user);
-  res.status(201).json(sanitize(user));
+  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+  const token = await savePendingSignup({ email, passwordHash, name });
+  try {
+    await sendVerificationEmail(email, token, PAID_PLAN_IDS.includes(plan) ? plan : null);
+  } catch (err) {
+    console.error(err);
+    return res.status(502).json({
+      error: 'We could not send a verification email to that address. Check it and try again.',
+    });
+  }
+
+  res.status(202).json({ message: 'Check your email to finish creating your account', email });
 }));
 
 router.post('/login', authLimiter, asyncHandler(async (req, res) => {
@@ -111,6 +158,69 @@ router.get('/me', requireAuth, asyncHandler(async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
   res.json(sanitize(user));
+}));
+
+router.post('/verify-email', emailLimiter, asyncHandler(async (req, res) => {
+  // The link from signing up is the only verification email there is: opening
+  // it is the moment the account is created, and the person is signed
+  // straight in. An existing account is never asked to verify again.
+  const pending = await findValidPendingSignup(req.body.token);
+  if (!pending) {
+    return res.status(400).json({ error: 'This verification link is invalid or has expired' });
+  }
+
+  const user = await registerPendingSignup(pending);
+  setAuthCookie(res, user);
+  res.status(201).json(sanitize(user));
+}));
+
+router.post('/forgot-password', emailLimiter, asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email || !EMAIL_REGEX.test(email)) {
+    return res.status(400).json({ error: 'A valid email is required' });
+  }
+
+  // Same response whether or not the email is registered, and the email is
+  // sent without awaiting it, so neither the body nor the response time
+  // reveals which addresses have accounts.
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user) {
+    issueAuthToken(user.id, RESET_PASSWORD)
+      .then((token) => sendPasswordResetEmail(user.email, token))
+      .catch((err) => console.error(err));
+  }
+  res.json({ message: 'If an account exists for that email, a reset link has been sent' });
+}));
+
+router.post('/reset-password', emailLimiter, asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  const passwordError = validatePassword(password);
+  if (passwordError) {
+    return res.status(400).json({ error: passwordError });
+  }
+
+  const record = await findValidAuthToken(token, RESET_PASSWORD);
+  if (!record) {
+    return res.status(400).json({ error: 'This reset link is invalid or has expired' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
+  const user = await prisma.user.findUnique({ where: { id: record.userId } });
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: record.userId },
+      data: {
+        passwordHash,
+        // Bumping tokenVersion signs out every existing session, so whoever
+        // knew the old password loses access.
+        tokenVersion: { increment: 1 },
+        // Opening the emailed link proves they own the inbox.
+        emailVerifiedAt: user.emailVerifiedAt || new Date(),
+      },
+    }),
+    prisma.authToken.deleteMany({ where: { userId: record.userId, type: RESET_PASSWORD } }),
+  ]);
+  res.json({ message: 'Password updated' });
 }));
 
 export default router;

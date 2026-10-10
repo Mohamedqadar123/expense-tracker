@@ -1,11 +1,10 @@
-import { API_BASE } from './config';
+import { API_BASE, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/budgets`;
 
 export async function getBudgets() {
   const res = await fetch(BASE_URL, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load budgets');
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to load budgets');
 }
 
 export async function createBudget(data) {
@@ -15,11 +14,7 @@ export async function createBudget(data) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error || 'Failed to create budget');
-  }
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to create budget');
 }
 
 export async function updateBudget(id, data) {
@@ -29,14 +24,10 @@ export async function updateBudget(id, data) {
     credentials: 'include',
     body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error || 'Failed to update budget');
-  }
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to update budget');
 }
 
 export async function deleteBudget(id) {
   const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to delete budget');
+  return parseJsonOrThrow(res, 'Failed to delete budget');
 }

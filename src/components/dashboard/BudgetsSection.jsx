@@ -41,8 +41,12 @@ function BudgetsSection() {
 
   const handleDelete = async (id) => {
     if (!window.confirm(t('budgets.deleteConfirm'))) return;
-    await deleteBudget(id);
-    load();
+    try {
+      await deleteBudget(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (

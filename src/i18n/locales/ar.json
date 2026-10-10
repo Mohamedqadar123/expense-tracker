@@ -14,18 +14,23 @@
     "credit": "دائن",
     "debit": "مدين",
     "to": "إلى",
-    "notAvailable": "غير متاح"
+    "notAvailable": "غير متاح",
+    "welcome": "مرحباً، {{name}}"
   },
   "nav": {
     "home": "الرئيسية",
     "transactions": "المعاملات",
     "budgets": "الميزانيات",
+    "accounts": "الحسابات",
     "goals": "الأهداف",
     "reports": "التقارير",
     "recurring": "المتكررة",
     "financeAI": "المساعد المالي الذكي",
+    "calculator": "الحاسبة",
     "more": "المزيد",
-    "addTransaction": "إضافة معاملة"
+    "addTransaction": "إضافة معاملة",
+    "billing": "الخطة والاشتراك",
+    "admin": "الإدارة"
   },
   "theme": {
     "label": "المظهر",
@@ -103,7 +108,6 @@
     "clearFilters": "مسح عوامل التصفية",
     "descriptionPlaceholder": "الوصف",
     "amountPlaceholder": "المبلغ",
-    "accountOptionalPlaceholder": "الحساب (اختياري)",
     "adding": "جارٍ الإضافة…",
     "prev": "السابق",
     "next": "التالي",
@@ -137,7 +141,8 @@
     "addGoal": "إضافة هدف ادخار",
     "namePlaceholder": "اسم الهدف",
     "targetAmountPlaceholder": "المبلغ المستهدف",
-    "savedSoFarPlaceholder": "المبلغ المدّخر حتى الآن"
+    "savedSoFarPlaceholder": "المبلغ المدّخر حتى الآن",
+    "accountHint": "يُخصم المبلغ المدّخر من الحساب المحدد. تخفيض المبلغ المدّخر يعيده إلى الحساب."
   },
   "reports": {
     "title": "التقارير المالية",
@@ -193,5 +198,79 @@
     "inputPlaceholder": "مثال: \"كم أنفقت هذا الشهر؟\"",
     "send": "إرسال",
     "thinking": "جارٍ التفكير…"
+  },
+  "calculator": {
+    "title": "الحاسبة",
+    "subtitle": "حسابات سريعة، في نفس مكان تتبع أموالك",
+    "historyHeading": "السجل",
+    "historyEmpty": "ستظهر حساباتك هنا.",
+    "clearHistory": "مسح السجل",
+    "clearHistoryConfirm": "هل تريد مسح سجل الحسابات؟",
+    "error": "خطأ"
+  },
+  "accounts": {
+    "title": "الحسابات",
+    "subtitle": "كل معاملة أو دفعة متكررة أو إيداع ادخار ينقل المال إلى (دائن) أو من (مدين) أحد هذه الحسابات، مثل حسابك البنكي أو محفظة EVC.",
+    "heading": "حساباتك",
+    "loading": "جارٍ تحميل الحسابات...",
+    "loadError": "تعذّر تحميل الحسابات",
+    "empty": "لا توجد حسابات بعد — أضف واحدًا أدناه، مثل \"البنك\" أو \"EVC\".",
+    "deleteConfirm": "حذف هذا الحساب؟ لا يمكن حذف حساب لديه معاملات.",
+    "startingBalance": "الرصيد الابتدائي: ${{amount}}",
+    "addAccount": "إضافة حساب",
+    "namePlaceholder": "اسم الحساب (مثل Salam Bank أو EVC Plus)",
+    "startingBalancePlaceholder": "الرصيد الابتدائي",
+    "yourAccounts": "حساباتك",
+    "presetAccounts": "البنوك والمحافظ الإلكترونية"
+  },
+  "billing": {
+    "title": "الاشتراك",
+    "planTrial": "تجربة مجانية",
+    "planStandard": "القياسية",
+    "planPro": "برو",
+    "planExpired": "لا توجد خطة فعّالة",
+    "currentPlan": "الخطة الحالية",
+    "trialEnds": "تنتهي تجربتك المجانية في {{date}}.",
+    "paidUntil": "خطتك ({{plan}}) فعّالة حتى {{date}}.",
+    "expired": "انتهت تجربتك المجانية. اختر خطة لمواصلة استخدام Finance Tracker.",
+    "choosePlan": "اختر خطتك",
+    "perPeriod": "{{price}} / {{days}} يوماً",
+    "switchNote": "تجديد الخطة نفسها يضيف {{days}} يوماً. الانتقال إلى خطة أخرى يبدأ اليوم ويستبدل الأيام المتبقية من خطتك الحالية.",
+    "phoneLabel": "رقم المحفظة (EVC Plus، Zaad، Sahal)",
+    "payButton": "ادفع {{price}}",
+    "paying": "تحقق من هاتفك وأدخل الرقم السري للموافقة على الدفع.",
+    "success": "تم استلام الدفع. خطتك فعّالة.",
+    "notConfigured": "الدفع غير متاح حالياً.",
+    "history": "سجل المدفوعات",
+    "noPayments": "لا توجد مدفوعات بعد.",
+    "status": {
+      "approved": "مدفوع",
+      "failed": "فشل",
+      "pending": "قيد الانتظار",
+      "unknown": "غير مؤكد"
+    },
+    "subscribe": "اختر خطة",
+    "upgrade": "الترقية إلى برو",
+    "gateTitle": "المساعد المالي ميزة في خطة برو",
+    "gateBody": "قم بالترقية إلى خطة برو لتسأل المساعد المالي عن أموالك.",
+    "trialPrice": "{{days}} أيام مجاناً",
+    "freeDesc": "جرّب جميع الخدمات مجاناً لمدة {{days}} أيام. لا حاجة للدفع.",
+    "standardDesc": "كل ما تحتاجه لتتبع أموالك والتخطيط لها.",
+    "proDesc": "كل ما في القياسية، مع المساعد المالي الذي يجيب عن أسئلتك حول أموالك.",
+    "startTrial": "ابدأ التجربة المجانية",
+    "signUpFor": "سجّل في خطة {{plan}}",
+    "payFor": "ادفع لخطة {{plan}}",
+    "trialUsed": "لقد استخدمت تجربتك المجانية من قبل.",
+    "pickPaidPlan": "انتقل إلى شريحة القياسية أو برو للدفع.",
+    "included": "مشمول",
+    "notIncluded": "غير مشمول",
+    "previous": "الخطة السابقة",
+    "next": "الخطة التالية",
+    "logIn": "تسجيل الدخول",
+    "intro": "يبدأ كل حساب بتجربة مجانية لمدة {{days}} أيام. ادفع عبر EVC Plus أو Zaad أو Sahal.",
+    "unsubscribe": "إلغاء الاشتراك",
+    "unsubscribeConfirm": "هل تريد إلغاء اشتراكك؟ ستحتفظ بالوصول الكامل حتى {{date}}، وهي المدة التي دفعت مقابلها. بعد ذلك تنتهي خطتك وستحتاج إلى الاشتراك مجدداً لمواصلة استخدام التطبيق.",
+    "unsubscribed": "لقد ألغيت اشتراكك. تبقى خطتك ({{plan}}) فعّالة حتى {{date}} ثم تنتهي.",
+    "keepPlan": "أبقِ خطتي"
   }
 }

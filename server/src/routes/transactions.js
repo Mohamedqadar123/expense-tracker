@@ -3,6 +3,8 @@ import prisma from '../prismaClient.js';
 import { parsePartialDateRange } from '../utils/dateRange.js';
 import { isIncomeCategory } from '../constants/incomeCategories.js';
 import asyncHandler from '../middleware/asyncHandler.js';
+import { ensureAccountName, isSavingsCategory } from '../utils/accounts.js';
+import { getDebitError } from '../utils/accountBalances.js';
 
 const router = Router();
 
@@ -45,7 +47,7 @@ function validateTransactionQuery(query) {
   return null;
 }
 
-function validateTransactionInput({ description, amount, type, category, account }) {
+function validateTransactionInput({ description, amount, type, category, account, date }) {
   if (!description || typeof description !== 'string' || !description.trim()) {
     return 'description is required';
   }
@@ -59,11 +61,14 @@ function validateTransactionInput({ description, amount, type, category, account
     return 'category is required';
   }
   const normalizedType = String(type || '').toLowerCase();
-  if (isIncomeCategory(category) !== (normalizedType === 'income')) {
+  if (!isSavingsCategory(category) && isIncomeCategory(category) !== (normalizedType === 'income')) {
     return `category "${category}" is not valid for type "${normalizedType}"`;
   }
   if (account !== undefined && account !== null && typeof account !== 'string') {
     return 'account must be a string';
+  }
+  if (date !== undefined && date !== null && date !== '' && isNaN(new Date(date).getTime())) {
+    return 'date must be a valid date';
   }
   return null;
 }
@@ -121,14 +126,22 @@ router.post('/', asyncHandler(async (req, res) => {
   const error = validateTransactionInput(req.body);
   if (error) return res.status(400).json({ error });
 
-  const { description, amount, type, category, account } = req.body;
+  const { description, amount, type, category, account, date } = req.body;
+  const normalizedType = String(type).toLowerCase();
+  const accountName = await ensureAccountName(prisma, req.user.id, account);
+  if (normalizedType === 'expense') {
+    const debitError = await getDebitError(prisma, req.user.id, accountName, amount);
+    if (debitError) return res.status(400).json({ error: debitError });
+  }
+
   const transaction = await prisma.transaction.create({
     data: {
       description,
       amount,
-      type: String(type).toLowerCase(),
+      type: normalizedType,
       category,
-      account: account || null,
+      account: accountName,
+      date: date ? new Date(date) : undefined,
       userId: req.user.id,
     },
   });
@@ -144,10 +157,27 @@ router.put('/:id', asyncHandler(async (req, res) => {
   const existing = await prisma.transaction.findFirst({ where: { id, userId: req.user.id } });
   if (!existing) return res.status(404).json({ error: 'Transaction not found' });
 
-  const { description, amount, type, category, account } = req.body;
+  const { description, amount, type, category, account, date } = req.body;
+  const normalizedType = String(type).toLowerCase();
+  const accountName = await ensureAccountName(prisma, req.user.id, account);
+  if (normalizedType === 'expense') {
+    // Checked against the balance without this transaction's old value, so
+    // lowering or correcting an existing debit is never refused for the
+    // money that debit itself took out.
+    const debitError = await getDebitError(prisma, req.user.id, accountName, amount, { excludeTransactionId: id });
+    if (debitError) return res.status(400).json({ error: debitError });
+  }
+
   const result = await prisma.transaction.updateMany({
     where: { id, userId: req.user.id },
-    data: { description, amount, type: String(type).toLowerCase(), category, account: account || null },
+    data: {
+      description,
+      amount,
+      type: normalizedType,
+      category,
+      account: accountName,
+      date: date ? new Date(date) : undefined,
+    },
   });
   if (result.count === 0) return res.status(404).json({ error: 'Transaction not found' });
 

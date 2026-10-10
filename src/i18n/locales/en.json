@@ -14,18 +14,23 @@
     "credit": "Credit",
     "debit": "Debit",
     "to": "to",
-    "notAvailable": "N/A"
+    "notAvailable": "N/A",
+    "welcome": "Welcome, {{name}}"
   },
   "nav": {
     "home": "Home",
     "transactions": "Transactions",
     "budgets": "Budgets",
+    "accounts": "Accounts",
     "goals": "Goals",
     "reports": "Reports",
     "recurring": "Recurring",
     "financeAI": "Finance AI",
+    "calculator": "Calculator",
     "more": "More",
-    "addTransaction": "Add Transaction"
+    "addTransaction": "Add Transaction",
+    "billing": "Plan & billing",
+    "admin": "Admin"
   },
   "theme": {
     "label": "Theme",
@@ -103,7 +108,6 @@
     "clearFilters": "Clear filters",
     "descriptionPlaceholder": "Description",
     "amountPlaceholder": "Amount",
-    "accountOptionalPlaceholder": "Account (optional)",
     "adding": "Adding…",
     "prev": "Prev",
     "next": "Next",
@@ -137,7 +141,8 @@
     "addGoal": "Add Savings Goal",
     "namePlaceholder": "Goal name",
     "targetAmountPlaceholder": "Target amount",
-    "savedSoFarPlaceholder": "Saved so far"
+    "savedSoFarPlaceholder": "Saved so far",
+    "accountHint": "Saved money is debited from the selected account. Lowering the saved amount credits it back."
   },
   "reports": {
     "title": "Financial Reports",
@@ -193,5 +198,79 @@
     "inputPlaceholder": "Ask e.g. \"How much did I spend this month?\"",
     "send": "Send",
     "thinking": "Thinking…"
+  },
+  "calculator": {
+    "title": "Calculator",
+    "subtitle": "Quick calculations, right where you track your money",
+    "historyHeading": "History",
+    "historyEmpty": "Your calculations will appear here.",
+    "clearHistory": "Clear history",
+    "clearHistoryConfirm": "Clear your calculation history?",
+    "error": "Error"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "subtitle": "Every transaction, recurring payment and savings deposit moves money into (credit) or out of (debit) one of these accounts, e.g. your bank or EVC wallet.",
+    "heading": "Your Accounts",
+    "loading": "Loading accounts...",
+    "loadError": "Failed to load accounts",
+    "empty": "No accounts yet — add one below, e.g. \"Bank\" or \"EVC\".",
+    "deleteConfirm": "Delete this account? An account that has transactions cannot be deleted.",
+    "startingBalance": "Starting balance: ${{amount}}",
+    "addAccount": "Add Account",
+    "namePlaceholder": "Account name (e.g. Salam Bank, EVC Plus)",
+    "startingBalancePlaceholder": "Starting balance",
+    "yourAccounts": "Your accounts",
+    "presetAccounts": "Banks and mobile money"
+  },
+  "billing": {
+    "title": "Subscription",
+    "planTrial": "Free trial",
+    "planStandard": "Standard",
+    "planPro": "Pro",
+    "planExpired": "No active plan",
+    "currentPlan": "Current plan",
+    "trialEnds": "Your free trial ends on {{date}}.",
+    "paidUntil": "Your {{plan}} plan is active until {{date}}.",
+    "expired": "Your free trial has ended. Choose a plan to keep using Finance Tracker.",
+    "choosePlan": "Choose your plan",
+    "perPeriod": "{{price}} / {{days}} days",
+    "switchNote": "Renewing the same plan adds {{days}} days. Switching to a different plan starts it today and replaces the days left on your current plan.",
+    "phoneLabel": "Mobile money number (EVC Plus, Zaad, Sahal)",
+    "payButton": "Pay {{price}}",
+    "paying": "Check your phone and enter your PIN to approve the payment.",
+    "success": "Payment received. Your plan is active.",
+    "notConfigured": "Payments are not available yet.",
+    "history": "Payment history",
+    "noPayments": "No payments yet.",
+    "status": {
+      "approved": "Paid",
+      "failed": "Failed",
+      "pending": "Pending",
+      "unknown": "Unconfirmed"
+    },
+    "subscribe": "Choose a plan",
+    "upgrade": "Upgrade to Pro",
+    "gateTitle": "Finance AI is a Pro feature",
+    "gateBody": "Upgrade to the Pro plan to ask Finance AI about your money.",
+    "trialPrice": "{{days}} days free",
+    "freeDesc": "Try every service free for {{days}} days. No payment needed.",
+    "standardDesc": "Everything you need to track and plan your money.",
+    "proDesc": "Everything in Standard, plus the Finance AI assistant that answers questions about your money.",
+    "startTrial": "Start free trial",
+    "signUpFor": "Sign up for {{plan}}",
+    "payFor": "Pay for {{plan}}",
+    "trialUsed": "Your free trial has already been used.",
+    "pickPaidPlan": "Go to the Standard or Pro slide to pay for a plan.",
+    "included": "Included",
+    "notIncluded": "Not included",
+    "previous": "Previous plan",
+    "next": "Next plan",
+    "logIn": "Log in",
+    "intro": "Every account starts with a {{days}}-day free trial. Pay with EVC Plus, Zaad or Sahal.",
+    "unsubscribe": "Unsubscribe",
+    "unsubscribeConfirm": "Unsubscribe from your plan? You keep full access until {{date}}, which you have already paid for. After that your plan ends and you will need to subscribe again to keep using the app.",
+    "unsubscribed": "You have unsubscribed. Your {{plan}} plan stays active until {{date}}, then ends.",
+    "keepPlan": "Keep my plan"
   }
 }

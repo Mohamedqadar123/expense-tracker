@@ -9,9 +9,13 @@ import FloatingAddButton from './FloatingAddButton.jsx'
 import QuickAddTransactionForm from './transactions/QuickAddTransactionForm.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import LanguageSelector from './LanguageSelector.jsx'
+import AccountBanners from './AccountBanners.jsx'
+import AccountMenu from './AccountMenu.jsx'
 import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
 import { mergeCategories } from '../utils/mergeCategories'
+import { getUsername, isNewUser } from '../utils/username'
+import { UserIcon } from './icons/Icons.jsx'
 
 const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
@@ -21,6 +25,17 @@ function Layout() {
   const { t } = useTranslation();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const username = getUsername(user?.email);
+  // Greets accounts on their first day.
+  const isWelcome = isNewUser(user?.createdAt);
+  const userLabel = username && (
+    <span className={`layout-username ${isWelcome ? 'layout-username-welcome' : ''}`}>
+      <UserIcon />
+      <span className="layout-username-text">
+        {isWelcome ? t('common.welcome', { name: username }) : username}
+      </span>
+    </span>
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -30,7 +45,14 @@ function Layout() {
   return (
     <div className="layout">
       <header className="layout-header">
-        <span className="layout-brand">Finance Tracker</span>
+        <div className="layout-top">
+          <span className="layout-brand">Finance Tracker</span>
+          <div className="layout-user">
+            <LanguageSelector />
+            <ThemeToggle />
+            <AccountMenu onLogout={handleLogout}>{userLabel}</AccountMenu>
+          </div>
+        </div>
         <nav className="layout-nav">
           <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.home')}
@@ -40,6 +62,9 @@ function Layout() {
           </NavLink>
           <NavLink to="/budgets" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.budgets')}
+          </NavLink>
+          <NavLink to="/accounts" className={({ isActive }) => isActive ? 'active' : ''}>
+            {t('nav.accounts')}
           </NavLink>
           <NavLink to="/goals" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.goals')}
@@ -53,14 +78,18 @@ function Layout() {
           <NavLink to="/finance-ai" className={({ isActive }) => isActive ? 'active' : ''}>
             {t('nav.financeAI')}
           </NavLink>
+          <NavLink to="/calculator" className={({ isActive }) => isActive ? 'active' : ''}>
+            {t('nav.calculator')}
+          </NavLink>
+          {user?.isAdmin && (
+            <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : ''}>
+              {t('nav.admin')}
+            </NavLink>
+          )}
         </nav>
-        <div className="layout-user">
-          <ThemeToggle />
-          <LanguageSelector />
-          <span className="layout-user-email">{user?.name || user?.email}</span>
-          <button type="button" onClick={handleLogout}>{t('common.logOut')}</button>
-        </div>
       </header>
+
+      <AccountBanners />
 
       <main className="layout-main">
         <Outlet />
@@ -71,10 +100,17 @@ function Layout() {
 
       <BottomSheet isOpen={isMoreOpen} onClose={() => setIsMoreOpen(false)} title={t('nav.more')}>
         <nav className="more-sheet-nav">
+          <NavLink to="/accounts" onClick={() => setIsMoreOpen(false)}>{t('nav.accounts')}</NavLink>
           <NavLink to="/reports" onClick={() => setIsMoreOpen(false)}>{t('nav.reports')}</NavLink>
           <NavLink to="/recurring" onClick={() => setIsMoreOpen(false)}>{t('nav.recurring')}</NavLink>
           <NavLink to="/finance-ai" onClick={() => setIsMoreOpen(false)}>{t('nav.financeAI')}</NavLink>
+          <NavLink to="/calculator" onClick={() => setIsMoreOpen(false)}>{t('nav.calculator')}</NavLink>
+          <NavLink to="/billing" onClick={() => setIsMoreOpen(false)}>{t('nav.billing')}</NavLink>
+          {user?.isAdmin && (
+            <NavLink to="/admin" onClick={() => setIsMoreOpen(false)}>{t('nav.admin')}</NavLink>
+          )}
           <button type="button" className="more-sheet-logout" onClick={handleLogout}>{t('common.logOut')}</button>
+          {userLabel}
         </nav>
         <div className="more-sheet-theme">
           <span className="more-sheet-theme-label">{t('theme.label')}</span>

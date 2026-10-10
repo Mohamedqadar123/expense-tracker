@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import '../styles/shared.css'
 import '../App.css'
-import { getTransactions, getTransactionAccounts, deleteTransaction } from '../api/transactions'
+import { getTransactions, getTransactionAccounts, updateTransaction, deleteTransaction } from '../api/transactions'
 import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
 import { mergeCategories } from '../utils/mergeCategories'
@@ -22,6 +22,7 @@ function Transactions() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [accounts, setAccounts] = useState([]);
+  const [editingId, setEditingId] = useState(null);
 
   const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
@@ -104,7 +105,17 @@ function Transactions() {
 
   const handleDelete = async (id) => {
     if (!window.confirm(t('transactions.deleteConfirm'))) return;
-    await deleteTransaction(id);
+    try {
+      await deleteTransaction(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleUpdate = async (id, data) => {
+    await updateTransaction(id, data);
+    setEditingId(null);
     load();
   };
 
@@ -158,18 +169,32 @@ function Transactions() {
                 </thead>
                 <tbody>
                   {transactions.map(tx => (
-                    <tr key={tx.id}>
-                      <td data-label={t('transactions.date')}>{tx.date.slice(0, 10)}</td>
-                      <td data-label={t('transactions.description')}>{tx.description}</td>
-                      <td data-label={t('transactions.category')}>{tx.category}</td>
-                      <td data-label={t('transactions.account')}>{tx.account || '—'}</td>
-                      <td data-label={t('transactions.amount')} className={tx.type === "income" ? "income-amount" : "expense-amount"}>
-                        {tx.type === "income" ? "+" : "-"}${tx.amount}
-                      </td>
-                      <td data-label={t('transactions.actions')}>
-                        <button className="delete-btn" onClick={() => handleDelete(tx.id)}>{t('common.delete')}</button>
-                      </td>
-                    </tr>
+                    editingId === tx.id ? (
+                      <tr key={tx.id}>
+                        <td colSpan={6}>
+                          <QuickAddTransactionForm
+                            categories={categories}
+                            initialValues={tx}
+                            onSubmit={(data) => handleUpdate(tx.id, data)}
+                            onCancel={() => setEditingId(null)}
+                          />
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={tx.id}>
+                        <td data-label={t('transactions.date')}>{tx.date.slice(0, 10)}</td>
+                        <td data-label={t('transactions.description')}>{tx.description}</td>
+                        <td data-label={t('transactions.category')}>{tx.category}</td>
+                        <td data-label={t('transactions.account')}>{tx.account || '—'}</td>
+                        <td data-label={t('transactions.amount')} className={tx.type === "income" ? "income-amount" : "expense-amount"}>
+                          {tx.type === "income" ? "+" : "-"}${tx.amount.toFixed(2)}
+                        </td>
+                        <td data-label={t('transactions.actions')}>
+                          <button onClick={() => setEditingId(tx.id)}>{t('common.edit')}</button>
+                          <button className="delete-btn" onClick={() => handleDelete(tx.id)}>{t('common.delete')}</button>
+                        </td>
+                      </tr>
+                    )
                   ))}
                 </tbody>
               </table>
