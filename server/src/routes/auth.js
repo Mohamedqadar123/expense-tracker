@@ -11,7 +11,7 @@ import { isAdmin } from '../utils/admin.js';
 import { getEmailDomainError } from '../utils/emailDomain.js';
 import { savePendingSignup, findValidPendingSignup, registerPendingSignup } from '../utils/pendingSignups.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
-import { issueAuthToken, findValidAuthToken, VERIFY_EMAIL, RESET_PASSWORD } from '../utils/authTokens.js';
+import { issueAuthToken, findValidAuthToken, RESET_PASSWORD } from '../utils/authTokens.js';
 
 const router = Router();
 
@@ -56,17 +56,6 @@ function validatePassword(password) {
   if (!password || password.length < 8) return 'Password must be at least 8 characters';
   if (password.length > MAX_PASSWORD_LENGTH) return `Password must be ${MAX_PASSWORD_LENGTH} characters or fewer`;
   return null;
-}
-
-// A failed email must never fail the request that triggered it: the account
-// (or reset token) already exists, and the user can ask for another email.
-async function sendVerification(user) {
-  try {
-    const token = await issueAuthToken(user.id, VERIFY_EMAIL);
-    await sendVerificationEmail(user.email, token);
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 const authLimiter = rateLimit({
@@ -172,34 +161,17 @@ router.get('/me', requireAuth, asyncHandler(async (req, res) => {
 }));
 
 router.post('/verify-email', emailLimiter, asyncHandler(async (req, res) => {
-  // A link from signing up: this is the moment the account is created, and
-  // the person is signed straight in.
+  // The link from signing up is the only verification email there is: opening
+  // it is the moment the account is created, and the person is signed
+  // straight in. An existing account is never asked to verify again.
   const pending = await findValidPendingSignup(req.body.token);
-  if (pending) {
-    const user = await registerPendingSignup(pending);
-    setAuthCookie(res, user);
-    return res.status(201).json(sanitize(user));
-  }
-
-  // Otherwise a link re-sent to an account that predates sign-up confirmation.
-  const record = await findValidAuthToken(req.body.token, VERIFY_EMAIL);
-  if (!record) {
+  if (!pending) {
     return res.status(400).json({ error: 'This verification link is invalid or has expired' });
   }
 
-  await prisma.$transaction([
-    prisma.user.update({ where: { id: record.userId }, data: { emailVerifiedAt: new Date() } }),
-    prisma.authToken.delete({ where: { id: record.id } }),
-  ]);
-  res.json({ message: 'Email verified' });
-}));
-
-router.post('/resend-verification', requireAuth, emailLimiter, asyncHandler(async (req, res) => {
-  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-  if (!user.emailVerifiedAt) {
-    await sendVerification(user);
-  }
-  res.json({ message: 'Verification email sent' });
+  const user = await registerPendingSignup(pending);
+  setAuthCookie(res, user);
+  res.status(201).json(sanitize(user));
 }));
 
 router.post('/forgot-password', emailLimiter, asyncHandler(async (req, res) => {

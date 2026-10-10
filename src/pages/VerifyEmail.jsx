@@ -25,8 +25,7 @@ function VerifyEmail() {
       .then(() => {
         setState('verified');
         // Confirming a new sign-up creates the account and signs it in, so
-        // pick up the session. (For an older account this is a no-op unless
-        // they are logged in on this device.)
+        // pick up the session.
         refreshUser().catch(() => {});
       })
       .catch(() => setState('error'));

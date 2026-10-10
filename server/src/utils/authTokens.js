@@ -1,11 +1,9 @@
 import { createHash, randomBytes } from 'node:crypto';
 import prisma from '../prismaClient.js';
 
-export const VERIFY_EMAIL = 'verify_email';
 export const RESET_PASSWORD = 'reset_password';
 
 const TTL_MS = {
-  [VERIFY_EMAIL]: 24 * 60 * 60 * 1000,
   [RESET_PASSWORD]: 60 * 60 * 1000,
 };
 

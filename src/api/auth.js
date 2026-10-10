@@ -43,10 +43,6 @@ export function verifyEmail(token) {
   return postJson('/verify-email', { token }, 'Failed to verify email');
 }
 
-export function resendVerification() {
-  return postJson('/resend-verification', {}, 'Failed to send verification email');
-}
-
 export function forgotPassword(email) {
   return postJson('/forgot-password', { email }, 'Failed to send reset link');
 }
