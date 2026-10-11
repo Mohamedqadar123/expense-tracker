@@ -61,6 +61,15 @@ export function MoreIcon() {
   );
 }
 
+export function UserIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+    </svg>
+  );
+}
+
 export function PlusIcon() {
   return (
     <svg {...common}>

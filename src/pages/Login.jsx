@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Auth.css'
+import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { useAuth } from '../context/useAuth.js'
 
 function Login() {
@@ -28,6 +29,7 @@ function Login() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <SavingsIllustration />
         <h1>Log In</h1>
         <p className="subtitle">Welcome back to Finance Tracker</p>
         <form onSubmit={handleSubmit}>
@@ -51,7 +53,10 @@ function Login() {
           </button>
         </form>
         <p className="auth-switch">
-          Don't have an account? <Link to="/signup">Sign up</Link>
+          <Link to="/forgot-password">Forgot your password?</Link>
+        </p>
+        <p className="auth-switch">
+          Don't have an account? <Link to="/billing">Sign up</Link>
         </p>
       </div>
     </div>

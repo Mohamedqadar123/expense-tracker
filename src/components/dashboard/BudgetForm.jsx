@@ -64,6 +64,8 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
         placeholder={t('budgets.amountPlaceholder')}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        min="0.01"
+        step="0.01"
       />
       <select value={period} onChange={(e) => handlePeriodChange(e.target.value)}>
         {BUDGET_PERIODS.map(p => (

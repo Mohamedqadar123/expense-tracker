@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FREQUENCIES, RECURRING_TYPES } from '../../constants/frequencies'
 import { CATEGORIES } from '../../constants/categories'
 import { isIncomeCategory } from '../../constants/incomeCategories'
+import { getAccounts } from '../../api/accounts'
+import AccountSelect from '../accounts/AccountSelect.jsx'
 
 function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -21,7 +23,20 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
     initialValues?.endDate ? initialValues.endDate.slice(0, 10) : ''
   );
   const [error, setError] = useState(null);
+  const [accounts, setAccounts] = useState([]);
   const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
+
+  // Each occurrence is debited from or credited to one of the user's
+  // accounts, so one is always selected (the first by default).
+  useEffect(() => {
+    getAccounts()
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setAccounts(list);
+        setAccount((current) => current || list[0]?.name || '');
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +58,7 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         setAmount('');
         setType(RECURRING_TYPES[1].value);
         setCategory(expenseCategories[0]);
-        setAccount('');
+        setAccount(accounts[0]?.name || '');
         setFrequency(FREQUENCIES[2].value);
         setStartDate('');
         setEndDate('');
@@ -66,6 +81,8 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         placeholder={t('transactions.amountPlaceholder')}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        min="0.01"
+        step="0.01"
       />
       <select value={type} onChange={(e) => {
         const newType = e.target.value;
@@ -81,12 +98,7 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
           <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
-      <input
-        type="text"
-        placeholder={t('transactions.accountOptionalPlaceholder')}
-        value={account}
-        onChange={(e) => setAccount(e.target.value)}
-      />
+      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
       <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
         {FREQUENCIES.map(f => (
           <option key={f.value} value={f.value}>{t(`frequencies.${f.value}`)}</option>

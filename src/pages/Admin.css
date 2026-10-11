@@ -1,0 +1,161 @@
+.admin-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.admin-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-title h1 {
+  font-size: 20px;
+  color: var(--color-heading);
+}
+
+.admin-title button {
+  padding: 6px 12px;
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary-text);
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.admin-page h2 {
+  font-size: 16px;
+  color: var(--color-heading);
+  margin-bottom: 12px;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 6px;
+}
+
+.admin-stat-label {
+  font-size: 13px;
+  color: var(--color-text-subtle);
+}
+
+.admin-stat-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--color-heading);
+}
+
+.admin-stat-note {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.admin-filters input,
+.admin-filters select {
+  padding: 8px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.admin-filters input {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Wide tables scroll inside their card instead of stretching the page */
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 8px 10px;
+  text-align: start;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.admin-table th {
+  color: var(--color-text-subtle);
+  font-weight: bold;
+}
+
+.admin-user-name,
+.admin-user-email {
+  display: block;
+}
+
+.admin-user-email {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.admin-plan {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral-text);
+}
+
+.admin-plan-standard,
+.admin-plan-pro {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.admin-plan-trial {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.admin-plan-expired {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.admin-status-approved {
+  color: var(--color-success);
+}
+
+.admin-status-failed {
+  color: var(--color-danger);
+}
+
+.admin-status-pending,
+.admin-status-unknown {
+  color: var(--color-warning);
+}

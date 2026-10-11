@@ -1,3 +1,6 @@
+import { ensureAccountName } from './accounts.js';
+import { getDebitError } from './accountBalances.js';
+
 const DEFAULT_MAX_ITERATIONS = 366;
 
 function addUTCDays(date, days) {
@@ -110,6 +113,25 @@ export async function generateOccurrence(prisma, ruleId, expectedOccurrenceDate,
       }
 
       const rule = await tx.recurringTransaction.findUniqueOrThrow({ where: { id: ruleId } });
+      const account = await ensureAccountName(tx, rule.userId, rule.account);
+
+      // A debit the account can't cover is not taken. The occurrence is
+      // recorded as skipped (and nextExecutionDate still advances above), so
+      // the user can see what was missed and the rule doesn't get stuck.
+      if (rule.type === 'expense') {
+        const debitError = await getDebitError(tx, rule.userId, account, rule.amount);
+        if (debitError) {
+          const log = await tx.recurringTransactionLog.create({
+            data: {
+              recurringTransactionId: rule.id,
+              occurrenceDate: expectedOccurrenceDate,
+              status: 'skipped',
+              message: debitError,
+            },
+          });
+          return { claimed: true, skipped: true, log };
+        }
+      }
 
       const transaction = await tx.transaction.create({
         data: {
@@ -117,6 +139,7 @@ export async function generateOccurrence(prisma, ruleId, expectedOccurrenceDate,
           amount: rule.amount,
           type: rule.type,
           category: rule.category,
+          account,
           date: expectedOccurrenceDate,
           userId: rule.userId,
           recurringTransactionId: rule.id,
@@ -160,7 +183,7 @@ export async function processRecurringTransaction(prisma, ruleId, options = {}) 
 
     const result = await generateOccurrence(prisma, ruleId, occurrenceDate, nextOccurrenceDate);
     iterations += 1;
-    if (result.claimed && !result.alreadyLogged) generated += 1;
+    if (result.claimed && !result.alreadyLogged && !result.skipped) generated += 1;
   }
 
   const cappedOut = iterations >= maxIterations;

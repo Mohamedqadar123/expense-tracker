@@ -1,14 +1,10 @@
-import { API_BASE } from './config';
+import { API_BASE, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/ai`;
 
 export async function getAiMessages() {
   const res = await fetch(`${BASE_URL}/messages`, { credentials: 'include' });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error || 'Failed to load conversation history');
-  }
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to load conversation history');
 }
 
 export async function askAiQuestion(question) {
@@ -18,17 +14,10 @@ export async function askAiQuestion(question) {
     credentials: 'include',
     body: JSON.stringify({ question }),
   });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error || 'Failed to get a response');
-  }
-  return res.json();
+  return parseJsonOrThrow(res, 'Failed to get a response');
 }
 
 export async function clearAiMessages() {
   const res = await fetch(`${BASE_URL}/messages`, { method: 'DELETE', credentials: 'include' });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.error || 'Failed to clear history');
-  }
+  return parseJsonOrThrow(res, 'Failed to clear history');
 }

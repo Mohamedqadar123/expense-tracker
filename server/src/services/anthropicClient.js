@@ -14,6 +14,40 @@ export class AiServiceError extends Error {
   }
 }
 
+function formatMoney(n) {
+  const num = Number(n ?? 0);
+  const sign = num < 0 ? '-' : '';
+  return `${sign}$${Math.abs(num).toFixed(2)}`;
+}
+
+// Deterministic, no-network stand-in for askFinancialQuestion, used when
+// ANTHROPIC_API_KEY isn't configured so the Finance AI feature still works
+// end-to-end (storage, history, UI) during local development. Never claims
+// to be a real AI answer — always labeled as a mock response.
+function buildMockAnswer({ summary, question }) {
+  const month = summary?.currentMonth;
+  const lines = [
+    `[Mock response — no ANTHROPIC_API_KEY is configured, so this is placeholder data, not a real AI answer]`,
+    '',
+    `You asked: "${question}"`,
+    '',
+  ];
+
+  if (month) {
+    lines.push(`For ${month.label}, your data shows income of ${formatMoney(month.income)} and expenses of ${formatMoney(month.expenses)}, for net savings of ${formatMoney(month.savings)}.`);
+    if (month.spendingByCategory?.length) {
+      const top = month.spendingByCategory[0];
+      lines.push(`Your largest expense category this month is ${top.category} at ${formatMoney(top.amount)}.`);
+    }
+  } else {
+    lines.push("I don't have enough transaction data yet to answer that.");
+  }
+
+  lines.push('', 'Set ANTHROPIC_API_KEY in server/.env to get real answers from Claude instead of this placeholder.');
+
+  return lines.join('\n');
+}
+
 const SYSTEM_PROMPT = `You are the "Finance AI" assistant inside a personal finance tracker app.
 
 Answer using ONLY the financial summary JSON provided in this conversation — you have no database or live account access beyond what's given here. Never claim to have looked anything up or to have real-time access.
@@ -29,8 +63,8 @@ Formatting rules (important — the app displays your reply as plain text with l
 
 export async function askFinancialQuestion({ summary, history, question }) {
   if (!client) {
-    console.error('ANTHROPIC_API_KEY is not set — Finance AI cannot reach Claude.');
-    throw new AiServiceError('The AI assistant is not configured yet. Please contact the site administrator.', 503);
+    console.warn('ANTHROPIC_API_KEY is not set — Finance AI is returning a mock response instead of calling Claude.');
+    return buildMockAnswer({ summary, question });
   }
 
   const messages = [

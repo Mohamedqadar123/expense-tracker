@@ -40,8 +40,12 @@ function SavingsGoalsSection() {
 
   const handleDelete = async (id) => {
     if (!window.confirm(t('goals.deleteConfirm'))) return;
-    await deleteGoal(id);
-    load();
+    try {
+      await deleteGoal(id);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (

@@ -22,7 +22,7 @@ export async function resetDb() {
   await prisma.$executeRawUnsafe(`
     TRUNCATE TABLE
       "RecurringTransactionLog", "Transaction", "RecurringTransaction",
-      "Budget", "SavingsGoal", "AiMessage", "User"
+      "Budget", "SavingsGoal", "AiMessage", "PendingSignup", "User"
     RESTART IDENTITY CASCADE;
   `);
 }
