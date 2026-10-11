@@ -4,17 +4,17 @@
 // stay visually consistent with the rest of the themed UI.
 const CHART_COLORS = {
   light: {
-    grid: '#d3dbe5',
-    axis: '#5d6c7e',
-    tooltipBg: '#f6f8fb',
-    tooltipBorder: '#d3dbe5',
-    tooltipText: '#2c3b4c',
-    legendText: '#2c3b4c',
-    income: '#2a7556',
-    expense: '#b23b3b',
-    neutral: '#1f5f8b',
-    net: '#2b6cb0',
-    categorical: ['#1f5f8b', '#b23b3b', '#2a7556', '#915406', '#6b4e9b', '#1f7f8b', '#7a8797'],
+    grid: '#e5e7eb',
+    axis: '#64748b',
+    tooltipBg: '#ffffff',
+    tooltipBorder: '#e5e7eb',
+    tooltipText: '#1f2937',
+    legendText: '#1f2937',
+    income: '#16a34a',
+    expense: '#dc2626',
+    neutral: '#2563eb',
+    net: '#2563eb',
+    categorical: ['#16a34a', '#2563eb', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#64748b'],
   },
   dark: {
     grid: '#3a3a3a',
