@@ -10,11 +10,16 @@ import { mergeCategories } from '../utils/mergeCategories'
 import TransactionFilters from '../components/TransactionFilters.jsx'
 import Pagination from '../components/transactions/Pagination.jsx'
 import QuickAddTransactionForm from '../components/transactions/QuickAddTransactionForm.jsx'
+import { formatSignedCurrency, formatDate } from '../utils/format'
+import { useFeedback } from '../context/useFeedback.js'
+import { ListSkeleton } from '../components/feedback/Skeleton.jsx'
+import EmptyState from '../components/feedback/EmptyState.jsx'
 
 const DEFAULT_LIMIT = 25
 
 function Transactions() {
   const { t } = useTranslation();
+  const { confirm, notify } = useFeedback();
   const [searchParams, setSearchParams] = useSearchParams();
   const [transactions, setTransactions] = useState([]);
   const [total, setTotal] = useState(0);
@@ -104,10 +109,11 @@ function Transactions() {
   }, [load, loadAccounts]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('transactions.deleteConfirm'))) return;
+    if (!(await confirm(t('transactions.deleteConfirm'), t('common.delete')))) return;
     try {
       await deleteTransaction(id);
       load();
+      notify(t('feedback.deleted'));
     } catch (err) {
       setError(err.message);
     }
@@ -117,6 +123,7 @@ function Transactions() {
     await updateTransaction(id, data);
     setEditingId(null);
     load();
+    notify(t('feedback.saved'));
   };
 
   return (
@@ -128,7 +135,7 @@ function Transactions() {
         <h2>{t('transactions.addTransaction')}</h2>
         <QuickAddTransactionForm
           categories={categories}
-          onSuccess={() => { load(); loadAccounts(); }}
+          onSuccess={() => { load(); loadAccounts(); notify(t('feedback.added')); }}
           broadcast={false}
         />
       </div>
@@ -150,9 +157,9 @@ function Transactions() {
           </div>
         )}
         {isLoading ? (
-          <p>{t('transactions.loading')}</p>
+          <ListSkeleton label={t('transactions.loading')} rows={5} />
         ) : transactions.length === 0 ? (
-          <p className="list-empty">{t('transactions.noMatch')}</p>
+          <EmptyState icon="chart" message={t('transactions.noMatch')} />
         ) : (
           <>
             <div className="table-scroll">
@@ -182,14 +189,14 @@ function Transactions() {
                       </tr>
                     ) : (
                       <tr key={tx.id}>
-                        <td data-label={t('transactions.date')}>{tx.date.slice(0, 10)}</td>
+                        <td data-label={t('transactions.date')}>{formatDate(tx.date)}</td>
                         <td data-label={t('transactions.description')}>{tx.description}</td>
                         <td data-label={t('transactions.category')}>{tx.category}</td>
                         <td data-label={t('transactions.account')}>{tx.account || '—'}</td>
                         <td data-label={t('transactions.amount')} className={tx.type === "income" ? "income-amount" : "expense-amount"}>
-                          {tx.type === "income" ? "+" : "-"}${tx.amount.toFixed(2)}
+                          {formatSignedCurrency(tx.amount, tx.type)}
                         </td>
-                        <td data-label={t('transactions.actions')}>
+                        <td className="table-actions">
                           <button onClick={() => setEditingId(tx.id)}>{t('common.edit')}</button>
                           <button className="delete-btn" onClick={() => handleDelete(tx.id)}>{t('common.delete')}</button>
                         </td>

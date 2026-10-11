@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getGoals, createGoal, updateGoal, deleteGoal } from '../../api/goals'
 import SavingsGoalForm from './SavingsGoalForm.jsx'
+import { formatCurrency, formatDate } from '../../utils/format'
+import { useFeedback } from '../../context/useFeedback.js'
+import { ListSkeleton } from '../feedback/Skeleton.jsx'
+import EmptyState from '../feedback/EmptyState.jsx'
 
 function SavingsGoalsSection() {
   const { t } = useTranslation();
+  const { confirm, notify } = useFeedback();
   const [goals, setGoals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,19 +35,22 @@ function SavingsGoalsSection() {
   const handleCreate = async (data) => {
     await createGoal(data);
     load();
+    notify(t('feedback.added'));
   };
 
   const handleUpdate = async (id, data) => {
     await updateGoal(id, data);
     setEditingId(null);
     load();
+    notify(t('feedback.saved'));
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('goals.deleteConfirm'))) return;
+    if (!(await confirm(t('goals.deleteConfirm'), t('common.delete')))) return;
     try {
       await deleteGoal(id);
       load();
+      notify(t('feedback.deleted'));
     } catch (err) {
       setError(err.message);
     }
@@ -52,7 +60,7 @@ function SavingsGoalsSection() {
     <div className="section-card">
       <h2>{t('goals.heading')}</h2>
       {isLoading ? (
-        <p className="list-empty">{t('goals.loading')}</p>
+        <ListSkeleton label={t('goals.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
@@ -61,7 +69,7 @@ function SavingsGoalsSection() {
       ) : (
         <>
           {goals.length === 0 ? (
-            <p className="list-empty">{t('goals.empty')}</p>
+            <EmptyState icon="target" message={t('goals.empty')} />
           ) : (
             <ul className="goal-list">
               {goals.map(g => {
@@ -78,12 +86,12 @@ function SavingsGoalsSection() {
                       <>
                         <div className="budget-row-header">
                           <span className="budget-category">{g.name}</span>
-                          <span>${g.savedAmount.toFixed(2)} / ${g.targetAmount.toFixed(2)}</span>
+                          <span>{formatCurrency(g.savedAmount)} / {formatCurrency(g.targetAmount)}</span>
                         </div>
                         <div className="progress-bar">
                           <div className="progress-bar-fill" style={{ width: `${percent}%` }} />
                         </div>
-                        {g.targetDate && <p className="goal-target-date">{t('goals.target', { date: g.targetDate.slice(0, 10) })}</p>}
+                        {g.targetDate && <p className="goal-target-date">{t('goals.target', { date: formatDate(g.targetDate) })}</p>}
                         <div className="budget-actions">
                           <button onClick={() => setEditingId(g.id)}>{t('common.edit')}</button>
                           <button onClick={() => handleDelete(g.id)}>{t('common.delete')}</button>

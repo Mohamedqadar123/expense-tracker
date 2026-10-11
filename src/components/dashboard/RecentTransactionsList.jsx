@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { formatSignedCurrency, formatDate } from '../../utils/format'
 
 function RecentTransactionsList({ transactions }) {
   const { t } = useTranslation();
@@ -14,10 +15,10 @@ function RecentTransactionsList({ transactions }) {
             <li key={tx.id}>
               <div>
                 <span className="rt-description">{tx.description}</span>
-                <span className="rt-date">{tx.date.slice(0, 10)}</span>
+                <span className="rt-date">{formatDate(tx.date)}</span>
               </div>
               <span className={tx.type === 'income' ? 'income-amount' : 'expense-amount'}>
-                {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
+                {formatSignedCurrency(tx.amount, tx.type)}
               </span>
             </li>
           ))}

@@ -12,6 +12,7 @@ import SpendingByCategoryChart from '../components/dashboard/SpendingByCategoryC
 import RecentTransactionsList from '../components/dashboard/RecentTransactionsList.jsx'
 import InsightsList from '../components/dashboard/InsightsList.jsx'
 import BudgetAlertsBanner from '../components/dashboard/BudgetAlertsBanner.jsx'
+import { OverviewSkeleton } from '../components/feedback/Skeleton.jsx'
 
 function todayString() {
   const today = new Date();
@@ -42,6 +43,14 @@ function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, start, end, retryKey]);
 
+  // A transaction added from the header or the add button changes every
+  // number here, so the overview is fetched again.
+  useEffect(() => {
+    const handleCreated = () => setRetryKey((k) => k + 1);
+    window.addEventListener('transaction:created', handleCreated);
+    return () => window.removeEventListener('transaction:created', handleCreated);
+  }, []);
+
   const handlePeriodChange = useCallback(({ preset: nextPreset, customStart: nextStart, customEnd: nextEnd }) => {
     setPreset(nextPreset);
     if (nextStart !== undefined) setCustomStart(nextStart);
@@ -69,7 +78,7 @@ function Dashboard() {
       />
 
       {isLoading ? (
-        <p className="dashboard-status">{t('dashboard.loading')}</p>
+        <OverviewSkeleton label={t('dashboard.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>

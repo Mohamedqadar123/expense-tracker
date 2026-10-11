@@ -20,8 +20,8 @@ describe('QuickAddTransactionForm', () => {
 
     render(<QuickAddTransactionForm categories={['Food', 'Rent']} onSuccess={vi.fn()} />);
 
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Coffee');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '5');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByLabelText(/amount/i), '5');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
     await waitFor(() => expect(findPostCall(fetchMock)).toBeTruthy());
@@ -38,8 +38,8 @@ describe('QuickAddTransactionForm', () => {
     window.addEventListener('transaction:created', spy);
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Bad');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '0');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Bad');
+    await userEvent.type(screen.getByLabelText(/amount/i), '0');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
     expect(findPostCall(fetchMock)).toBeUndefined();
@@ -53,8 +53,8 @@ describe('QuickAddTransactionForm', () => {
     window.addEventListener('transaction:created', spy);
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Coffee');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '5');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByLabelText(/amount/i), '5');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
     expect(await screen.findByText(/too many requests, please slow down/i)).toBeInTheDocument();

@@ -15,7 +15,10 @@
     "debit": "Debit",
     "to": "ilaa",
     "notAvailable": "Ma jiro",
-    "welcome": "Soo dhawoow, {{name}}"
+    "welcome": "Soo dhawoow, {{name}}",
+    "startDate": "Taariikhda bilowga",
+    "endDate": "Taariikhda dhammaadka",
+    "confirm": "Xaqiiji"
   },
   "nav": {
     "home": "Guriga",
@@ -30,7 +33,10 @@
     "more": "Kale",
     "addTransaction": "Ku dar Dhaqdhaqaaq",
     "billing": "Qorshaha iyo rukunka",
-    "admin": "Maamulka"
+    "admin": "Maamulka",
+    "groupMoney": "Lacagta",
+    "groupPlanning": "Qorsheynta",
+    "groupInsights": "Falanqaynta"
   },
   "theme": {
     "label": "Muuqaalka",
@@ -57,7 +63,7 @@
     "custom": "Gaar ah"
   },
   "alerts": {
-    "overBudget": "Waxaad dhaaftay miisaaniyadda \"{{name}}\" (${{spent}} ka mid ah ${{amount}}).",
+    "overBudget": "Waxaad dhaaftay miisaaniyadda \"{{name}}\" ({{spent}} ka mid ah {{amount}}).",
     "nearBudget": "Waxaad isticmaashay {{percent}}% ee miisaaniyaddaada \"{{name}}\"."
   },
   "dashboard": {
@@ -111,7 +117,8 @@
     "adding": "Waa la darayaa…",
     "prev": "Hore",
     "next": "Xiga",
-    "pageOf": "Bogga {{page}} ee {{totalPages}} ({{total}} guud ahaan)"
+    "pageOf": "Bogga {{page}} ee {{totalPages}} ({{total}} guud ahaan)",
+    "sortBy": "U kala sooc"
   },
   "budgets": {
     "title": "Miisaaniyadaha",
@@ -123,11 +130,12 @@
     "empty": "Wali miisaaniyad ma jirto — hoos ku dar mid.",
     "emptyReport": "Miisaaniyad la warbixiyo lama helin.",
     "deleteConfirm": "Ma doonaysaa inaad tirtirto miisaaniyaddan?",
-    "spentOf": "${{spent}} waxaa laga bixiyay ${{amount}}",
-    "remaining": "${{remaining}} ayaa hadhay",
+    "spentOf": "{{spent}} waxaa laga bixiyay {{amount}}",
+    "remaining": "{{remaining}} ayaa hadhay",
     "addBudget": "Ku dar Miisaaniyad",
     "namePlaceholder": "Magaca Miisaaniyadda",
-    "amountPlaceholder": "Lacagta"
+    "amountPlaceholder": "Lacagta",
+    "period": "Muddada"
   },
   "goals": {
     "title": "Hadafyada",
@@ -142,7 +150,8 @@
     "namePlaceholder": "Magaca Hadafka",
     "targetAmountPlaceholder": "Lacagta Bartilmaameedka",
     "savedSoFarPlaceholder": "Lacagta la keydiyay ilaa hadda",
-    "accountHint": "Lacagta la kaydiyay waxaa laga jarayaa xisaabta la doortay. Haddii aad yarayso lacagta la kaydiyay, dib ayaa loogu celinayaa."
+    "accountHint": "Lacagta la kaydiyay waxaa laga jarayaa xisaabta la doortay. Haddii aad yarayso lacagta la kaydiyay, dib ayaa loogu celinayaa.",
+    "targetDate": "Taariikhda bartilmaameedka (ikhtiyaari)"
   },
   "reports": {
     "title": "Warbixinnada Maaliyadda",
@@ -183,7 +192,8 @@
     "historyLoadError": "Taariikhda lama soo rari karin",
     "noOccurrences": "Wali dhacdo lama soo saarin.",
     "transactionDeleted": "dhaqdhaqaaqa waa la tirtiray",
-    "endDateOptionalPlaceholder": "Taariikhda dhammaadka (ikhtiyaari)"
+    "endDateOptionalPlaceholder": "Taariikhda dhammaadka (ikhtiyaari)",
+    "frequency": "Soo noqnoqoshada"
   },
   "financeAI": {
     "title": "AI Maaliyadeed",
@@ -216,12 +226,13 @@
     "loadError": "Xisaabaha lama soo rari karin",
     "empty": "Wali xisaab ma jirto — hoos ku dar mid, tusaale \"Bangiga\" ama \"EVC\".",
     "deleteConfirm": "Ma tirtirtaa xisaabtan? Xisaab leh dhaqdhaqaaqyo lama tirtiri karo.",
-    "startingBalance": "Hadhaaga bilowga: ${{amount}}",
+    "startingBalance": "Hadhaaga bilowga: {{amount}}",
     "addAccount": "Ku dar Xisaab",
     "namePlaceholder": "Magaca xisaabta (tusaale Salam Bank, EVC Plus)",
     "startingBalancePlaceholder": "Hadhaaga bilowga",
     "yourAccounts": "Xisaabahaaga",
-    "presetAccounts": "Bangiyada iyo lacagta mobilka"
+    "presetAccounts": "Bangiyada iyo lacagta mobilka",
+    "name": "Magaca xisaabta"
   },
   "billing": {
     "title": "Rukunka",
@@ -272,5 +283,10 @@
     "unsubscribeConfirm": "Ma rabtaa inaad ka baxdo qorshahaaga? Waxaad haysan doontaa adeegga oo dhan ilaa {{date}}, taas oo aad hore u bixisay. Intaa ka dib qorshahaagu wuu dhammaanayaa waxaadna u baahan doontaa inaad mar kale rukunto si aad u sii isticmaasho app-ka.",
     "unsubscribed": "Waad ka baxday rukunka. Qorshahaaga {{plan}} wuxuu shaqaynayaa ilaa {{date}}, ka dibna wuu dhammaanayaa.",
     "keepPlan": "Sii hayso qorshahayga"
+  },
+  "feedback": {
+    "added": "Waa la daray",
+    "saved": "Isbeddellada waa la kaydiyay",
+    "deleted": "Waa la tirtiray"
   }
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getRecurringTransactionHistory } from '../../api/recurring'
+import { formatSignedCurrency, formatDate } from '../../utils/format'
 
 function RecurringTransactionHistory({ recurringTransactionId }) {
   const { t } = useTranslation();
@@ -24,10 +25,10 @@ function RecurringTransactionHistory({ recurringTransactionId }) {
     <ul className="recurring-history">
       {history.map(entry => (
         <li key={entry.id}>
-          <span className="recurring-history-date">{entry.occurrenceDate.slice(0, 10)}</span>
+          <span className="recurring-history-date">{formatDate(entry.occurrenceDate)}</span>
           {entry.transaction ? (
             <span className="recurring-history-amount">
-              {entry.transaction.type === 'income' ? '+' : '-'}${entry.transaction.amount.toFixed(2)} — {entry.transaction.description}
+              {formatSignedCurrency(entry.transaction.amount, entry.transaction.type)} — {entry.transaction.description}
             </span>
           ) : (
             <span className="recurring-history-amount">{t('recurring.transactionDeleted')}</span>

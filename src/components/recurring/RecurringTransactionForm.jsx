@@ -5,6 +5,7 @@ import { CATEGORIES } from '../../constants/categories'
 import { isIncomeCategory } from '../../constants/incomeCategories'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
+import Field from '../Field.jsx'
 
 function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -70,55 +71,70 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
 
   return (
     <form className="inline-form recurring-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder={t('transactions.descriptionPlaceholder')}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder={t('transactions.amountPlaceholder')}
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        min="0.01"
-        step="0.01"
-      />
-      <select value={type} onChange={(e) => {
-        const newType = e.target.value;
-        setType(newType);
-        setCategory((newType === 'income' ? incomeCategories : expenseCategories)[0] || CATEGORIES[0]);
-      }}>
-        {RECURRING_TYPES.map(rt => (
-          <option key={rt.value} value={rt.value}>{t(`common.${rt.value === 'income' ? 'credit' : 'debit'}`)}</option>
-        ))}
-      </select>
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {visibleCategories.map(cat => (
-          <option key={cat} value={cat}>{cat}</option>
-        ))}
-      </select>
-      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
-      <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
-        {FREQUENCIES.map(f => (
-          <option key={f.value} value={f.value}>{t(`frequencies.${f.value}`)}</option>
-        ))}
-      </select>
-      <input
-        type="date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-      />
-      <span className="inline-form-to">{t('common.to')}</span>
-      <input
-        type="date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        placeholder={t('recurring.endDateOptionalPlaceholder')}
-      />
+      <Field label={t('transactions.description')} wide>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+      </Field>
+      <Field label={t('transactions.amount')}>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          min="0.01"
+          step="0.01"
+          required
+        />
+      </Field>
+      <Field label={t('reports.type')}>
+        <select value={type} onChange={(e) => {
+          const newType = e.target.value;
+          setType(newType);
+          setCategory((newType === 'income' ? incomeCategories : expenseCategories)[0] || CATEGORIES[0]);
+        }}>
+          {RECURRING_TYPES.map(rt => (
+            <option key={rt.value} value={rt.value}>{t(`common.${rt.value === 'income' ? 'credit' : 'debit'}`)}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('transactions.category')}>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {visibleCategories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('transactions.account')}>
+        <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
+      </Field>
+      <Field label={t('recurring.frequency')}>
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
+          {FREQUENCIES.map(f => (
+            <option key={f.value} value={f.value}>{t(`frequencies.${f.value}`)}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('common.startDate')}>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          required
+        />
+      </Field>
+      <Field label={t('recurring.endDateOptionalPlaceholder')}>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </Field>
       <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
       {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
-      {error && <p className="auth-error">{error}</p>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );
 }

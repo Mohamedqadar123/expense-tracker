@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BUDGET_CATEGORIES, BUDGET_PERIODS } from '../../constants/budgetCategories'
 import { computePeriodDates } from '../../utils/budgetPeriod'
+import Field from '../Field.jsx'
 
 function BudgetForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -48,44 +49,57 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
 
   return (
     <form className="inline-form budget-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder={t('budgets.namePlaceholder')}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {BUDGET_CATEGORIES.map(cat => (
-          <option key={cat} value={cat}>{cat}</option>
-        ))}
-      </select>
-      <input
-        type="number"
-        placeholder={t('budgets.amountPlaceholder')}
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        min="0.01"
-        step="0.01"
-      />
-      <select value={period} onChange={(e) => handlePeriodChange(e.target.value)}>
-        {BUDGET_PERIODS.map(p => (
-          <option key={p.value} value={p.value}>{t(`frequencies.${p.value}`)}</option>
-        ))}
-      </select>
-      <input
-        type="date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-      />
-      <span className="inline-form-to">{t('common.to')}</span>
-      <input
-        type="date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-      />
+      <Field label={t('budgets.namePlaceholder')} wide>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </Field>
+      <Field label={t('transactions.category')}>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {BUDGET_CATEGORIES.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('transactions.amount')}>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          min="0.01"
+          step="0.01"
+          required
+        />
+      </Field>
+      <Field label={t('budgets.period')}>
+        <select value={period} onChange={(e) => handlePeriodChange(e.target.value)}>
+          {BUDGET_PERIODS.map(p => (
+            <option key={p.value} value={p.value}>{t(`frequencies.${p.value}`)}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('common.startDate')}>
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          required
+        />
+      </Field>
+      <Field label={t('common.endDate')}>
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          required
+        />
+      </Field>
       <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
       {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
-      {error && <p className="auth-error">{error}</p>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );
 }

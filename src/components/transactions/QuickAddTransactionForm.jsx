@@ -4,6 +4,7 @@ import { createTransaction } from '../../api/transactions'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
 import { isIncomeCategory } from '../../constants/incomeCategories'
+import Field from '../Field.jsx'
 
 function todayAsDateInputValue() {
   return new Date().toISOString().slice(0, 10);
@@ -91,22 +92,26 @@ function QuickAddTransactionForm({
 
   return (
     <form className="inline-form quick-add-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder={t('transactions.descriptionPlaceholder')}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder={t('transactions.amountPlaceholder')}
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        inputMode="decimal"
-        min="0.01"
-        step="0.01"
-      />
-      <div className="segmented-toggle">
+      <Field label={t('transactions.description')} wide>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+      </Field>
+      <Field label={t('transactions.amount')}>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          inputMode="decimal"
+          min="0.01"
+          step="0.01"
+          required
+        />
+      </Field>
+      <div className="segmented-toggle" role="group" aria-label={t('reports.type')}>
         <button
           type="button"
           className="expense-toggle"
@@ -124,18 +129,25 @@ function QuickAddTransactionForm({
           {t('common.credit')}
         </button>
       </div>
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        {visibleCategories.map(cat => (
-          <option key={cat} value={cat}>{cat}</option>
-        ))}
-      </select>
-      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        max={todayAsDateInputValue()}
-      />
+      <Field label={t('transactions.category')}>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {visibleCategories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label={t('transactions.account')}>
+        <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
+      </Field>
+      <Field label={t('transactions.date')}>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          max={todayAsDateInputValue()}
+          required
+        />
+      </Field>
       <button type="submit" className="quick-add-submit" disabled={isSubmitting}>
         {isSubmitting
           ? t('transactions.adding')
@@ -144,7 +156,7 @@ function QuickAddTransactionForm({
       {isEditing && onCancel && (
         <button type="button" onClick={onCancel}>{t('common.cancel')}</button>
       )}
-      {error && <p className="auth-error">{error}</p>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );
 }

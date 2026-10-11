@@ -15,7 +15,10 @@
     "debit": "مدين",
     "to": "إلى",
     "notAvailable": "غير متاح",
-    "welcome": "مرحباً، {{name}}"
+    "welcome": "مرحباً، {{name}}",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "confirm": "تأكيد"
   },
   "nav": {
     "home": "الرئيسية",
@@ -30,7 +33,10 @@
     "more": "المزيد",
     "addTransaction": "إضافة معاملة",
     "billing": "الخطة والاشتراك",
-    "admin": "الإدارة"
+    "admin": "الإدارة",
+    "groupMoney": "الأموال",
+    "groupPlanning": "التخطيط",
+    "groupInsights": "التحليلات"
   },
   "theme": {
     "label": "المظهر",
@@ -57,7 +63,7 @@
     "custom": "مخصص"
   },
   "alerts": {
-    "overBudget": "لقد تجاوزت ميزانية \"{{name}}\" (${{spent}} من أصل ${{amount}}).",
+    "overBudget": "لقد تجاوزت ميزانية \"{{name}}\" ({{spent}} من أصل {{amount}}).",
     "nearBudget": "لقد استخدمت {{percent}}% من ميزانية \"{{name}}\"."
   },
   "dashboard": {
@@ -111,7 +117,8 @@
     "adding": "جارٍ الإضافة…",
     "prev": "السابق",
     "next": "التالي",
-    "pageOf": "صفحة {{page}} من {{totalPages}} ({{total}} إجمالاً)"
+    "pageOf": "صفحة {{page}} من {{totalPages}} ({{total}} إجمالاً)",
+    "sortBy": "ترتيب حسب"
   },
   "budgets": {
     "title": "الميزانيات",
@@ -123,11 +130,12 @@
     "empty": "لا توجد ميزانيات بعد — أضف واحدة أدناه.",
     "emptyReport": "لا توجد ميزانيات لعرض تقرير عنها.",
     "deleteConfirm": "هل تريد حذف هذه الميزانية؟",
-    "spentOf": "تم إنفاق ${{spent}} من أصل ${{amount}}",
-    "remaining": "المتبقي ${{remaining}}",
+    "spentOf": "تم إنفاق {{spent}} من أصل {{amount}}",
+    "remaining": "المتبقي {{remaining}}",
     "addBudget": "إضافة ميزانية",
     "namePlaceholder": "اسم الميزانية",
-    "amountPlaceholder": "المبلغ"
+    "amountPlaceholder": "المبلغ",
+    "period": "الفترة"
   },
   "goals": {
     "title": "الأهداف",
@@ -142,7 +150,8 @@
     "namePlaceholder": "اسم الهدف",
     "targetAmountPlaceholder": "المبلغ المستهدف",
     "savedSoFarPlaceholder": "المبلغ المدّخر حتى الآن",
-    "accountHint": "يُخصم المبلغ المدّخر من الحساب المحدد. تخفيض المبلغ المدّخر يعيده إلى الحساب."
+    "accountHint": "يُخصم المبلغ المدّخر من الحساب المحدد. تخفيض المبلغ المدّخر يعيده إلى الحساب.",
+    "targetDate": "التاريخ المستهدف (اختياري)"
   },
   "reports": {
     "title": "التقارير المالية",
@@ -183,7 +192,8 @@
     "historyLoadError": "تعذّر تحميل السجل",
     "noOccurrences": "لم يتم إنشاء أي تكرار بعد.",
     "transactionDeleted": "تم حذف المعاملة",
-    "endDateOptionalPlaceholder": "تاريخ الانتهاء (اختياري)"
+    "endDateOptionalPlaceholder": "تاريخ الانتهاء (اختياري)",
+    "frequency": "التكرار"
   },
   "financeAI": {
     "title": "المساعد المالي الذكي",
@@ -216,12 +226,13 @@
     "loadError": "تعذّر تحميل الحسابات",
     "empty": "لا توجد حسابات بعد — أضف واحدًا أدناه، مثل \"البنك\" أو \"EVC\".",
     "deleteConfirm": "حذف هذا الحساب؟ لا يمكن حذف حساب لديه معاملات.",
-    "startingBalance": "الرصيد الابتدائي: ${{amount}}",
+    "startingBalance": "الرصيد الابتدائي: {{amount}}",
     "addAccount": "إضافة حساب",
     "namePlaceholder": "اسم الحساب (مثل Salam Bank أو EVC Plus)",
     "startingBalancePlaceholder": "الرصيد الابتدائي",
     "yourAccounts": "حساباتك",
-    "presetAccounts": "البنوك والمحافظ الإلكترونية"
+    "presetAccounts": "البنوك والمحافظ الإلكترونية",
+    "name": "اسم الحساب"
   },
   "billing": {
     "title": "الاشتراك",
@@ -272,5 +283,10 @@
     "unsubscribeConfirm": "هل تريد إلغاء اشتراكك؟ ستحتفظ بالوصول الكامل حتى {{date}}، وهي المدة التي دفعت مقابلها. بعد ذلك تنتهي خطتك وستحتاج إلى الاشتراك مجدداً لمواصلة استخدام التطبيق.",
     "unsubscribed": "لقد ألغيت اشتراكك. تبقى خطتك ({{plan}}) فعّالة حتى {{date}} ثم تنتهي.",
     "keepPlan": "أبقِ خطتي"
+  },
+  "feedback": {
+    "added": "تمت الإضافة",
+    "saved": "تم حفظ التغييرات",
+    "deleted": "تم الحذف"
   }
 }

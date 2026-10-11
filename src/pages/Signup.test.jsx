@@ -9,8 +9,8 @@ describe('Signup page', () => {
     const signup = vi.fn().mockResolvedValue({ message: 'Check your email', email: 'new@test.com' });
     renderWithProviders(<Signup />, { authValue: { signup } });
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'new@test.com');
-    await userEvent.type(screen.getByPlaceholderText(/password/i), 'password123');
+    await userEvent.type(screen.getByLabelText('Email'), 'new@test.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123');
     await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     expect(signup).toHaveBeenCalledWith('new@test.com', 'password123', '', undefined);
@@ -22,8 +22,8 @@ describe('Signup page', () => {
     const signup = vi.fn().mockRejectedValue(new Error('An account with this email already exists'));
     renderWithProviders(<Signup />, { authValue: { signup } });
 
-    await userEvent.type(screen.getByPlaceholderText('Email'), 'existing@test.com');
-    await userEvent.type(screen.getByPlaceholderText(/password/i), 'password123');
+    await userEvent.type(screen.getByLabelText('Email'), 'existing@test.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123');
     await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     expect(await screen.findByText('An account with this email already exists')).toBeInTheDocument();

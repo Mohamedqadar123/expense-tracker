@@ -6,11 +6,16 @@ import QuickAddTransactionForm from '../transactions/QuickAddTransactionForm.jsx
 import { CATEGORIES } from '../../constants/categories'
 import { BUDGET_CATEGORIES } from '../../constants/budgetCategories'
 import { mergeCategories } from '../../utils/mergeCategories'
+import { formatCurrency } from '../../utils/format'
+import { useFeedback } from '../../context/useFeedback.js'
+import { ListSkeleton } from '../feedback/Skeleton.jsx'
+import EmptyState from '../feedback/EmptyState.jsx'
 
 const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
 
 function AccountsSection() {
   const { t } = useTranslation();
+  const { confirm, notify } = useFeedback();
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,19 +40,22 @@ function AccountsSection() {
   const handleCreate = async (data) => {
     await createAccount(data);
     load();
+    notify(t('feedback.added'));
   };
 
   const handleUpdate = async (id, data) => {
     await updateAccount(id, data);
     setEditingId(null);
     load();
+    notify(t('feedback.saved'));
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('accounts.deleteConfirm'))) return;
+    if (!(await confirm(t('accounts.deleteConfirm'), t('common.delete')))) return;
     try {
       await deleteAccount(id);
       load();
+      notify(t('feedback.deleted'));
     } catch (err) {
       setError(err.message);
     }
@@ -57,7 +65,7 @@ function AccountsSection() {
     <div className="section-card">
       <h2>{t('accounts.heading')}</h2>
       {isLoading ? (
-        <p className="list-empty">{t('accounts.loading')}</p>
+        <ListSkeleton label={t('accounts.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
@@ -66,7 +74,7 @@ function AccountsSection() {
       ) : (
         <>
           {accounts.length === 0 ? (
-            <p className="list-empty">{t('accounts.empty')}</p>
+            <EmptyState icon="wallet" message={t('accounts.empty')} />
           ) : (
             <ul className="account-list">
               {accounts.map(a => (
@@ -82,11 +90,11 @@ function AccountsSection() {
                       <div className="budget-row-header">
                         <span className="budget-category">{a.name}</span>
                         <span className={a.balance >= 0 ? 'income-amount' : 'expense-amount'}>
-                          ${a.balance.toFixed(2)}
+                          {formatCurrency(a.balance)}
                         </span>
                       </div>
                       <div className="budget-meta">
-                        {t('accounts.startingBalance', { amount: a.startingBalance.toFixed(2) })}
+                        {t('accounts.startingBalance', { amount: formatCurrency(a.startingBalance) })}
                       </div>
                       <div className="budget-actions">
                         <button onClick={() => setMoving({ id: a.id, type: 'income' })}>{t('common.credit')}</button>
@@ -101,7 +109,7 @@ function AccountsSection() {
                             categories={categories}
                             defaultAccount={a.name}
                             defaultType={moving.type}
-                            onSuccess={() => { setMoving(null); load(); }}
+                            onSuccess={() => { setMoving(null); load(); notify(t('feedback.added')); }}
                           />
                           <div className="budget-actions">
                             <button onClick={() => setMoving(null)}>{t('common.cancel')}</button>

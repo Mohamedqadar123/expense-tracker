@@ -129,7 +129,8 @@
   }
 
   .no-print,
-  .layout-header {
+  .layout-header,
+  .layout-nav {
     display: none !important;
   }
 

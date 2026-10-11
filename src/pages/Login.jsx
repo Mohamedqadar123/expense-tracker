@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import './Auth.css'
 import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { useAuth } from '../context/useAuth.js'
+import Field from '../components/Field.jsx'
 
 function Login() {
   const { login } = useAuth();
@@ -33,21 +34,25 @@ function Login() {
         <h1>Log In</h1>
         <p className="subtitle">Welcome back to Finance Tracker</p>
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          {error && <p className="auth-error">{error}</p>}
+          <Field label="Email">
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Field>
+          <Field label="Password">
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Field>
+          {error && <p className="auth-error" role="alert">{error}</p>}
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Log In'}
           </button>

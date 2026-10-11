@@ -15,14 +15,48 @@ import { CATEGORIES } from '../constants/categories'
 import { BUDGET_CATEGORIES } from '../constants/budgetCategories'
 import { mergeCategories } from '../utils/mergeCategories'
 import { getUsername, isNewUser } from '../utils/username'
-import { UserIcon } from './icons/Icons.jsx'
+import {
+  UserIcon, PlusIcon, HomeIcon, ListIcon, CardIcon, WalletIcon, TargetIcon,
+  RepeatIcon, ChartIcon, SparklesIcon, CalculatorIcon, ShieldIcon,
+} from './icons/Icons.jsx'
+import { useFeedback } from '../context/useFeedback.js'
 
 const categories = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
+
+// The desktop sidebar: every page, grouped by what it is for. Budgets and
+// Goals keep the icons they have in the phone's bottom nav.
+const NAV_GROUPS = [
+  {
+    label: 'nav.groupMoney',
+    items: [
+      { to: '/dashboard', label: 'nav.home', icon: <HomeIcon /> },
+      { to: '/transactions', label: 'nav.transactions', icon: <ListIcon /> },
+      { to: '/accounts', label: 'nav.accounts', icon: <CardIcon /> },
+    ],
+  },
+  {
+    label: 'nav.groupPlanning',
+    items: [
+      { to: '/budgets', label: 'nav.budgets', icon: <WalletIcon /> },
+      { to: '/goals', label: 'nav.goals', icon: <TargetIcon /> },
+      { to: '/recurring', label: 'nav.recurring', icon: <RepeatIcon /> },
+    ],
+  },
+  {
+    label: 'nav.groupInsights',
+    items: [
+      { to: '/reports', label: 'nav.reports', icon: <ChartIcon /> },
+      { to: '/finance-ai', label: 'nav.financeAI', icon: <SparklesIcon /> },
+      { to: '/calculator', label: 'nav.calculator', icon: <CalculatorIcon /> },
+    ],
+  },
+];
 
 function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { notify } = useFeedback();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const username = getUsername(user?.email);
@@ -45,55 +79,49 @@ function Layout() {
   return (
     <div className="layout">
       <header className="layout-header">
-        <div className="layout-top">
-          <span className="layout-brand">Finance Tracker</span>
-          <div className="layout-user">
-            <LanguageSelector />
-            <ThemeToggle />
-            <AccountMenu onLogout={handleLogout}>{userLabel}</AccountMenu>
-          </div>
+        <span className="layout-brand">Finance Tracker</span>
+        <div className="layout-user">
+          <button type="button" className="layout-add-button" onClick={() => setIsQuickAddOpen(true)}>
+            <PlusIcon />
+            <span>{t('nav.addTransaction')}</span>
+          </button>
+          <LanguageSelector />
+          <ThemeToggle />
+          <AccountMenu onLogout={handleLogout}>{userLabel}</AccountMenu>
         </div>
-        <nav className="layout-nav">
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.home')}
-          </NavLink>
-          <NavLink to="/transactions" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.transactions')}
-          </NavLink>
-          <NavLink to="/budgets" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.budgets')}
-          </NavLink>
-          <NavLink to="/accounts" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.accounts')}
-          </NavLink>
-          <NavLink to="/goals" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.goals')}
-          </NavLink>
-          <NavLink to="/reports" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.reports')}
-          </NavLink>
-          <NavLink to="/recurring" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.recurring')}
-          </NavLink>
-          <NavLink to="/finance-ai" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.financeAI')}
-          </NavLink>
-          <NavLink to="/calculator" className={({ isActive }) => isActive ? 'active' : ''}>
-            {t('nav.calculator')}
-          </NavLink>
-          {user?.isAdmin && (
-            <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : ''}>
-              {t('nav.admin')}
-            </NavLink>
-          )}
-        </nav>
       </header>
 
       <AccountBanners />
 
-      <main className="layout-main">
-        <Outlet />
-      </main>
+      <div className="layout-body">
+        <nav className="layout-nav">
+          <div className="layout-nav-inner">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.label} className="layout-nav-group">
+                <span className="layout-nav-group-label">{t(group.label)}</span>
+                {group.items.map(({ to, label, icon }) => (
+                  <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>
+                    {icon}
+                    <span>{t(label)}</span>
+                  </NavLink>
+                ))}
+              </div>
+            ))}
+            {user?.isAdmin && (
+              <div className="layout-nav-group">
+                <NavLink to="/admin" className={({ isActive }) => isActive ? 'active' : ''}>
+                  <ShieldIcon />
+                  <span>{t('nav.admin')}</span>
+                </NavLink>
+              </div>
+            )}
+          </div>
+        </nav>
+
+        <main className="layout-main">
+          <Outlet />
+        </main>
+      </div>
 
       <BottomNav onMoreClick={() => setIsMoreOpen(true)} />
       <FloatingAddButton onClick={() => setIsQuickAddOpen(true)} />
@@ -125,7 +153,7 @@ function Layout() {
       <BottomSheet isOpen={isQuickAddOpen} onClose={() => setIsQuickAddOpen(false)} title={t('nav.addTransaction')}>
         <QuickAddTransactionForm
           categories={categories}
-          onSuccess={() => setIsQuickAddOpen(false)}
+          onSuccess={() => { setIsQuickAddOpen(false); notify(t('feedback.added')); }}
         />
       </BottomSheet>
     </div>

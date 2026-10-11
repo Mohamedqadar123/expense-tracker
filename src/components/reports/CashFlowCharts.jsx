@@ -5,6 +5,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../../context/useTheme.js'
 import { getChartColors, getTooltipStyle } from '../../theme/chartColors.js'
+import { formatCurrency } from '../../utils/format'
 
 function CashFlowCharts({ dailyCashFlow, monthlyCashFlow }) {
   const { resolvedTheme } = useTheme();
@@ -24,7 +25,7 @@ function CashFlowCharts({ dailyCashFlow, monthlyCashFlow }) {
                 <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} />
                 <XAxis dataKey="date" fontSize={11} stroke={colors.axis} />
                 <YAxis fontSize={12} stroke={colors.axis} />
-                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} {...getTooltipStyle(colors)} />
+                <Tooltip formatter={(value) => formatCurrency(value)} {...getTooltipStyle(colors)} />
                 <Legend wrapperStyle={{ color: colors.legendText, fontSize: 13 }} />
                 <Line type="monotone" dataKey="income" stroke={colors.income} name={t('common.income')} dot={false} />
                 <Line type="monotone" dataKey="expenses" stroke={colors.expense} name={t('common.expense')} dot={false} />
@@ -46,7 +47,7 @@ function CashFlowCharts({ dailyCashFlow, monthlyCashFlow }) {
                 <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} />
                 <XAxis dataKey="month" fontSize={12} stroke={colors.axis} />
                 <YAxis fontSize={12} stroke={colors.axis} />
-                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} {...getTooltipStyle(colors)} />
+                <Tooltip formatter={(value) => formatCurrency(value)} {...getTooltipStyle(colors)} />
                 <Legend wrapperStyle={{ color: colors.legendText, fontSize: 13 }} />
                 <Bar dataKey="income" fill={colors.income} name={t('common.income')} />
                 <Bar dataKey="expenses" fill={colors.expense} name={t('common.expense')} />

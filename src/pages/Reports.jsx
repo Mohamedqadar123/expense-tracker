@@ -12,6 +12,7 @@ import CashFlowCharts from '../components/reports/CashFlowCharts.jsx'
 import BudgetPerformanceTable from '../components/reports/BudgetPerformanceTable.jsx'
 import TransactionsTable from '../components/reports/TransactionsTable.jsx'
 import ReportExportToolbar from '../components/reports/ReportExportToolbar.jsx'
+import { OverviewSkeleton } from '../components/feedback/Skeleton.jsx'
 
 function todayString() {
   const today = new Date();
@@ -73,7 +74,7 @@ function Reports() {
       </div>
 
       {isLoading ? (
-        <p className="dashboard-status">{t('reports.loading')}</p>
+        <OverviewSkeleton label={t('reports.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>

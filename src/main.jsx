@@ -8,6 +8,7 @@ import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { LanguageProvider } from './context/LanguageContext.jsx'
+import { FeedbackProvider } from './context/FeedbackContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')).render(
       <LanguageProvider>
         <BrowserRouter>
           <AuthProvider>
-            <App />
+            <FeedbackProvider>
+              <App />
+            </FeedbackProvider>
           </AuthProvider>
         </BrowserRouter>
       </LanguageProvider>

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { BUDGET_STATUS_LABEL } from '../../utils/budgetStatus'
+import { formatCurrency, formatDate } from '../../utils/format'
 
 function BudgetPerformanceTable({ budgets }) {
   const { t } = useTranslation();
@@ -23,8 +24,8 @@ function BudgetPerformanceTable({ budgets }) {
                 </span>
               </div>
               <div className="budget-amounts">
-                <span>{t('budgets.spentOf', { spent: b.spent.toFixed(2), amount: b.amount.toFixed(2) })}</span>
-                <span>{t('budgets.remaining', { remaining: Math.max(b.remaining, 0).toFixed(2) })}</span>
+                <span>{t('budgets.spentOf', { spent: formatCurrency(b.spent), amount: formatCurrency(b.amount) })}</span>
+                <span>{t('budgets.remaining', { remaining: formatCurrency(Math.max(b.remaining, 0)) })}</span>
                 <span>{b.percentUsed.toFixed(0)}%</span>
               </div>
               <div className="progress-bar">
@@ -34,7 +35,7 @@ function BudgetPerformanceTable({ budgets }) {
                 />
               </div>
               <p className="budget-dates">
-                {b.startDate.slice(0, 10)} – {b.endDate.slice(0, 10)}
+                {formatDate(b.startDate)} – {formatDate(b.endDate)}
               </p>
             </li>
           ))}

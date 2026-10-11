@@ -10,9 +10,14 @@ import {
 } from '../../api/recurring'
 import RecurringTransactionForm from './RecurringTransactionForm.jsx'
 import RecurringTransactionHistory from './RecurringTransactionHistory.jsx'
+import { formatSignedCurrency, formatDate } from '../../utils/format'
+import { useFeedback } from '../../context/useFeedback.js'
+import { ListSkeleton } from '../feedback/Skeleton.jsx'
+import EmptyState from '../feedback/EmptyState.jsx'
 
 function RecurringTransactionsSection() {
   const { t } = useTranslation();
+  const { confirm, notify } = useFeedback();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,19 +41,22 @@ function RecurringTransactionsSection() {
   const handleCreate = async (data) => {
     await createRecurringTransaction(data);
     load();
+    notify(t('feedback.added'));
   };
 
   const handleUpdate = async (id, data) => {
     await updateRecurringTransaction(id, data);
     setEditingId(null);
     load();
+    notify(t('feedback.saved'));
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('recurring.deleteConfirm'))) return;
+    if (!(await confirm(t('recurring.deleteConfirm'), t('common.delete')))) return;
     try {
       await deleteRecurringTransaction(id);
       load();
+      notify(t('feedback.deleted'));
     } catch (err) {
       setError(err.message);
     }
@@ -58,6 +66,7 @@ function RecurringTransactionsSection() {
     try {
       await pauseRecurringTransaction(id);
       load();
+      notify(t('feedback.saved'));
     } catch (err) {
       setError(err.message);
     }
@@ -67,6 +76,7 @@ function RecurringTransactionsSection() {
     try {
       await resumeRecurringTransaction(id);
       load();
+      notify(t('feedback.saved'));
     } catch (err) {
       setError(err.message);
     }
@@ -76,7 +86,7 @@ function RecurringTransactionsSection() {
     <div className="section-card">
       <h2>{t('recurring.title')}</h2>
       {isLoading ? (
-        <p className="list-empty">{t('recurring.loading')}</p>
+        <ListSkeleton label={t('recurring.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
@@ -85,7 +95,7 @@ function RecurringTransactionsSection() {
       ) : (
         <>
           {items.length === 0 ? (
-            <p className="list-empty">{t('recurring.empty')}</p>
+            <EmptyState icon="repeat" message={t('recurring.empty')} />
           ) : (
             <ul className="recurring-list">
               {items.map(r => (
@@ -109,12 +119,12 @@ function RecurringTransactionsSection() {
                       </div>
                       <div className="recurring-amounts">
                         <span className={r.type === 'income' ? 'income-amount' : 'expense-amount'}>
-                          {r.type === 'income' ? '+' : '-'}${r.amount.toFixed(2)}
+                          {formatSignedCurrency(r.amount, r.type)}
                         </span>
-                        <span>{t('recurring.next', { date: r.nextExecutionDate.slice(0, 10) })}</span>
+                        <span>{t('recurring.next', { date: formatDate(r.nextExecutionDate) })}</span>
                       </div>
                       <p className="recurring-dates">
-                        {r.startDate.slice(0, 10)} – {r.endDate ? r.endDate.slice(0, 10) : t('recurring.noEndDate')}
+                        {formatDate(r.startDate)} – {r.endDate ? formatDate(r.endDate) : t('recurring.noEndDate')}
                       </p>
                       <div className="recurring-actions">
                         <button onClick={() => setEditingId(r.id)}>{t('common.edit')}</button>

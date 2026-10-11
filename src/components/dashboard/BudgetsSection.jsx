@@ -3,9 +3,14 @@ import { useTranslation } from 'react-i18next'
 import { getBudgets, createBudget, updateBudget, deleteBudget } from '../../api/budgets'
 import BudgetForm from './BudgetForm.jsx'
 import { BUDGET_STATUS_LABEL } from '../../utils/budgetStatus'
+import { formatCurrency, formatDate } from '../../utils/format'
+import { useFeedback } from '../../context/useFeedback.js'
+import { ListSkeleton } from '../feedback/Skeleton.jsx'
+import EmptyState from '../feedback/EmptyState.jsx'
 
 function BudgetsSection() {
   const { t } = useTranslation();
+  const { confirm, notify } = useFeedback();
   const [budgets, setBudgets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,19 +36,22 @@ function BudgetsSection() {
   const handleCreate = async (data) => {
     await createBudget(data);
     load();
+    notify(t('feedback.added'));
   };
 
   const handleUpdate = async (id, data) => {
     await updateBudget(id, data);
     setEditingId(null);
     load();
+    notify(t('feedback.saved'));
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t('budgets.deleteConfirm'))) return;
+    if (!(await confirm(t('budgets.deleteConfirm'), t('common.delete')))) return;
     try {
       await deleteBudget(id);
       load();
+      notify(t('feedback.deleted'));
     } catch (err) {
       setError(err.message);
     }
@@ -53,7 +61,7 @@ function BudgetsSection() {
     <div className="section-card">
       <h2>{t('budgets.progress')}</h2>
       {isLoading ? (
-        <p className="list-empty">{t('budgets.loading')}</p>
+        <ListSkeleton label={t('budgets.loading')} />
       ) : error ? (
         <div className="dashboard-error">
           <p>{error}</p>
@@ -62,7 +70,7 @@ function BudgetsSection() {
       ) : (
         <>
           {budgets.length === 0 ? (
-            <p className="list-empty">{t('budgets.empty')}</p>
+            <EmptyState icon="bell" message={t('budgets.empty')} />
           ) : (
             <ul className="budget-list">
               {budgets.map(b => (
@@ -85,8 +93,8 @@ function BudgetsSection() {
                         </span>
                       </div>
                       <div className="budget-amounts">
-                        <span>{t('budgets.spentOf', { spent: b.spent.toFixed(2), amount: b.amount.toFixed(2) })}</span>
-                        <span>{t('budgets.remaining', { remaining: Math.max(b.remaining, 0).toFixed(2) })}</span>
+                        <span>{t('budgets.spentOf', { spent: formatCurrency(b.spent), amount: formatCurrency(b.amount) })}</span>
+                        <span>{t('budgets.remaining', { remaining: formatCurrency(Math.max(b.remaining, 0)) })}</span>
                         <span>{b.percentUsed.toFixed(0)}%</span>
                       </div>
                       <div className="progress-bar">
@@ -96,7 +104,7 @@ function BudgetsSection() {
                         />
                       </div>
                       <p className="budget-dates">
-                        {b.startDate.slice(0, 10)} – {b.endDate.slice(0, 10)}
+                        {formatDate(b.startDate)} – {formatDate(b.endDate)}
                       </p>
                       <div className="budget-actions">
                         <button onClick={() => setEditingId(b.id)}>{t('common.edit')}</button>

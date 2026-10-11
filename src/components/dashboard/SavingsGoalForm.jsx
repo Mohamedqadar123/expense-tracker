@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
+import Field from '../Field.jsx'
 
 function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -50,14 +51,24 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
 
   return (
     <form className="inline-form" onSubmit={handleSubmit}>
-      <input type="text" placeholder={t('goals.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="number" placeholder={t('goals.targetAmountPlaceholder')} value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} min="0.01" step="0.01" />
-      <input type="number" placeholder={t('goals.savedSoFarPlaceholder')} value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} min="0" step="0.01" />
-      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
-      <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+      <Field label={t('goals.namePlaceholder')} wide>
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+      </Field>
+      <Field label={t('goals.targetAmountPlaceholder')}>
+        <input type="number" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} min="0.01" step="0.01" required />
+      </Field>
+      <Field label={t('goals.savedSoFarPlaceholder')}>
+        <input type="number" value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} min="0" step="0.01" />
+      </Field>
+      <Field label={t('transactions.account')}>
+        <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
+      </Field>
+      <Field label={t('goals.targetDate')}>
+        <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+      </Field>
       <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
       {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
-      {error && <p className="auth-error">{error}</p>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
       <p className="form-hint">{t('goals.accountHint')}</p>
     </form>
   );

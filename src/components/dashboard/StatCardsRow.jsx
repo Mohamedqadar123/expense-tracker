@@ -1,9 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import StatCard from './StatCard.jsx'
-
-function formatCurrency(n) {
-  return `$${n.toFixed(2)}`;
-}
+import { formatCurrency } from '../../utils/format'
 
 function StatCardsRow({ summary }) {
   const { t } = useTranslation();

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import './Auth.css'
 import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { useAuth } from '../context/useAuth.js'
+import Field from '../components/Field.jsx'
 
 const PAID_PLANS = { standard: 'Standard', pro: 'Pro' };
 
@@ -69,28 +70,34 @@ function Signup() {
           </p>
         )}
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Name (optional)"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password (min. 8 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-          {error && <p className="auth-error">{error}</p>}
+          <Field label="Name (optional)">
+            <input
+              type="text"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Field>
+          <Field label="Email">
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Field>
+          <Field label="Password (min. 8 characters)">
+            <input
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </Field>
+          {error && <p className="auth-error" role="alert">{error}</p>}
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Creating account...' : 'Sign Up'}
           </button>

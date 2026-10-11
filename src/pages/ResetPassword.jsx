@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import './Auth.css'
 import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { resetPassword } from '../api/auth'
+import Field from '../components/Field.jsx'
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -36,15 +37,17 @@ function ResetPassword() {
       <>
         <p className="subtitle">Choose a new password</p>
         <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            placeholder="New password (min. 8 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-          {error && <p className="auth-error">{error}</p>}
+          <Field label="New password (min. 8 characters)">
+            <input
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </Field>
+          {error && <p className="auth-error" role="alert">{error}</p>}
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : 'Set New Password'}
           </button>

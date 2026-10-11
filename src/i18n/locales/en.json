@@ -15,7 +15,10 @@
     "debit": "Debit",
     "to": "to",
     "notAvailable": "N/A",
-    "welcome": "Welcome, {{name}}"
+    "welcome": "Welcome, {{name}}",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "confirm": "Confirm"
   },
   "nav": {
     "home": "Home",
@@ -30,7 +33,10 @@
     "more": "More",
     "addTransaction": "Add Transaction",
     "billing": "Plan & billing",
-    "admin": "Admin"
+    "admin": "Admin",
+    "groupMoney": "Money",
+    "groupPlanning": "Planning",
+    "groupInsights": "Insights"
   },
   "theme": {
     "label": "Theme",
@@ -57,7 +63,7 @@
     "custom": "Custom"
   },
   "alerts": {
-    "overBudget": "You're over budget for \"{{name}}\" (${{spent}} of ${{amount}}).",
+    "overBudget": "You're over budget for \"{{name}}\" ({{spent}} of {{amount}}).",
     "nearBudget": "You've used {{percent}}% of your \"{{name}}\" budget."
   },
   "dashboard": {
@@ -111,7 +117,8 @@
     "adding": "Adding…",
     "prev": "Prev",
     "next": "Next",
-    "pageOf": "Page {{page}} of {{totalPages}} ({{total}} total)"
+    "pageOf": "Page {{page}} of {{totalPages}} ({{total}} total)",
+    "sortBy": "Sort by"
   },
   "budgets": {
     "title": "Budgets",
@@ -123,11 +130,12 @@
     "empty": "No budgets yet — add one below.",
     "emptyReport": "No budgets to report on.",
     "deleteConfirm": "Delete this budget?",
-    "spentOf": "${{spent}} spent of ${{amount}}",
-    "remaining": "${{remaining}} remaining",
+    "spentOf": "{{spent}} spent of {{amount}}",
+    "remaining": "{{remaining}} remaining",
     "addBudget": "Add Budget",
     "namePlaceholder": "Budget name",
-    "amountPlaceholder": "Amount"
+    "amountPlaceholder": "Amount",
+    "period": "Period"
   },
   "goals": {
     "title": "Goals",
@@ -142,7 +150,8 @@
     "namePlaceholder": "Goal name",
     "targetAmountPlaceholder": "Target amount",
     "savedSoFarPlaceholder": "Saved so far",
-    "accountHint": "Saved money is debited from the selected account. Lowering the saved amount credits it back."
+    "accountHint": "Saved money is debited from the selected account. Lowering the saved amount credits it back.",
+    "targetDate": "Target date (optional)"
   },
   "reports": {
     "title": "Financial Reports",
@@ -183,7 +192,8 @@
     "historyLoadError": "Failed to load history",
     "noOccurrences": "No occurrences generated yet.",
     "transactionDeleted": "transaction deleted",
-    "endDateOptionalPlaceholder": "End date (optional)"
+    "endDateOptionalPlaceholder": "End date (optional)",
+    "frequency": "Frequency"
   },
   "financeAI": {
     "title": "Finance AI",
@@ -216,12 +226,13 @@
     "loadError": "Failed to load accounts",
     "empty": "No accounts yet — add one below, e.g. \"Bank\" or \"EVC\".",
     "deleteConfirm": "Delete this account? An account that has transactions cannot be deleted.",
-    "startingBalance": "Starting balance: ${{amount}}",
+    "startingBalance": "Starting balance: {{amount}}",
     "addAccount": "Add Account",
     "namePlaceholder": "Account name (e.g. Salam Bank, EVC Plus)",
     "startingBalancePlaceholder": "Starting balance",
     "yourAccounts": "Your accounts",
-    "presetAccounts": "Banks and mobile money"
+    "presetAccounts": "Banks and mobile money",
+    "name": "Account name"
   },
   "billing": {
     "title": "Subscription",
@@ -272,5 +283,10 @@
     "unsubscribeConfirm": "Unsubscribe from your plan? You keep full access until {{date}}, which you have already paid for. After that your plan ends and you will need to subscribe again to keep using the app.",
     "unsubscribed": "You have unsubscribed. Your {{plan}} plan stays active until {{date}}, then ends.",
     "keepPlan": "Keep my plan"
+  },
+  "feedback": {
+    "added": "Added",
+    "saved": "Changes saved",
+    "deleted": "Deleted"
   }
 }

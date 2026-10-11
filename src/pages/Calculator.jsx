@@ -13,6 +13,7 @@ import {
   chooseOperator,
   calculateResult,
 } from '../utils/calculator'
+import { useFeedback } from '../context/useFeedback.js'
 
 const HISTORY_STORAGE_KEY = 'calculator:history';
 const MAX_HISTORY = 20;
@@ -29,6 +30,7 @@ function loadHistory() {
 
 function Calculator() {
   const { t } = useTranslation();
+  const { confirm } = useFeedback();
   const [state, setState] = useState(initialCalculatorState);
   const [history, setHistory] = useState(loadHistory);
 
@@ -83,8 +85,8 @@ function Calculator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
-  const handleClearHistory = () => {
-    if (!window.confirm(t('calculator.clearHistoryConfirm'))) return;
+  const handleClearHistory = async () => {
+    if (!(await confirm(t('calculator.clearHistoryConfirm'), t('calculator.clearHistory')))) return;
     setHistory([]);
   };
 

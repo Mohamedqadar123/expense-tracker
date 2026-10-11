@@ -87,3 +87,70 @@ export function CloseIcon() {
     </svg>
   );
 }
+
+export function CheckIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <polyline points="5 12 10 17 19 7" />
+    </svg>
+  );
+}
+
+export function CardIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+    </svg>
+  );
+}
+
+export function RepeatIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M17 2l4 4-4 4" />
+      <path d="M3 11V9a3 3 0 0 1 3-3h15" />
+      <path d="M7 22l-4-4 4-4" />
+      <path d="M21 13v2a3 3 0 0 1-3 3H3" />
+    </svg>
+  );
+}
+
+export function ChartIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M4 20V10" />
+      <path d="M10 20V4" />
+      <path d="M16 20v-7" />
+      <path d="M22 20H2" />
+    </svg>
+  );
+}
+
+export function SparklesIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />
+      <path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7z" />
+    </svg>
+  );
+}
+
+export function CalculatorIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M8 6h8" />
+      <path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01" />
+    </svg>
+  );
+}
+
+export function ShieldIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z" />
+    </svg>
+  );
+}

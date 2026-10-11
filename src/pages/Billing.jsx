@@ -9,6 +9,7 @@ import PlanSlides from '../components/PlanSlides.jsx'
 import { PLAN_ORDER } from '../constants/plans'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 import LanguageSelector from '../components/LanguageSelector.jsx'
+import { useFeedback } from '../context/useFeedback.js'
 
 // Visitors pick a plan here and are sent on to sign up with it. Signed-in
 // users reach it from the account menu, inside the app, to see their current
@@ -16,6 +17,7 @@ import LanguageSelector from '../components/LanguageSelector.jsx'
 function Billing() {
   const { user, isLoading: isAuthLoading, refreshUser } = useAuth();
   const { t, i18n } = useTranslation();
+  const { confirm } = useFeedback();
   const [searchParams] = useSearchParams();
   const requestedPlan = searchParams.get('plan');
   const [activePlan, setActivePlan] = useState(PLAN_ORDER.includes(requestedPlan) ? requestedPlan : 'free');
@@ -70,7 +72,7 @@ function Billing() {
   // what will happen: the plan runs to the date already paid for, then ends.
   const handleUnsubscribe = async () => {
     const until = new Date(user.access.paidUntil).toLocaleDateString(i18n.language);
-    if (!window.confirm(t('billing.unsubscribeConfirm', { date: until }))) return;
+    if (!(await confirm(t('billing.unsubscribeConfirm', { date: until }), t('billing.unsubscribe')))) return;
     setPlanError(null);
     try {
       await unsubscribe();

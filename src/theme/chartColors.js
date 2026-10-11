@@ -25,7 +25,7 @@ const CHART_COLORS = {
     legendText: '#e8e8e8',
     income: '#66bb6a',
     expense: '#ef5350',
-    neutral: '#e0e0e0',
+    neutral: '#5ea7e8',
     net: '#64b5f6',
     categorical: ['#e0e0e0', '#ef5350', '#66bb6a', '#64b5f6', '#ffca28', '#ba68c8', '#4dd0e1'],
   },

@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../../context/useTheme.js'
 import { getChartColors, getTooltipStyle } from '../../theme/chartColors.js'
+import { formatCurrency } from '../../utils/format'
 
 function CategoryPie({ title, data, emptyMessage }) {
   const { resolvedTheme } = useTheme();
@@ -19,7 +20,7 @@ function CategoryPie({ title, data, emptyMessage }) {
                   <Cell key={entry.category} fill={colors.categorical[index % colors.categorical.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} {...getTooltipStyle(colors)} />
+              <Tooltip formatter={(value) => formatCurrency(value)} {...getTooltipStyle(colors)} />
               <Legend wrapperStyle={{ color: colors.legendText, fontSize: 13 }} />
             </PieChart>
           </ResponsiveContainer>
