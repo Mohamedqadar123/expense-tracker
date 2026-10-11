@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import './Auth.css'
 import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { useAuth } from '../context/useAuth.js'
@@ -13,6 +13,7 @@ function VerifyEmail() {
   // Present when the person chose a paid plan before signing up.
   const plan = PAID_PLANS.includes(searchParams.get('plan')) ? searchParams.get('plan') : null;
   const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
   const [state, setState] = useState(token ? 'verifying' : 'error');
   // The token is single-use, so the request must go out exactly once even
   // though StrictMode runs effects twice in development.
@@ -25,11 +26,15 @@ function VerifyEmail() {
       .then(() => {
         setState('verified');
         // Confirming a new sign-up creates the account and signs it in, so
-        // pick up the session.
-        refreshUser().catch(() => {});
+        // pick up the session and go straight into the app (or on to paying
+        // for the plan chosen beforehand). If the session can't be picked
+        // up, the page stays and offers the log-in link instead.
+        return refreshUser()
+          .then(() => navigate(plan ? `/billing?plan=${plan}` : '/dashboard', { replace: true }))
+          .catch(() => {});
       })
       .catch(() => setState('error'));
-  }, [token, refreshUser]);
+  }, [token, plan, refreshUser, navigate]);
 
   return (
     <div className="auth-page">

@@ -121,14 +121,11 @@ router.post('/signup', authLimiter, emailLimiter, asyncHandler(async (req, res) 
 
   const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
   const token = await savePendingSignup({ email, passwordHash, name });
-  try {
-    await sendVerificationEmail(email, token, PAID_PLAN_IDS.includes(plan) ? plan : null);
-  } catch (err) {
-    console.error(err);
-    return res.status(502).json({
-      error: 'We could not send a verification email to that address. Check it and try again.',
-    });
-  }
+  // Sent without awaiting it: handing the email to the mail server takes
+  // several seconds, and the person only needs to be told to check their
+  // inbox. A failed send is logged, and signing up again sends a new link.
+  sendVerificationEmail(email, token, PAID_PLAN_IDS.includes(plan) ? plan : null)
+    .catch((err) => console.error(err));
 
   res.status(202).json({ message: 'Check your email to finish creating your account', email });
 }));
