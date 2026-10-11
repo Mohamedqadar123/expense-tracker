@@ -7,6 +7,10 @@ import Anthropic from '@anthropic-ai/sdk';
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const client = apiKey ? new Anthropic({ apiKey }) : null;
 
+if (!client && process.env.NODE_ENV !== 'test') {
+  console.warn('ANTHROPIC_API_KEY is not set: Finance AI will reply with a plain summary of the figures instead of an answer from Claude. Set it in server/.env to turn the assistant on.');
+}
+
 export class AiServiceError extends Error {
   constructor(message, status = 502) {
     super(message);
@@ -22,12 +26,14 @@ function formatMoney(n) {
 
 // Deterministic, no-network stand-in for askFinancialQuestion, used when
 // ANTHROPIC_API_KEY isn't configured so the Finance AI feature still works
-// end-to-end (storage, history, UI) during local development. Never claims
-// to be a real AI answer — always labeled as a mock response.
+// end-to-end (storage, history, UI). Never claims to be a real AI answer: it
+// says plainly that the assistant is not set up. It is written for whoever
+// is using the app, so how to set the key is in the startup log above, not
+// in the reply.
 function buildMockAnswer({ summary, question }) {
   const month = summary?.currentMonth;
   const lines = [
-    `[Mock response — no ANTHROPIC_API_KEY is configured, so this is placeholder data, not a real AI answer]`,
+    "Finance AI isn't set up yet, so this is a plain summary of your own figures, not an AI answer.",
     '',
     `You asked: "${question}"`,
     '',
@@ -42,8 +48,6 @@ function buildMockAnswer({ summary, question }) {
   } else {
     lines.push("I don't have enough transaction data yet to answer that.");
   }
-
-  lines.push('', 'Set ANTHROPIC_API_KEY in server/.env to get real answers from Claude instead of this placeholder.');
 
   return lines.join('\n');
 }

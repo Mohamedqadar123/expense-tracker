@@ -5,6 +5,7 @@ import './FinanceAI.css'
 import { getAiMessages, askAiQuestion, clearAiMessages } from '../api/financeAI'
 import ChatMessageList from '../components/financeAI/ChatMessageList.jsx'
 import { useFeedback } from '../context/useFeedback.js'
+import { loadErrorMessage } from '../api/config'
 
 function FinanceAI() {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ function FinanceAI() {
     setLoadError(null);
     getAiMessages()
       .then(setHistory)
-      .catch(() => setLoadError(t('financeAI.loadError')))
+      .catch((err) => setLoadError(loadErrorMessage(err, t('financeAI.loadError'))))
       .finally(() => setIsLoading(false));
   };
 
@@ -56,8 +57,13 @@ function FinanceAI() {
 
   const handleClear = async () => {
     if (!(await confirm(t('financeAI.clearConfirm'), t('financeAI.clearHistory')))) return;
-    await clearAiMessages();
-    setHistory([]);
+    setSendError(null);
+    try {
+      await clearAiMessages();
+      setHistory([]);
+    } catch (err) {
+      setSendError(err.message);
+    }
   };
 
   return (

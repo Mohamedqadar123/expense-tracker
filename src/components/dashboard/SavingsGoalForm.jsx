@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
 import Field from '../Field.jsx'
+import { useSubmitGuard } from '../../hooks/useSubmitGuard.js'
 
 function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
   const [savedAmount, setSavedAmount] = useState(initialValues?.savedAmount ?? 0);
   const [targetDate, setTargetDate] = useState(initialValues?.targetDate ? initialValues.targetDate.slice(0, 10) : '');
   const [error, setError] = useState(null);
+  const saving = useSubmitGuard();
   const [accounts, setAccounts] = useState([]);
   const [account, setAccount] = useState('');
 
@@ -23,13 +25,14 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
         setAccounts(list);
         setAccount((current) => current || list[0]?.name || '');
       })
-      .catch(() => {});
+      .catch(console.error);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     if (!name || !targetAmount || Number(targetAmount) <= 0) return;
+    if (!saving.begin()) return;
     try {
       await onSubmit({
         name,
@@ -46,6 +49,8 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      saving.end();
     }
   };
 
@@ -66,8 +71,11 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
       <Field label={t('goals.targetDate')}>
         <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
       </Field>
-      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
-      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
+      <button type="submit" disabled={saving.isPending} aria-busy={saving.isPending}>
+        {saving.isPending && <span className="button-spinner" aria-hidden="true" />}
+        {saving.isPending ? t('common.saving') : initialValues ? t('common.save') : t('common.add')}
+      </button>
+      {onCancel && <button type="button" onClick={onCancel} disabled={saving.isPending}>{t('common.cancel')}</button>}
       {error && <p className="auth-error" role="alert">{error}</p>}
       <p className="form-hint">{t('goals.accountHint')}</p>
     </form>

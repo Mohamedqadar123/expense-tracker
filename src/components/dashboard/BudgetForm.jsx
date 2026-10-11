@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BUDGET_CATEGORIES, BUDGET_PERIODS } from '../../constants/budgetCategories'
 import { computePeriodDates } from '../../utils/budgetPeriod'
 import Field from '../Field.jsx'
+import { useSubmitGuard } from '../../hooks/useSubmitGuard.js'
 
 function BudgetForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
     initialValues?.endDate ? initialValues.endDate.slice(0, 10) : defaultDates?.end || ''
   );
   const [error, setError] = useState(null);
+  const saving = useSubmitGuard();
 
   const handlePeriodChange = (nextPeriod) => {
     setPeriod(nextPeriod);
@@ -32,6 +34,7 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
     e.preventDefault();
     setError(null);
     if (!name || !amount || Number(amount) <= 0 || !startDate || !endDate) return;
+    if (!saving.begin()) return;
     try {
       await onSubmit({ name, category, amount: Number(amount), period, startDate, endDate });
       if (!initialValues) {
@@ -44,6 +47,8 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      saving.end();
     }
   };
 
@@ -97,8 +102,11 @@ function BudgetForm({ initialValues, onSubmit, onCancel }) {
           required
         />
       </Field>
-      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
-      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
+      <button type="submit" disabled={saving.isPending} aria-busy={saving.isPending}>
+        {saving.isPending && <span className="button-spinner" aria-hidden="true" />}
+        {saving.isPending ? t('common.saving') : initialValues ? t('common.save') : t('common.add')}
+      </button>
+      {onCancel && <button type="button" onClick={onCancel} disabled={saving.isPending}>{t('common.cancel')}</button>}
       {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );

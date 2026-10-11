@@ -67,6 +67,10 @@ function Calculator() {
 
   useEffect(() => {
     const onKeyDown = (e) => {
+      // Keys typed into a field or an open dialog (e.g. Add Transaction)
+      // belong to it, as do browser shortcuts such as Ctrl+1.
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.target.closest?.('input, select, textarea, [contenteditable="true"], [role="dialog"], [role="alertdialog"]')) return;
       if (/^[0-9]$/.test(e.key)) { handleDigit(e.key); return; }
       if (e.key === '.') { handleDecimal(); return; }
       if (e.key === '+') { handleOperator('+'); return; }

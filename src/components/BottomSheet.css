@@ -10,6 +10,8 @@
 .bottom-sheet {
   width: 100%;
   max-height: 85vh;
+  /* The part of the screen actually visible, where the browser knows it */
+  max-height: 85dvh;
   overflow-y: auto;
   background: var(--color-surface);
   color: var(--color-text);

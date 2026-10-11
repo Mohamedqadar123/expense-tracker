@@ -168,3 +168,15 @@ textarea.input {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-md);
 }
+
+/* --- Touch screens ---------------------------------------------------------- */
+
+/* Below the desktop shell everything is used by finger: the small buttons
+   that suit a mouse grow to a full touch target. */
+@media (max-width: 1023.98px) {
+  .btn-sm {
+    min-height: var(--touch-target);
+    padding: 0 var(--space-4);
+    font-size: var(--font-size-md);
+  }
+}

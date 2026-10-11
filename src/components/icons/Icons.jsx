@@ -154,3 +154,68 @@ export function ShieldIcon() {
     </svg>
   );
 }
+
+export function BankIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M3 10l9-6 9 6" />
+      <path d="M5 10v8M10 10v8M14 10v8M19 10v8" />
+      <path d="M3 21h18" />
+    </svg>
+  );
+}
+
+export function ChevronLeftIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <polyline points="15 6 9 12 15 18" />
+    </svg>
+  );
+}
+
+export function ArrowUpIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M12 19V5" />
+      <path d="M6 11l6-6 6 6" />
+    </svg>
+  );
+}
+
+export function ArrowDownIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M12 5v14" />
+      <path d="M6 13l6 6 6-6" />
+    </svg>
+  );
+}
+
+export function PercentIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <path d="M19 5L5 19" />
+      <circle cx="7" cy="7" r="2.5" />
+      <circle cx="17" cy="17" r="2.5" />
+    </svg>
+  );
+}
+
+export function PhoneIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <rect x="7" y="2" width="10" height="20" rx="2" />
+      <path d="M11 18h2" />
+    </svg>
+  );
+}
+
+export function CashIcon() {
+  return (
+    <svg {...common} aria-hidden="true">
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M6 10v4M18 10v4" />
+    </svg>
+  );
+}

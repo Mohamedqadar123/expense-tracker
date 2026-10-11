@@ -18,6 +18,8 @@
   --control-height: 40px;
   --control-height-sm: 32px;
   --page-width: 1100px;
+  --sidebar-width: 248px;
+  --sidebar-width-collapsed: 68px;
 
   --font-size-base: 16px;
   --line-height-base: 1.5;

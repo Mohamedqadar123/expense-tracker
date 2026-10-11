@@ -2,15 +2,26 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FREQUENCIES, RECURRING_TYPES } from '../../constants/frequencies'
 import { CATEGORIES } from '../../constants/categories'
+import { BUDGET_CATEGORIES } from '../../constants/budgetCategories'
+import { mergeCategories } from '../../utils/mergeCategories'
 import { isIncomeCategory } from '../../constants/incomeCategories'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
 import Field from '../Field.jsx'
+import { useSubmitGuard } from '../../hooks/useSubmitGuard.js'
+
+// The same categories the transaction form offers, so a recurring item can
+// fall under any budget a one-off transaction can.
+const ALL_CATEGORIES = mergeCategories(CATEGORIES, BUDGET_CATEGORIES);
+
+function todayAsDateInputValue() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
-  const incomeCategories = CATEGORIES.filter((c) => isIncomeCategory(c));
-  const expenseCategories = CATEGORIES.filter((c) => !isIncomeCategory(c));
+  const incomeCategories = ALL_CATEGORIES.filter((c) => isIncomeCategory(c));
+  const expenseCategories = ALL_CATEGORIES.filter((c) => !isIncomeCategory(c));
   const [description, setDescription] = useState(initialValues?.description || '');
   const [amount, setAmount] = useState(initialValues?.amount ?? '');
   const [type, setType] = useState(initialValues?.type || RECURRING_TYPES[1].value);
@@ -18,14 +29,18 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
   const [account, setAccount] = useState(initialValues?.account || '');
   const [frequency, setFrequency] = useState(initialValues?.frequency || FREQUENCIES[2].value);
   const [startDate, setStartDate] = useState(
-    initialValues?.startDate ? initialValues.startDate.slice(0, 10) : ''
+    initialValues?.startDate ? initialValues.startDate.slice(0, 10) : todayAsDateInputValue()
   );
   const [endDate, setEndDate] = useState(
     initialValues?.endDate ? initialValues.endDate.slice(0, 10) : ''
   );
   const [error, setError] = useState(null);
+  const saving = useSubmitGuard();
   const [accounts, setAccounts] = useState([]);
-  const visibleCategories = type === 'income' ? incomeCategories : expenseCategories;
+  const typeCategories = type === 'income' ? incomeCategories : expenseCategories;
+  // Keeps the current category selectable when editing an item whose
+  // category isn't in the list.
+  const visibleCategories = typeCategories.includes(category) ? typeCategories : [category, ...typeCategories];
 
   // Each occurrence is debited from or credited to one of the user's
   // accounts, so one is always selected (the first by default).
@@ -36,13 +51,14 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         setAccounts(list);
         setAccount((current) => current || list[0]?.name || '');
       })
-      .catch(() => {});
+      .catch(console.error);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     if (!description || !amount || Number(amount) <= 0 || !startDate) return;
+    if (!saving.begin()) return;
     try {
       await onSubmit({
         description,
@@ -61,11 +77,13 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
         setCategory(expenseCategories[0]);
         setAccount(accounts[0]?.name || '');
         setFrequency(FREQUENCIES[2].value);
-        setStartDate('');
+        setStartDate(todayAsDateInputValue());
         setEndDate('');
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      saving.end();
     }
   };
 
@@ -96,7 +114,7 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
           setCategory((newType === 'income' ? incomeCategories : expenseCategories)[0] || CATEGORIES[0]);
         }}>
           {RECURRING_TYPES.map(rt => (
-            <option key={rt.value} value={rt.value}>{t(`common.${rt.value === 'income' ? 'credit' : 'debit'}`)}</option>
+            <option key={rt.value} value={rt.value}>{t(`common.${rt.value}`)}</option>
           ))}
         </select>
       </Field>
@@ -132,8 +150,11 @@ function RecurringTransactionForm({ initialValues, onSubmit, onCancel }) {
           onChange={(e) => setEndDate(e.target.value)}
         />
       </Field>
-      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
-      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
+      <button type="submit" disabled={saving.isPending} aria-busy={saving.isPending}>
+        {saving.isPending && <span className="button-spinner" aria-hidden="true" />}
+        {saving.isPending ? t('common.saving') : initialValues ? t('common.save') : t('common.add')}
+      </button>
+      {onCancel && <button type="button" onClick={onCancel} disabled={saving.isPending}>{t('common.cancel')}</button>}
       {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );

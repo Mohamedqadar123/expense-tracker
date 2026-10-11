@@ -11,6 +11,17 @@
   color: var(--color-text-subtle);
 }
 
+.field-invalid input,
+.field-invalid select,
+.field-invalid textarea {
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+}
+
 /* Side by side in a desktop form row; below that forms stack (see shared.css). */
 @media (min-width: 1024px) {
   .inline-form .field {

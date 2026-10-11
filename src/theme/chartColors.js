@@ -14,7 +14,9 @@ const CHART_COLORS = {
     expense: '#dc2626',
     neutral: '#2563eb',
     net: '#2563eb',
-    categorical: ['#16a34a', '#2563eb', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#64748b'],
+    // Categories are told apart by these; none is the income green or the
+    // expense red, which mean something else on the same page.
+    categorical: ['#2563eb', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d', '#64748b'],
   },
   dark: {
     grid: '#3a3a3a',
@@ -27,7 +29,7 @@ const CHART_COLORS = {
     expense: '#ef5350',
     neutral: '#5ea7e8',
     net: '#64b5f6',
-    categorical: ['#e0e0e0', '#ef5350', '#66bb6a', '#64b5f6', '#ffca28', '#ba68c8', '#4dd0e1'],
+    categorical: ['#60a5fa', '#fbbf24', '#a78bfa', '#22d3ee', '#f472b6', '#a3e635', '#94a3b8'],
   },
 };
 

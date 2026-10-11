@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/useAuth.js'
 
 // The signed-in person's menu at the end of the top bar: who they are, the
-// plan they are on, and the account actions (plan & billing, log out). The
-// `children` are the username label shown on the button.
+// plan they are on, and logging out. Plan & billing is a page in the
+// sidebar's Settings group. The `children` are the username label shown on
+// the button.
 function AccountMenu({ children, onLogout }) {
   const { user } = useAuth();
   const { t } = useTranslation();
@@ -56,9 +56,6 @@ function AccountMenu({ children, onLogout }) {
               {t('billing.currentPlan')}: <strong>{planNames[plan]}</strong>
             </p>
           )}
-          <Link to="/billing" role="menuitem" onClick={() => setIsOpen(false)}>
-            {t('nav.billing')}
-          </Link>
           <button type="button" role="menuitem" onClick={onLogout}>
             {t('common.logOut')}
           </button>

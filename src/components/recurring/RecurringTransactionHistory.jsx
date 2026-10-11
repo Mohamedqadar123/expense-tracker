@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getRecurringTransactionHistory } from '../../api/recurring'
 import { formatSignedCurrency, formatDate } from '../../utils/format'
+import { loadErrorMessage } from '../../api/config'
 
 function RecurringTransactionHistory({ recurringTransactionId }) {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ function RecurringTransactionHistory({ recurringTransactionId }) {
   useEffect(() => {
     getRecurringTransactionHistory(recurringTransactionId)
       .then(setHistory)
-      .catch(() => setError(t('recurring.historyLoadError')))
+      .catch((err) => setError(loadErrorMessage(err, t('recurring.historyLoadError'))))
       .finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recurringTransactionId]);

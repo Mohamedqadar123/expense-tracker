@@ -169,3 +169,14 @@
 .empty-state .feature-icon {
   margin: 0 auto 12px;
 }
+
+/* Doubled selector so a page's own h3 rule does not shrink or grey it */
+.empty-state .empty-state-title {
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-lg);
+  color: var(--color-heading);
+}
+
+.empty-state-action {
+  margin-top: var(--space-4);
+}

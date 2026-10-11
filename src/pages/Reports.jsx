@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import '../styles/shared.css'
 import './Reports.css'
 import { getReportsOverview } from '../api/reports'
+import { getAccounts } from '../api/accounts'
 import { getReportPeriodRange } from '../utils/reportPeriodRange'
 import { REPORT_PRESETS } from '../constants/periodPresets'
 import PeriodSelector from '../components/dashboard/PeriodSelector.jsx'
@@ -13,6 +14,17 @@ import BudgetPerformanceTable from '../components/reports/BudgetPerformanceTable
 import TransactionsTable from '../components/reports/TransactionsTable.jsx'
 import ReportExportToolbar from '../components/reports/ReportExportToolbar.jsx'
 import { OverviewSkeleton } from '../components/feedback/Skeleton.jsx'
+import { loadErrorMessage } from '../api/config'
+
+// The balance shown here is what the accounts hold, starting balances
+// included: the same figure as the dashboard and the Accounts page. The
+// overview's own (all income minus all expenses) leaves starting balances
+// out, and stands in only when the accounts cannot be read.
+function withAccountBalance(report, accounts) {
+  if (!Array.isArray(accounts) || accounts.length === 0) return report;
+  const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
+  return { ...report, summary: { ...report.summary, totalBalance } };
+}
 
 function todayString() {
   const today = new Date();
@@ -36,9 +48,12 @@ function Reports() {
   const { start, end } = getReportPeriodRange(preset, customStart, customEnd);
 
   useEffect(() => {
-    getReportsOverview({ start, end })
-      .then(setReport)
-      .catch(() => setError(t('reports.loadError')))
+    Promise.all([getReportsOverview({ start, end }), getAccounts().catch(() => null)])
+      .then(([overview, accounts]) => {
+        setError(null);
+        setReport(withAccountBalance(overview, accounts));
+      })
+      .catch((err) => setError(loadErrorMessage(err, t('reports.loadError'))))
       .finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset, start, end, retryKey]);

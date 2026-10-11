@@ -17,16 +17,16 @@ export function ListSkeleton({ label, rows = 3 }) {
 }
 
 // The dashboard and reports pages: a row of stat cards over a grid of charts.
-export function OverviewSkeleton({ label }) {
+export function OverviewSkeleton({ label, cards = 5, charts = 3 }) {
   return (
     <div role="status" aria-label={label}>
       <div className="stat-cards-row">
-        {Array.from({ length: 5 }, (_, index) => (
+        {Array.from({ length: cards }, (_, index) => (
           <div key={index} className="skeleton skeleton-card" />
         ))}
       </div>
-      <div className="dashboard-charts-grid">
-        {Array.from({ length: 3 }, (_, index) => (
+      <div className={`dashboard-charts-grid ${charts === 2 ? 'dashboard-charts-grid--two' : ''}`}>
+        {Array.from({ length: charts }, (_, index) => (
           <div key={index} className="skeleton skeleton-chart" />
         ))}
       </div>

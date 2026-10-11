@@ -18,7 +18,8 @@
     "welcome": "Soo dhawoow, {{name}}",
     "startDate": "Taariikhda bilowga",
     "endDate": "Taariikhda dhammaadka",
-    "confirm": "Xaqiiji"
+    "confirm": "Xaqiiji",
+    "saving": "Waa la kaydinayaa…"
   },
   "nav": {
     "home": "Guriga",
@@ -34,9 +35,15 @@
     "addTransaction": "Ku dar Dhaqdhaqaaq",
     "billing": "Qorshaha iyo rukunka",
     "admin": "Maamulka",
-    "groupMoney": "Lacagta",
+    "groupMoney": "Maamulka Lacagta",
     "groupPlanning": "Qorsheynta",
-    "groupInsights": "Falanqaynta"
+    "groupOverview": "Guudmar",
+    "groupAnalytics": "Falanqaynta",
+    "groupTools": "Qalabka",
+    "groupSettings": "Dejinta",
+    "financialCalculator": "Xisaabiyaha Maaliyadda",
+    "collapseSidebar": "Yaree liiska dhinaca",
+    "expandSidebar": "Balaadhi liiska dhinaca"
   },
   "theme": {
     "label": "Muuqaalka",
@@ -84,7 +91,20 @@
     "monthlySpending": "Kharashaadka Bishii",
     "spendingByCategory": "Kharashka Qaybaha",
     "noExpensesPeriod": "Kharash lagama helin muddadan.",
-    "noExpenses6mo": "Kharash lagama helin 6-dii bilood ee ugu dambeeyay."
+    "noExpenses6mo": "Kharash lagama helin 6-dii bilood ee ugu dambeeyay.",
+    "welcome": "Ku soo dhowow mar kale, {{name}}",
+    "balanceHint": "Dhammaan xisaabaadkaaga, ilaa maanta",
+    "incomeHint": "Lacagta soo gashay muddadan",
+    "expensesHint": "Lacagta baxday muddadan",
+    "savingsRateHint": "Qaybta dakhliga ee hadhay kharashka ka dib",
+    "savingsRateNoIncome": "Dakhli ma jiro muddadan",
+    "vsPrevious": "{{change}} marka la barbar dhigo muddadii hore",
+    "vsPreviousPoints": "{{change}} dhibcood marka la barbar dhigo muddadii hore",
+    "viewAll": "Eeg dhammaan dhaqdhaqaaqyada",
+    "emptyTitle": "Dhaqdhaqaaq ma jiro muddadan",
+    "emptyBody": "Falanqaynta maaliyaddaadu halkan ayay ka soo muuqan doontaa. Ku dar dhaqdhaqaaq si aad u bilowdo.",
+    "totalSpent": "Wadarta la kharash gareeyay",
+    "otherCategories": "Qaybaha kale"
   },
   "transactions": {
     "brand": "Finance Tracker",
@@ -118,7 +138,11 @@
     "prev": "Hore",
     "next": "Xiga",
     "pageOf": "Bogga {{page}} ee {{totalPages}} ({{total}} guud ahaan)",
-    "sortBy": "U kala sooc"
+    "sortBy": "U kala sooc",
+    "editTransaction": "Wax ka beddel dhaqdhaqaaqa",
+    "emptyTitle": "Weli dhaqdhaqaaq ma jiro",
+    "emptyBody": "Ku dar dhaqdhaqaaqaaga ugu horreeya si aad u bilowdo la socodka lacagtaada.",
+    "filters": "Shaandhooyin"
   },
   "budgets": {
     "title": "Miisaaniyadaha",
@@ -127,7 +151,7 @@
     "performance": "Waxqabadka Miisaaniyadda",
     "loading": "Miisaaniyadaha ayaa soo raraya...",
     "loadError": "Miisaaniyadaha lama soo rari karin",
-    "empty": "Wali miisaaniyad ma jirto — hoos ku dar mid.",
+    "empty": "Weli miisaaniyad ma jirto. Mid ku dar si aad u dejiso xadka kharashka.",
     "emptyReport": "Miisaaniyad la warbixiyo lama helin.",
     "deleteConfirm": "Ma doonaysaa inaad tirtirto miisaaniyaddan?",
     "spentOf": "{{spent}} waxaa laga bixiyay {{amount}}",
@@ -135,7 +159,15 @@
     "addBudget": "Ku dar Miisaaniyad",
     "namePlaceholder": "Magaca Miisaaniyadda",
     "amountPlaceholder": "Lacagta",
-    "period": "Muddada"
+    "period": "Muddada",
+    "overBy": "Waa laga badiyay {{amount}}",
+    "editBudget": "Wax ka beddel miisaaniyadda",
+    "status": {
+      "normal": "Si fiican u socda",
+      "warning": "Xadka ku dhow",
+      "near_limit": "Xadka aad ugu dhow",
+      "exceeded": "Miisaaniyadda waa laga badiyay"
+    }
   },
   "goals": {
     "title": "Hadafyada",
@@ -143,7 +175,7 @@
     "heading": "Hadafyada Keydinta",
     "loading": "Hadafyada ayaa soo raraya...",
     "loadError": "Hadafyada lama soo rari karin",
-    "empty": "Wali hadaf keydin ah ma jiro — hoos ku dar mid.",
+    "empty": "Weli hadaf kayd ma jiro. Mid ku dar si aad u bilowdo kaydinta.",
     "deleteConfirm": "Ma doonaysaa inaad tirtirto hadafkan keydinta?",
     "target": "Bartilmaameedka: {{date}}",
     "addGoal": "Ku dar Hadaf Keydin",
@@ -151,7 +183,17 @@
     "targetAmountPlaceholder": "Lacagta Bartilmaameedka",
     "savedSoFarPlaceholder": "Lacagta la keydiyay ilaa hadda",
     "accountHint": "Lacagta la kaydiyay waxaa laga jarayaa xisaabta la doortay. Haddii aad yarayso lacagta la kaydiyay, dib ayaa loogu celinayaa.",
-    "targetDate": "Taariikhda bartilmaameedka (ikhtiyaari)"
+    "targetDate": "Taariikhda bartilmaameedka (ikhtiyaari)",
+    "addMoney": "Ku dar lacag",
+    "addMoneyTo": "Ku dar lacag: {{name}}",
+    "amountToAdd": "Lacagta lagu darayo",
+    "toGo": "{{amount}} ayaa hadhay",
+    "reached": "Hadafka waa la gaadhay",
+    "editGoal": "Wax ka beddel hadafka",
+    "deleteGoal": "Tirtir hadafka kaydka",
+    "deleteWithMoney": "Hadafkani wuxuu hayaa {{amount}}. Waxaa lagu celin doonaa xisaabta aad doorato, ka dibna hadafka waa la tirtiri doonaa.",
+    "returnTo": "Lacagta ku celi",
+    "returnAndDelete": "Lacagta celi oo tirtir"
   },
   "reports": {
     "title": "Warbixinnada Maaliyadda",
@@ -177,7 +219,7 @@
     "subtitle": "Si otomaatig ah u maamul dakhliga iyo kharashka soo noqnoqda",
     "loading": "Dhaqdhaqaaqyada soo noqnoqda ayaa soo raraya...",
     "loadError": "Dhaqdhaqaaqyada soo noqnoqda lama soo rari karin",
-    "empty": "Wali dhaqdhaqaaq soo noqnoqda ah ma jiro — hoos ku dar mid.",
+    "empty": "Weli dhaqdhaqaaq soo noqnoqda ma jiro. Mid ku dar si uu si toos ah u dhaco.",
     "deleteConfirm": "Ma doonaysaa inaad tirtirto dhaqdhaqaaqan soo noqnoqda? Dhaqdhaqaaqyadii hore loo abuuray ma saameyn doonaan.",
     "active": "Firfircoon",
     "paused": "La Hakiyay",
@@ -193,7 +235,8 @@
     "noOccurrences": "Wali dhacdo lama soo saarin.",
     "transactionDeleted": "dhaqdhaqaaqa waa la tirtiray",
     "endDateOptionalPlaceholder": "Taariikhda dhammaadka (ikhtiyaari)",
-    "frequency": "Soo noqnoqoshada"
+    "frequency": "Soo noqnoqoshada",
+    "editRecurring": "Wax ka beddel dhaqdhaqaaqa soo noqnoqda"
   },
   "financeAI": {
     "title": "AI Maaliyadeed",
@@ -224,7 +267,7 @@
     "heading": "Xisaabahaaga",
     "loading": "Xisaabaha ayaa soo raraya...",
     "loadError": "Xisaabaha lama soo rari karin",
-    "empty": "Wali xisaab ma jirto — hoos ku dar mid, tusaale \"Bangiga\" ama \"EVC\".",
+    "empty": "Weli xisaab ma jirto. Mid ku dar, tusaale \"Bank\" ama \"EVC\".",
     "deleteConfirm": "Ma tirtirtaa xisaabtan? Xisaab leh dhaqdhaqaaqyo lama tirtiri karo.",
     "startingBalance": "Hadhaaga bilowga: {{amount}}",
     "addAccount": "Ku dar Xisaab",
@@ -232,7 +275,18 @@
     "startingBalancePlaceholder": "Hadhaaga bilowga",
     "yourAccounts": "Xisaabahaaga",
     "presetAccounts": "Bangiyada iyo lacagta mobilka",
-    "name": "Magaca xisaabta"
+    "name": "Magaca xisaabta",
+    "totalBalance": "Wadarta hadhaaga, dhammaan xisaabaadka",
+    "typeBank": "Xisaab bangi",
+    "typeMobileMoney": "Lacagta mobilka",
+    "typeCash": "Lacag caddaan ah",
+    "typeOther": "Kale",
+    "moneyIn": "Soo gashay {{amount}}",
+    "moneyOut": "Baxday {{amount}}",
+    "recentActivity": "Dhaqdhaqaaqii u dambeeyay",
+    "noActivity": "Weli dhaqdhaqaaq ma jiro",
+    "viewTransactions": "Eeg dhaqdhaqaaqyada",
+    "editAccount": "Wax ka beddel xisaabta"
   },
   "billing": {
     "title": "Rukunka",
@@ -288,5 +342,16 @@
     "added": "Waa la daray",
     "saved": "Isbeddellada waa la kaydiyay",
     "deleted": "Waa la tirtiray"
+  },
+  "validation": {
+    "descriptionRequired": "Geli sharaxaad",
+    "amountPositive": "Geli lacag ka badan 0",
+    "dateRequired": "Dooro taariikh",
+    "dateFuture": "Taariikhdu ma noqon karto mustaqbalka"
+  },
+  "errors": {
+    "network": "Lama gaari karo server-ka. Hubi internet-kaaga oo mar kale isku day.",
+    "session": "Fadhigaagu wuu dhammaaday. Fadlan mar kale gal.",
+    "server": "Khalad ayaa dhinacayaga ka dhacay. Fadlan wax yar ka dib isku day."
   }
 }
