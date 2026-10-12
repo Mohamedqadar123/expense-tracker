@@ -14,7 +14,7 @@ import { isDisposableEmail } from '../utils/disposableEmail.js';
 import { hasUsedTrial } from '../utils/trialClaims.js';
 import { savePendingSignup, findValidPendingSignup, registerPendingSignup } from '../utils/pendingSignups.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
-import { issueAuthToken, findValidAuthToken, RESET_PASSWORD } from '../utils/authTokens.js';
+import { issueAuthToken, findValidAuthToken, RESET_PASSWORD, SIGNUP_LINK } from '../utils/authTokens.js';
 
 const router = Router();
 
@@ -176,13 +176,24 @@ router.post('/verify-email', emailLimiter, asyncHandler(async (req, res) => {
   // it is the moment the account is created, and the person is signed
   // straight in. An existing account is never asked to verify again.
   const pending = await findValidPendingSignup(req.body.token);
-  if (!pending) {
-    return res.status(400).json({ error: 'This verification link is invalid or has expired' });
+  if (pending) {
+    const user = await registerPendingSignup(pending);
+    setAuthCookie(res, user);
+    return res.status(201).json(sanitize(user));
   }
 
-  const user = await registerPendingSignup(pending);
+  // Already used to create the account: opening it again signs that account
+  // in, until the link's original expiry.
+  const used = await findValidAuthToken(req.body.token, SIGNUP_LINK);
+  const user = used && await prisma.user.findUnique({ where: { id: used.userId } });
+  if (!user) {
+    return res.status(400).json({ error: 'This verification link is invalid or has expired' });
+  }
+  if (user.suspendedAt) {
+    return res.status(403).json({ error: SUSPENDED_MESSAGE, code: 'account_suspended' });
+  }
   setAuthCookie(res, user);
-  res.status(201).json(sanitize(user));
+  res.json(sanitize(user));
 }));
 
 router.post('/forgot-password', emailLimiter, asyncHandler(async (req, res) => {
@@ -229,7 +240,8 @@ router.post('/reset-password', emailLimiter, asyncHandler(async (req, res) => {
         emailVerifiedAt: user.emailVerifiedAt || new Date(),
       },
     }),
-    prisma.authToken.deleteMany({ where: { userId: record.userId, type: RESET_PASSWORD } }),
+    // The sign-up link signs in too, so it stops working along with the old password.
+    prisma.authToken.deleteMany({ where: { userId: record.userId, type: { in: [RESET_PASSWORD, SIGNUP_LINK] } } }),
   ]);
   res.json({ message: 'Password updated' });
 }));

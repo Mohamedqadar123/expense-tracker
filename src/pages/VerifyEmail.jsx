@@ -22,18 +22,23 @@ function VerifyEmail() {
   useEffect(() => {
     if (!token || hasStarted.current) return;
     hasStarted.current = true;
+    const destination = plan ? `/billing?plan=${plan}` : '/dashboard';
+    // Opening the link signs the person in (it creates the account the first
+    // time, and signs that account in again on later opens until it expires),
+    // so pick up the session and go straight into the app, or on to paying
+    // for the plan chosen beforehand.
     verifyEmail(token)
       .then(() => {
         setState('verified');
-        // Confirming a new sign-up creates the account and signs it in, so
-        // pick up the session and go straight into the app (or on to paying
-        // for the plan chosen beforehand). If the session can't be picked
-        // up, the page stays and offers the log-in link instead.
         return refreshUser()
-          .then(() => navigate(plan ? `/billing?plan=${plan}` : '/dashboard', { replace: true }))
+          .then(() => navigate(destination, { replace: true }))
           .catch(() => {});
       })
-      .catch(() => setState('error'));
+      // Even when the link itself is no longer accepted, someone who is
+      // already signed in in this browser belongs in the app, not on an error.
+      .catch(() => refreshUser()
+        .then(() => navigate(destination, { replace: true }))
+        .catch(() => setState('error')));
   }, [token, plan, refreshUser, navigate]);
 
   return (
@@ -41,15 +46,17 @@ function VerifyEmail() {
       <div className="auth-card">
         <SavingsIllustration />
         <h1>Email Verification</h1>
-        {state === 'verifying' && <p className="subtitle">Verifying your email...</p>}
+        {state === 'verifying' && <p className="subtitle">Signing you in...</p>}
         {state === 'verified' && (
           <p className="subtitle">Your email is confirmed and your account is ready. Welcome!</p>
         )}
         {state === 'error' && (
-          <p className="auth-error">This link is invalid or has expired. Sign up again to get a new one.</p>
+          <p className="auth-error">
+            This link has expired. If you already confirmed your email, log in; otherwise sign up again to get a new link.
+          </p>
         )}
         <p className="auth-switch">
-          {state === 'error' && <Link to="/billing">Sign up</Link>}
+          {state === 'error' && <><Link to="/login">Log in</Link> · <Link to="/signup">Sign up</Link></>}
           {state !== 'error' && user && plan && <Link to={`/billing?plan=${plan}`}>Continue to payment</Link>}
           {state !== 'error' && user && !plan && <Link to="/dashboard">Go to dashboard</Link>}
           {state !== 'error' && !user && <Link to="/login">Log in</Link>}

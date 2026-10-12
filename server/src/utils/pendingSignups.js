@@ -3,6 +3,7 @@ import prisma from '../prismaClient.js';
 import { newTrialEnd } from '../services/subscription.js';
 import { DEFAULT_ACCOUNT_NAME } from './accounts.js';
 import { claimTrial } from './trialClaims.js';
+import { SIGNUP_LINK } from './authTokens.js';
 
 const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -54,6 +55,10 @@ export async function registerPendingSignup(pending) {
       },
     });
     await tx.pendingSignup.delete({ where: { id: pending.id } });
+    // The same link keeps signing this account in until it expires.
+    await tx.authToken.create({
+      data: { userId: user.id, type: SIGNUP_LINK, tokenHash: pending.tokenHash, expiresAt: pending.expiresAt },
+    });
     return user;
   });
 }
