@@ -167,7 +167,21 @@
       "warning": "Xadka ku dhow",
       "near_limit": "Xadka aad ugu dhow",
       "exceeded": "Miisaaniyadda waa laga badiyay"
-    }
+    },
+    "budgeted": "La qorsheeyay",
+    "spent": "La kharash gareeyay",
+    "remainingLabel": "Hadhay",
+    "overByLabel": "Laga badiyay",
+    "percentUsed": "{{percent}}% la isticmaalay",
+    "ended": "Dhammaaday",
+    "upcoming": "Soo socda",
+    "allPeriods": "Dhammaan",
+    "totalBudgeted": "Wadarta la qorsheeyay",
+    "totalSpent": "Wadarta la kharash gareeyay",
+    "totalRemaining": "Wadarta hadhay",
+    "totalOver": "Wadarta laga badiyay",
+    "overviewHint": "Miisaaniyadaha la muujiyay oo dhan",
+    "viewSpending": "Eeg kharashka"
   },
   "goals": {
     "title": "Hadafyada",
@@ -347,7 +361,9 @@
     "descriptionRequired": "Geli sharaxaad",
     "amountPositive": "Geli lacag ka badan 0",
     "dateRequired": "Dooro taariikh",
-    "dateFuture": "Taariikhdu ma noqon karto mustaqbalka"
+    "dateFuture": "Taariikhdu ma noqon karto mustaqbalka",
+    "nameRequired": "Geli magac",
+    "endAfterStart": "Taariikhda dhammaadku waa inay ka dambaysaa taariikhda bilowga"
   },
   "errors": {
     "network": "Lama gaari karo server-ka. Hubi internet-kaaga oo mar kale isku day.",

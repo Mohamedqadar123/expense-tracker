@@ -167,7 +167,21 @@
       "warning": "Approaching limit",
       "near_limit": "Near limit",
       "exceeded": "Over budget"
-    }
+    },
+    "budgeted": "Budgeted",
+    "spent": "Spent",
+    "remainingLabel": "Remaining",
+    "overByLabel": "Over by",
+    "percentUsed": "{{percent}}% used",
+    "ended": "Ended",
+    "upcoming": "Upcoming",
+    "allPeriods": "All",
+    "totalBudgeted": "Total budgeted",
+    "totalSpent": "Total spent",
+    "totalRemaining": "Total remaining",
+    "totalOver": "Over in total",
+    "overviewHint": "Across the budgets shown",
+    "viewSpending": "View spending"
   },
   "goals": {
     "title": "Goals",
@@ -347,7 +361,9 @@
     "descriptionRequired": "Enter a description",
     "amountPositive": "Enter an amount greater than 0",
     "dateRequired": "Choose a date",
-    "dateFuture": "The date cannot be in the future"
+    "dateFuture": "The date cannot be in the future",
+    "nameRequired": "Enter a name",
+    "endAfterStart": "The end date must be after the start date"
   },
   "errors": {
     "network": "Can't reach the server. Check your internet connection and try again.",

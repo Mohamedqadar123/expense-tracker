@@ -167,7 +167,21 @@
       "warning": "يقترب من الحد",
       "near_limit": "قريب من الحد",
       "exceeded": "تجاوز الميزانية"
-    }
+    },
+    "budgeted": "المخصص",
+    "spent": "المصروف",
+    "remainingLabel": "المتبقي",
+    "overByLabel": "التجاوز",
+    "percentUsed": "تم استخدام {{percent}}%",
+    "ended": "انتهت",
+    "upcoming": "قادمة",
+    "allPeriods": "الكل",
+    "totalBudgeted": "إجمالي المخصص",
+    "totalSpent": "إجمالي المصروف",
+    "totalRemaining": "إجمالي المتبقي",
+    "totalOver": "إجمالي التجاوز",
+    "overviewHint": "لجميع الميزانيات المعروضة",
+    "viewSpending": "عرض الإنفاق"
   },
   "goals": {
     "title": "الأهداف",
@@ -347,7 +361,9 @@
     "descriptionRequired": "أدخل وصفًا",
     "amountPositive": "أدخل مبلغًا أكبر من 0",
     "dateRequired": "اختر تاريخًا",
-    "dateFuture": "لا يمكن أن يكون التاريخ في المستقبل"
+    "dateFuture": "لا يمكن أن يكون التاريخ في المستقبل",
+    "nameRequired": "أدخل اسمًا",
+    "endAfterStart": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء"
   },
   "errors": {
     "network": "تعذّر الوصول إلى الخادم. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.",
