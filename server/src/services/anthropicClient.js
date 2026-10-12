@@ -89,9 +89,20 @@ export async function askFinancialQuestion({ summary, history, question }) {
       messages,
     });
 
-    const textBlock = response.content.find((b) => b.type === 'text');
-    return textBlock?.text?.trim() ?? '';
+    const answer = response.content
+      .filter((b) => b.type === 'text')
+      .map((b) => b.text)
+      .join('')
+      .trim();
+    // An empty answer (e.g. stop_reason "refusal") must not be saved: an empty
+    // assistant turn in the history makes every later request fail with a 400.
+    if (!answer) {
+      console.warn('Finance AI returned no text; stop_reason:', response.stop_reason);
+      throw new AiServiceError("The AI assistant couldn't answer that. Try rephrasing your question.", 502);
+    }
+    return answer;
   } catch (err) {
+    if (err instanceof AiServiceError) throw err;
     // TypeScript SDK error hierarchy: APIConnectionError is a SUBCLASS of
     // APIError (unlike Python, where it's a sibling), so it must be checked
     // before the generic APIError catch. The TS base class is `APIError`
