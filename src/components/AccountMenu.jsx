@@ -34,6 +34,7 @@ function AccountMenu({ children, onLogout }) {
     standard: t('billing.planStandard'),
     pro: t('billing.planPro'),
     expired: t('billing.planExpired'),
+    admin: t('billing.planAdmin', 'Admin'),
   };
 
   return (

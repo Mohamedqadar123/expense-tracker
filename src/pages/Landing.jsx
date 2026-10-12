@@ -87,6 +87,7 @@ function Landing() {
 
       <footer className="landing-footer">
         <span>Finance Tracker</span>
+        <Link to="/terms">Terms and Conditions</Link>
         <Link to="/login">Log in</Link>
       </footer>
     </div>

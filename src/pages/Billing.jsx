@@ -104,7 +104,10 @@ function Billing() {
     standard: t('billing.planStandard'),
     pro: t('billing.planPro'),
     expired: t('billing.planExpired'),
+    admin: t('billing.planAdmin', 'Admin'),
   };
+  // Admins have every feature without paying (server: utils/admin.js).
+  const isAdminPlan = access?.plan === 'admin';
   const isPaidSlide = activePlan !== 'free';
   const chosen = pricing?.plans.find((plan) => plan.id === activePlan);
   const chosenPrice = chosen ? `${chosen.price} ${pricing.currency}` : '';
@@ -168,6 +171,7 @@ function Billing() {
             </>
           )}
           {access.plan === 'expired' && <span>{t('billing.expired')}</span>}
+          {isAdminPlan && <span>{t('billing.adminAccess', 'Admin account: every feature is included and no payment is needed.')}</span>}
           {planError && <p className="billing-error">{planError}</p>}
         </div>
       )}
@@ -179,7 +183,7 @@ function Billing() {
         renderAction={renderAction}
       />
 
-      {user && (
+      {user && !isAdminPlan && (
         <div className="section-card billing-pay">
           {!isPaidSlide && <p className="billing-note">{t('billing.pickPaidPlan')}</p>}
           {isPaidSlide && (

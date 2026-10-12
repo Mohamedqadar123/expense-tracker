@@ -2,6 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import prisma from '../prismaClient.js';
 import { newTrialEnd } from '../services/subscription.js';
 import { DEFAULT_ACCOUNT_NAME } from './accounts.js';
+import { claimTrial } from './trialClaims.js';
 
 const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -34,22 +35,25 @@ export async function findValidPendingSignup(token) {
 
 // Turns a confirmed sign-up into a real account. The email is verified by
 // definition, and the free trial starts now rather than when the form was
-// submitted, so time spent finding the email doesn't eat into it.
+// submitted, so time spent finding the email doesn't eat into it. An email
+// that has already had a trial (see trialClaims.js) gets an account with no
+// trial, which goes straight to choosing a plan.
 export async function registerPendingSignup(pending) {
-  const [user] = await prisma.$transaction([
-    prisma.user.create({
+  return prisma.$transaction(async (tx) => {
+    const getsTrial = await claimTrial(tx, pending.email);
+    const user = await tx.user.create({
       data: {
         email: pending.email,
         passwordHash: pending.passwordHash,
         name: pending.name,
         emailVerifiedAt: new Date(),
-        trialEndsAt: newTrialEnd(),
+        trialEndsAt: getsTrial ? newTrialEnd() : null,
         // Every transaction belongs to an account, so a new user gets one
         // straight away and can start recording money coming in.
         accounts: { create: { name: DEFAULT_ACCOUNT_NAME } },
       },
-    }),
-    prisma.pendingSignup.delete({ where: { id: pending.id } }),
-  ]);
-  return user;
+    });
+    await tx.pendingSignup.delete({ where: { id: pending.id } });
+    return user;
+  });
 }

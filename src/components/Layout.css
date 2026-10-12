@@ -534,3 +534,8 @@
     padding: 28px 32px;
   }
 }
+
+.account-menu-plan-admin {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}

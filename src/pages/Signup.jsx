@@ -19,6 +19,9 @@ function Signup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // The address the confirmation link was sent to, once the form is accepted.
   const [sentTo, setSentTo] = useState(null);
+  // False when this email (or a variant of it) has already had the free
+  // trial: it is only for a person's first registration.
+  const [trialAvailable, setTrialAvailable] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +30,8 @@ function Signup() {
     try {
       // The account isn't created yet: the server emails a link, and opening
       // it is what registers the account (and carries the chosen plan along).
-      await signup(email, password, name, plan || undefined);
+      const result = await signup(email, password, name, plan || undefined);
+      setTrialAvailable(result?.trialAvailable !== false);
       setSentTo(email);
     } catch (err) {
       setError(err.message);
@@ -49,6 +53,12 @@ function Signup() {
             Your account is only created after you open the link, so we know the email address is really yours.
             The link works for 24 hours.
           </p>
+          {!trialAvailable && (
+            <p className="auth-plan" role="status">
+              This email has already used its free trial, which is only given on the first registration.
+              After you confirm, you can choose a plan to continue.
+            </p>
+          )}
           <p className="auth-switch">
             Nothing arrived? Check your spam folder, or{' '}
             <button type="button" className="auth-link-button" onClick={() => setSentTo(null)}>try again</button>.
@@ -98,6 +108,9 @@ function Signup() {
             />
           </Field>
           {error && <p className="auth-error" role="alert">{error}</p>}
+          <p className="auth-terms">
+            By signing up, you agree to the <Link to="/terms" target="_blank" rel="noopener">Terms and Conditions</Link>.
+          </p>
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Creating account...' : 'Sign Up'}
           </button>

@@ -102,3 +102,8 @@
   color: var(--color-text);
   font-weight: bold;
 }
+
+.auth-terms {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}

@@ -194,3 +194,8 @@
 .billing-status-unknown {
   color: var(--color-warning);
 }
+
+.billing-plan-admin {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}

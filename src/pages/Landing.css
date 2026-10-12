@@ -143,6 +143,8 @@
 
 .landing-footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   justify-content: space-between;
   padding: 24px 0;
   margin-top: 24px;

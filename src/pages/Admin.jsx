@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import '../styles/shared.css'
 import './Admin.css'
-import { getAdminOverview } from '../api/admin'
+import { getAdminOverview, suspendUser, unsuspendUser, deleteUser } from '../api/admin'
+import BottomSheet from '../components/BottomSheet.jsx'
+import Field from '../components/Field.jsx'
+import { useFeedback } from '../context/useFeedback.js'
+
+// The grounds for suspending or deleting an account, as set out in the Terms.
+const REASON_LABELS = { non_payment: 'Missed payments', terms_violation: 'Violated the Terms and Conditions' };
 
 const PLAN_LABELS = { trial: 'Free trial', standard: 'Standard', pro: 'Pro', expired: 'Expired' };
 const STATUS_LABELS = { approved: 'Paid', failed: 'Failed', pending: 'Pending', unknown: 'Unconfirmed' };
@@ -10,7 +16,62 @@ const PLAN_FILTERS = ['all', 'trial', 'standard', 'pro', 'expired'];
 const formatDate = (value) => (value ? new Date(value).toLocaleDateString() : '-');
 const formatDateTime = (value) => new Date(value).toLocaleString();
 
+// Asks why before suspending or permanently deleting an account.
+// action is 'suspend' or 'delete'.
+function ModerationSheet({ user, action, onClose, onDone }) {
+  const [reason, setReason] = useState(user.plan === 'expired' ? 'non_payment' : 'terms_violation');
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isDelete = action === 'delete';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await (isDelete ? deleteUser(user.id, reason) : suspendUser(user.id, reason));
+      onDone(isDelete ? `${user.email} was deleted` : `${user.email} was suspended`);
+    } catch (err) {
+      setError(err.message);
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <BottomSheet isOpen onClose={onClose} title={isDelete ? 'Delete user' : 'Suspend user'}>
+      <form className="admin-moderation-form" onSubmit={handleSubmit}>
+        <p>
+          <strong>{user.name || user.email}</strong>
+          {user.name && <span className="admin-user-email">{user.email}</span>}
+        </p>
+        <Field label="Reason">
+          <select value={reason} onChange={(e) => setReason(e.target.value)}>
+            {Object.entries(REASON_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </Field>
+        <p className="admin-moderation-warning">
+          {isDelete
+            ? 'This permanently deletes the account and all of its data, including its payment history. It cannot be undone.'
+            : 'The user is signed out straight away and cannot sign in until you lift the suspension. Their data is kept.'}
+        </p>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+        <div className="admin-moderation-actions">
+          <button type="submit" className="btn-danger" disabled={isSubmitting}>
+            {isSubmitting ? 'Working...' : (isDelete ? 'Delete permanently' : 'Suspend')}
+          </button>
+          <button type="button" className="btn-secondary" onClick={onClose} disabled={isSubmitting}>Cancel</button>
+        </div>
+      </form>
+    </BottomSheet>
+  );
+}
+
 function Admin() {
+  const { confirm, notify } = useFeedback();
+  // { user, action } while the suspend/delete sheet is open.
+  const [moderating, setModerating] = useState(null);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [planFilter, setPlanFilter] = useState('all');
@@ -28,6 +89,23 @@ function Admin() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const handleModerationDone = (message) => {
+    setModerating(null);
+    notify(message);
+    load();
+  };
+
+  const handleUnsuspend = async (user) => {
+    if (!(await confirm(`Let ${user.email} sign in again?`, 'Lift suspension'))) return;
+    try {
+      await unsuspendUser(user.id);
+      notify(`${user.email} can sign in again`);
+      load();
+    } catch (err) {
+      notify(err.message);
+    }
+  };
 
   if (error) {
     return (
@@ -110,11 +188,12 @@ function Admin() {
                   <th>Ends</th>
                   <th>Days left</th>
                   <th>Total paid</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {visibleUsers.map((user) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} className={user.suspendedAt ? 'admin-row-suspended' : undefined}>
                     <td>
                       <span className="admin-user-name">{user.name || '-'}</span>
                       <span className="admin-user-email">
@@ -125,10 +204,35 @@ function Admin() {
                     <td>
                       <span className={`admin-plan admin-plan-${user.plan}`}>{PLAN_LABELS[user.plan]}</span>
                       {user.cancelled && <span className="admin-user-email">Unsubscribed</span>}
+                      {user.suspendedAt && (
+                        <span className="admin-suspended">
+                          Suspended {formatDate(user.suspendedAt)}: {REASON_LABELS[user.suspensionReason] || user.suspensionReason}
+                        </span>
+                      )}
                     </td>
                     <td>{formatDate(user.accessEndsAt)}</td>
                     <td>{user.daysLeft}</td>
                     <td>{money(user.totalPaid)}</td>
+                    <td>
+                      {user.isAdmin ? (
+                        <span className="admin-user-email">Admin</span>
+                      ) : (
+                        <div className="admin-row-actions">
+                          {user.suspendedAt ? (
+                            <button type="button" className="btn-secondary" onClick={() => handleUnsuspend(user)}>
+                              Unsuspend
+                            </button>
+                          ) : (
+                            <button type="button" className="btn-secondary" onClick={() => setModerating({ user, action: 'suspend' })}>
+                              Suspend
+                            </button>
+                          )}
+                          <button type="button" className="btn-danger" onClick={() => setModerating({ user, action: 'delete' })}>
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -172,6 +276,15 @@ function Admin() {
           </div>
         )}
       </div>
+
+      {moderating && (
+        <ModerationSheet
+          user={moderating.user}
+          action={moderating.action}
+          onClose={() => setModerating(null)}
+          onDone={handleModerationDone}
+        />
+      )}
     </div>
   );
 }

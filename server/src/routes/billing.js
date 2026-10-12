@@ -6,6 +6,7 @@ import requireAuth from '../middleware/requireAuth.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { createRateLimitStore } from '../rateLimitStore.js';
 import { getAccess, getPlans, extendPaidUntil } from '../services/subscription.js';
+import { getUserAccess } from '../utils/admin.js';
 import { chargeWallet, isPaymentConfigured, normalizeSomaliPhone } from '../services/waafiPayClient.js';
 
 const router = Router();
@@ -44,7 +45,7 @@ router.get('/status', requireAuth, asyncHandler(async (req, res) => {
     }),
   ]);
   res.json({
-    access: getAccess(user),
+    access: getUserAccess(user),
     pricing: getPlans(),
     paymentsEnabled: isPaymentConfigured(),
     payments,
@@ -124,7 +125,7 @@ router.post('/subscribe', requireAuth, paymentLimiter, asyncHandler(async (req, 
     }),
   ]);
 
-  res.json({ access: getAccess(updated) });
+  res.json({ access: getUserAccess(updated) });
 }));
 
 // Plans are prepaid and never renew by themselves, so unsubscribing takes
@@ -142,13 +143,13 @@ router.post('/unsubscribe', requireAuth, asyncHandler(async (req, res) => {
     where: { id: user.id },
     data: { cancelledAt: user.cancelledAt || new Date() },
   });
-  res.json({ access: getAccess(updated) });
+  res.json({ access: getUserAccess(updated) });
 }));
 
 // Undoes an unsubscribe while the paid period is still running.
 router.post('/resubscribe', requireAuth, asyncHandler(async (req, res) => {
   const updated = await prisma.user.update({ where: { id: req.user.id }, data: { cancelledAt: null } });
-  res.json({ access: getAccess(updated) });
+  res.json({ access: getUserAccess(updated) });
 }));
 
 export default router;
