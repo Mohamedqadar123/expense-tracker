@@ -6,12 +6,15 @@ import prisma from '../prismaClient.js';
 import requireAuth from '../middleware/requireAuth.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import { createRateLimitStore } from '../rateLimitStore.js';
-import { getAccess, PLAN_IDS as PAID_PLAN_IDS } from '../services/subscription.js';
-import { isAdmin } from '../utils/admin.js';
+import { PLAN_IDS as PAID_PLAN_IDS } from '../services/subscription.js';
+import { isAdmin, getUserAccess } from '../utils/admin.js';
+import { SUSPENDED_MESSAGE } from '../constants/moderation.js';
 import { getEmailDomainError } from '../utils/emailDomain.js';
+import { isDisposableEmail } from '../utils/disposableEmail.js';
+import { hasUsedTrial } from '../utils/trialClaims.js';
 import { savePendingSignup, findValidPendingSignup, registerPendingSignup } from '../utils/pendingSignups.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
-import { issueAuthToken, findValidAuthToken, RESET_PASSWORD } from '../utils/authTokens.js';
+import { issueAuthToken, findValidAuthToken, RESET_PASSWORD, SIGNUP_LINK } from '../utils/authTokens.js';
 
 const router = Router();
 
@@ -49,7 +52,7 @@ function clearAuthCookie(res) {
 
 function sanitize(user) {
   const { passwordHash, tokenVersion, ...rest } = user;
-  return { ...rest, access: getAccess(user), isAdmin: isAdmin(user) };
+  return { ...rest, access: getUserAccess(user), isAdmin: isAdmin(user) };
 }
 
 function validatePassword(password) {
@@ -105,6 +108,10 @@ router.post('/signup', authLimiter, emailLimiter, asyncHandler(async (req, res) 
     return res.status(400).json({ error: passwordError });
   }
 
+  if (isDisposableEmail(email)) {
+    return res.status(400).json({ error: 'Temporary email addresses cannot be used. Please sign up with your own email.' });
+  }
+
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return res.status(409).json({ error: 'An account with this email already exists' });
@@ -127,7 +134,10 @@ router.post('/signup', authLimiter, emailLimiter, asyncHandler(async (req, res) 
   sendVerificationEmail(email, token, PAID_PLAN_IDS.includes(plan) ? plan : null)
     .catch((err) => console.error(err));
 
-  res.status(202).json({ message: 'Check your email to finish creating your account', email });
+  // Told up front so nobody is surprised after confirming. The trial itself
+  // is decided again, atomically, when the account is created.
+  const trialAvailable = !(await hasUsedTrial(email));
+  res.status(202).json({ message: 'Check your email to finish creating your account', email, trialAvailable });
 }));
 
 router.post('/login', authLimiter, asyncHandler(async (req, res) => {
@@ -140,6 +150,10 @@ router.post('/login', authLimiter, asyncHandler(async (req, res) => {
   const valid = await bcrypt.compare(password, user ? user.passwordHash : DUMMY_PASSWORD_HASH);
   if (!user || !valid) {
     return res.status(401).json({ error: 'Invalid email or password' });
+  }
+  // Checked only after the password, so it doesn't reveal which emails exist.
+  if (user.suspendedAt) {
+    return res.status(403).json({ error: SUSPENDED_MESSAGE, code: 'account_suspended' });
   }
 
   setAuthCookie(res, user);
@@ -162,13 +176,24 @@ router.post('/verify-email', emailLimiter, asyncHandler(async (req, res) => {
   // it is the moment the account is created, and the person is signed
   // straight in. An existing account is never asked to verify again.
   const pending = await findValidPendingSignup(req.body.token);
-  if (!pending) {
-    return res.status(400).json({ error: 'This verification link is invalid or has expired' });
+  if (pending) {
+    const user = await registerPendingSignup(pending);
+    setAuthCookie(res, user);
+    return res.status(201).json(sanitize(user));
   }
 
-  const user = await registerPendingSignup(pending);
+  // Already used to create the account: opening it again signs that account
+  // in, until the link's original expiry.
+  const used = await findValidAuthToken(req.body.token, SIGNUP_LINK);
+  const user = used && await prisma.user.findUnique({ where: { id: used.userId } });
+  if (!user) {
+    return res.status(400).json({ error: 'This verification link is invalid or has expired' });
+  }
+  if (user.suspendedAt) {
+    return res.status(403).json({ error: SUSPENDED_MESSAGE, code: 'account_suspended' });
+  }
   setAuthCookie(res, user);
-  res.status(201).json(sanitize(user));
+  res.json(sanitize(user));
 }));
 
 router.post('/forgot-password', emailLimiter, asyncHandler(async (req, res) => {
@@ -215,7 +240,8 @@ router.post('/reset-password', emailLimiter, asyncHandler(async (req, res) => {
         emailVerifiedAt: user.emailVerifiedAt || new Date(),
       },
     }),
-    prisma.authToken.deleteMany({ where: { userId: record.userId, type: RESET_PASSWORD } }),
+    // The sign-up link signs in too, so it stops working along with the old password.
+    prisma.authToken.deleteMany({ where: { userId: record.userId, type: { in: [RESET_PASSWORD, SIGNUP_LINK] } } }),
   ]);
   res.json({ message: 'Password updated' });
 }));

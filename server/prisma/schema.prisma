@@ -30,7 +30,13 @@ model User {
   // change their mind or pay again.
   cancelledAt DateTime?
 
-  transactions          Transaction[]
+  // Set by an admin for missed payments or a breach of the Terms (see
+  // constants/moderation.js). A suspended account cannot sign in or use the
+  // API; an admin can lift the suspension.
+  suspendedAt      DateTime?
+  suspensionReason String?
+
+  transactions         Transaction[]
   budgets               Budget[]
   savingsGoals          SavingsGoal[]
   recurringTransactions RecurringTransaction[]
@@ -51,6 +57,16 @@ model PendingSignup {
   tokenHash    String   @unique
   expiresAt    DateTime
   createdAt    DateTime @default(now())
+}
+
+// One row per email that has had the free trial, so it is only ever given on
+// a person's first registration. Deliberately not linked to User: it must
+// outlive a deleted account. Holds only a SHA-256 fingerprint of the
+// canonical email (see utils/trialClaims.js), not the address.
+model TrialClaim {
+  id        Int      @id @default(autoincrement())
+  emailHash String   @unique
+  createdAt DateTime @default(now())
 }
 
 // Single-use, expiring tokens emailed to the user for email verification and

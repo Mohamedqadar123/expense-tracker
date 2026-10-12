@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getAccounts } from '../../api/accounts'
 import AccountSelect from '../accounts/AccountSelect.jsx'
+import Field from '../Field.jsx'
+import { useSubmitGuard } from '../../hooks/useSubmitGuard.js'
 
 function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
@@ -10,6 +12,7 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
   const [savedAmount, setSavedAmount] = useState(initialValues?.savedAmount ?? 0);
   const [targetDate, setTargetDate] = useState(initialValues?.targetDate ? initialValues.targetDate.slice(0, 10) : '');
   const [error, setError] = useState(null);
+  const saving = useSubmitGuard();
   const [accounts, setAccounts] = useState([]);
   const [account, setAccount] = useState('');
 
@@ -22,13 +25,14 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
         setAccounts(list);
         setAccount((current) => current || list[0]?.name || '');
       })
-      .catch(() => {});
+      .catch(console.error);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     if (!name || !targetAmount || Number(targetAmount) <= 0) return;
+    if (!saving.begin()) return;
     try {
       await onSubmit({
         name,
@@ -45,19 +49,34 @@ function SavingsGoalForm({ initialValues, onSubmit, onCancel }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      saving.end();
     }
   };
 
   return (
     <form className="inline-form" onSubmit={handleSubmit}>
-      <input type="text" placeholder={t('goals.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="number" placeholder={t('goals.targetAmountPlaceholder')} value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} min="0.01" step="0.01" />
-      <input type="number" placeholder={t('goals.savedSoFarPlaceholder')} value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} min="0" step="0.01" />
-      <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
-      <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
-      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
-      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
-      {error && <p className="auth-error">{error}</p>}
+      <Field label={t('goals.namePlaceholder')} wide>
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+      </Field>
+      <Field label={t('goals.targetAmountPlaceholder')}>
+        <input type="number" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} min="0.01" step="0.01" required />
+      </Field>
+      <Field label={t('goals.savedSoFarPlaceholder')}>
+        <input type="number" value={savedAmount} onChange={(e) => setSavedAmount(e.target.value)} min="0" step="0.01" />
+      </Field>
+      <Field label={t('transactions.account')}>
+        <AccountSelect value={account} onChange={setAccount} accounts={accounts} />
+      </Field>
+      <Field label={t('goals.targetDate')}>
+        <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+      </Field>
+      <button type="submit" disabled={saving.isPending} aria-busy={saving.isPending}>
+        {saving.isPending && <span className="button-spinner" aria-hidden="true" />}
+        {saving.isPending ? t('common.saving') : initialValues ? t('common.save') : t('common.add')}
+      </button>
+      {onCancel && <button type="button" onClick={onCancel} disabled={saving.isPending}>{t('common.cancel')}</button>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
       <p className="form-hint">{t('goals.accountHint')}</p>
     </form>
   );

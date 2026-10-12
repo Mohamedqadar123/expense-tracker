@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { getPeriodRange } from './periodRange.js';
+import { getPeriodRange, getPreviousPeriodRange } from './periodRange.js';
 
 // June 15, 2024 is a Saturday. Constructed via local date components and read
 // back via local getters inside periodRange.js, so this is timezone-agnostic.
@@ -34,5 +34,19 @@ describe('getPeriodRange', () => {
   it('custom: uses the provided custom start/end, falling back to today', () => {
     expect(getPeriodRange('custom', '2024-01-01', '2024-01-31')).toEqual({ start: '2024-01-01', end: '2024-01-31' });
     expect(getPeriodRange('custom')).toEqual({ start: '2024-06-15', end: '2024-06-15' });
+  });
+});
+
+describe('getPreviousPeriodRange', () => {
+  it('returns the same number of days, ending the day before the period starts', () => {
+    expect(getPreviousPeriodRange('2024-10-01', '2024-10-11')).toEqual({ start: '2024-09-20', end: '2024-09-30' });
+  });
+
+  it('for a single day, returns the day before', () => {
+    expect(getPreviousPeriodRange('2024-06-15', '2024-06-15')).toEqual({ start: '2024-06-14', end: '2024-06-14' });
+  });
+
+  it('crosses a year boundary', () => {
+    expect(getPreviousPeriodRange('2024-01-01', '2024-01-31')).toEqual({ start: '2023-12-01', end: '2023-12-31' });
   });
 });

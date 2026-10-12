@@ -45,6 +45,22 @@
   margin-bottom: 20px;
 }
 
+/* Two charts to a row from tablet up (the shared grid's third column would stay empty) */
+@media (min-width: 640px) {
+  .dashboard-charts-grid.reports-charts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The table sets one text colour for its cells; money in and out keep theirs */
+.reports-table-wrapper td.income-amount {
+  color: var(--color-success);
+}
+
+.reports-table-wrapper td.expense-amount {
+  color: var(--color-danger);
+}
+
 .reports-table-wrapper {
   overflow-x: auto;
 }
@@ -66,7 +82,7 @@
 
 .reports-table-wrapper th {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
 }
 
@@ -113,7 +129,7 @@
     content: attr(data-label);
     font-weight: bold;
     color: var(--color-text-muted);
-    font-size: 11px;
+    font-size: 12px;
     text-transform: uppercase;
     text-align: start;
   }
@@ -123,14 +139,33 @@
    on-screen theme — printing a dark background wastes ink and reads poorly
    on paper, so this intentionally uses literal colors, not theme tokens. */
 @media print {
+  /* No page margin leaves the browser no room for its own header and footer
+     (URL, date, page numbers); the body padding stands in for the margin. */
+  @page {
+    margin: 0;
+  }
+
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
   }
 
+  body {
+    padding: 12mm;
+  }
+
+  /* Only the report itself: no app chrome, bottom nav icons or add button. */
   .no-print,
-  .layout-header {
+  .layout-header,
+  .layout-nav,
+  .bottom-nav,
+  .fab,
+  .account-banner {
     display: none !important;
+  }
+
+  .layout-main {
+    padding-bottom: 0 !important;
   }
 
   .reports {

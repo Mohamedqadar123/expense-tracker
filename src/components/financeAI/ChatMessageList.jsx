@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
+import { ListSkeleton } from '../feedback/Skeleton.jsx'
+import EmptyState from '../feedback/EmptyState.jsx'
 
 function ChatMessageList({ history, isLoading, error, isSending }) {
   const { t } = useTranslation();
 
-  if (isLoading) return <p className="list-empty">{t('financeAI.loadingConversation')}</p>;
+  if (isLoading) return <ListSkeleton label={t('financeAI.loadingConversation')} />;
   if (error) return <p className="dashboard-error">{error}</p>;
   if (history.length === 0 && !isSending) {
-    return <p className="list-empty">{t('financeAI.emptyPrompt')}</p>;
+    return <EmptyState icon="sparkles" message={t('financeAI.emptyPrompt')} />;
   }
 
   return (

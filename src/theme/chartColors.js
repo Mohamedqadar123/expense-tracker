@@ -4,17 +4,19 @@
 // stay visually consistent with the rest of the themed UI.
 const CHART_COLORS = {
   light: {
-    grid: '#d3dbe5',
-    axis: '#5d6c7e',
-    tooltipBg: '#f6f8fb',
-    tooltipBorder: '#d3dbe5',
-    tooltipText: '#2c3b4c',
-    legendText: '#2c3b4c',
-    income: '#2a7556',
-    expense: '#b23b3b',
-    neutral: '#1f5f8b',
-    net: '#2b6cb0',
-    categorical: ['#1f5f8b', '#b23b3b', '#2a7556', '#915406', '#6b4e9b', '#1f7f8b', '#7a8797'],
+    grid: '#e5e7eb',
+    axis: '#64748b',
+    tooltipBg: '#ffffff',
+    tooltipBorder: '#e5e7eb',
+    tooltipText: '#1f2937',
+    legendText: '#1f2937',
+    income: '#16a34a',
+    expense: '#dc2626',
+    neutral: '#2563eb',
+    net: '#2563eb',
+    // Categories are told apart by these; none is the income green or the
+    // expense red, which mean something else on the same page.
+    categorical: ['#2563eb', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d', '#64748b'],
   },
   dark: {
     grid: '#3a3a3a',
@@ -25,9 +27,9 @@ const CHART_COLORS = {
     legendText: '#e8e8e8',
     income: '#66bb6a',
     expense: '#ef5350',
-    neutral: '#e0e0e0',
+    neutral: '#5ea7e8',
     net: '#64b5f6',
-    categorical: ['#e0e0e0', '#ef5350', '#66bb6a', '#64b5f6', '#ffca28', '#ba68c8', '#4dd0e1'],
+    categorical: ['#60a5fa', '#fbbf24', '#a78bfa', '#22d3ee', '#f472b6', '#a3e635', '#94a3b8'],
   },
 };
 

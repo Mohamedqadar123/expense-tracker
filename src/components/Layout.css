@@ -1,17 +1,24 @@
-.layout-header {
+/* Sidebar (desktop only) beside a column holding the top bar and the page */
+.layout {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px 20px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  min-height: 100vh;
 }
 
-.layout-top {
+.layout-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.layout-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding: 12px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .layout-username {
@@ -51,24 +58,188 @@
   color: var(--color-heading);
 }
 
+/* Full height, and stays put while the page scrolls */
 .layout-nav {
   display: none;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex-shrink: 0;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding: var(--space-4) var(--space-3);
+  overflow-y: auto;
+  /* Only needed on short windows; kept thin and dark so it does not stand out */
+  scrollbar-width: thin;
+  scrollbar-color: var(--sidebar-border) transparent;
+  background: var(--sidebar-bg);
+  border-inline-end: 1px solid var(--sidebar-border);
+  transition: width 0.18s ease;
+}
+
+.layout-nav-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding-inline-start: 6px;
+}
+
+.layout-nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--color-accent);
+  color: #ffffff;
+  border-radius: var(--radius-sm);
+}
+
+.layout-nav-logo svg {
+  width: 18px;
+  height: 18px;
+}
+
+.layout-nav-brand {
+  flex: 1;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--sidebar-active-text);
+  white-space: nowrap;
+}
+
+.layout-nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  color: var(--sidebar-text-muted);
+  border: none;
+  cursor: pointer;
+}
+
+.layout-nav-toggle:hover {
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
+}
+
+.layout-nav-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.18s ease;
+}
+
+/* The chevron points towards the edge the sidebar closes to */
+[dir="rtl"] .layout-nav-toggle svg,
+.layout-collapsed .layout-nav-toggle svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .layout-collapsed .layout-nav-toggle svg {
+  transform: none;
+}
+
+.layout-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.layout-nav-group-label {
+  padding: 0 12px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--sidebar-text-muted);
 }
 
 .layout-nav a {
-  color: var(--color-text-subtle);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 0 10px;
+  border-inline-start: 3px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
   text-decoration: none;
-  font-size: 14px;
-  padding: 6px 0;
-  border-bottom: 2px solid transparent;
+  font-size: var(--font-size-md);
+  white-space: nowrap;
 }
 
+.layout-nav a svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.layout-nav a:hover {
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
+}
+
+/* The current page: lighter row, white label, green marker and icon */
 .layout-nav a.active {
-  color: var(--color-heading);
-  font-weight: bold;
-  border-bottom-color: var(--color-primary);
+  background: var(--sidebar-active-bg);
+  border-inline-start-color: var(--sidebar-accent);
+  color: var(--sidebar-active-text);
+  font-weight: 600;
+}
+
+.layout-nav a.active svg {
+  color: var(--sidebar-accent);
+}
+
+.layout-nav :focus-visible {
+  outline-color: var(--sidebar-accent);
+}
+
+/* Collapsed: icons only. Labels stay in the page for screen readers, and
+   each link's title shows its name on hover. */
+.layout-collapsed .layout-nav {
+  width: var(--sidebar-width-collapsed);
+}
+
+.layout-collapsed .layout-nav-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.layout-collapsed .layout-nav-top {
+  flex-direction: column;
+  padding-inline-start: 0;
+}
+
+.layout-collapsed .layout-nav-group-label {
+  height: 1px;
+  margin: 0 8px 6px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--sidebar-border);
+  color: transparent;
+}
+
+.layout-collapsed .layout-nav-group:first-of-type .layout-nav-group-label {
+  display: none;
+}
+
+.layout-collapsed .layout-nav a {
+  justify-content: center;
+  padding: 0;
+  border-inline-start-width: 0;
 }
 
 /* Account controls: language, theme and the account menu as one row at the
@@ -78,6 +249,30 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
+}
+
+.layout-add-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 14px;
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.layout-add-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.layout-add-button svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Same compact height for every control in the group */
@@ -142,7 +337,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
   border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow-lg);
 }
 
 .account-menu-current {
@@ -229,24 +424,100 @@
   font-size: 14px;
 }
 
+/* Room at the end of every page for the bottom nav and the floating add
+   button above it, so the last row can always be scrolled clear of both */
 .layout-main {
-  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px);
+  flex: 1;
+  min-width: 0;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--fab-size) + var(--fab-gap) * 2);
+}
+
+@media (max-width: 1023.98px) {
+  .account-banner {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .account-banner a,
+  .account-banner button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target);
+  }
+}
+
+/* One shell for every page inside the app: the same width, padding and title
+   block, whatever each page's own stylesheet says. Screen only, so the
+   reports page can still print edge to edge. */
+@media screen {
+  .layout .layout-main > :not(.upgrade-gate) {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: 20px;
+  }
+
+  .layout .layout-main h1 {
+    margin-bottom: 4px;
+    font-size: var(--font-size-2xl);
+    line-height: 1.25;
+    color: var(--color-heading);
+  }
+
+  /* Section headings sit below the page title unless a page sizes its own */
+  :where(.layout-main) h2 {
+    margin-bottom: 12px;
+    font-size: var(--font-size-lg);
+  }
+
+  .layout .layout-main .subtitle {
+    margin-bottom: 20px;
+    font-size: var(--font-size-md);
+    color: var(--color-text-subtle);
+  }
+}
+
+/* A page's title beside its main action */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.layout .layout-main .page-header .subtitle {
+  margin-bottom: 0;
+}
+
+/* A page's own Add button (a budget, a goal, ...). It stays on phones, where
+   the floating button only adds transactions; there it goes under the title. */
+@media (max-width: 639.98px) {
+  .page-header:has(> .page-header-add) {
+    flex-direction: column;
+  }
+
+  .page-header-add {
+    width: 100%;
+  }
+}
+
+/* Phones already have the floating add button */
+.page-header-action {
+  display: none;
 }
 
 @media (min-width: 1024px) {
-  .layout-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  .layout-top {
-    flex-basis: 100%;
+  .page-header-action {
+    display: inline-flex;
   }
 
   .layout-nav {
     display: flex;
+  }
+
+  /* The name is at the top of the sidebar instead */
+  .layout-brand {
+    visibility: hidden;
   }
 
   .layout-user {
@@ -256,4 +527,15 @@
   .layout-main {
     padding-bottom: 0;
   }
+}
+
+@media screen and (min-width: 1024px) {
+  .layout .layout-main > :not(.upgrade-gate) {
+    padding: 28px 32px;
+  }
+}
+
+.account-menu-plan-admin {
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }

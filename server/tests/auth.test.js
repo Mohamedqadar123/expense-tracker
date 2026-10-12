@@ -94,12 +94,35 @@ describe('POST /api/auth/verify-email', () => {
     expect(await prisma.account.count({ where: { user: { email } } })).toBe(1);
   });
 
-  it('works only once', async () => {
+  it('creates the account once, then signs it in again when the link is reopened', async () => {
+    const email = uniqueEmail();
+    const token = await savePendingSignup({ email, passwordHash: 'not-a-real-hash' });
+    const first = await request(app).post('/api/auth/verify-email').send({ token });
+
+    // e.g. a second tap, another device, or an email app that opened it first
+    const res = await request(app).post('/api/auth/verify-email').send({ token });
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(first.body.id);
+    expect(res.headers['set-cookie'][0]).toMatch(/token=/);
+    expect(await prisma.user.count({ where: { email } })).toBe(1);
+  });
+
+  it('stops signing in with the link once it expires', async () => {
     const token = await savePendingSignup({ email: uniqueEmail(), passwordHash: 'not-a-real-hash' });
-    await request(app).post('/api/auth/verify-email').send({ token });
+    const first = await request(app).post('/api/auth/verify-email').send({ token });
+    await prisma.authToken.updateMany({ where: { userId: first.body.id }, data: { expiresAt: new Date(Date.now() - 1000) } });
 
     const res = await request(app).post('/api/auth/verify-email').send({ token });
     expect(res.status).toBe(400);
+  });
+
+  it('does not sign in a suspended account with the link', async () => {
+    const token = await savePendingSignup({ email: uniqueEmail(), passwordHash: 'not-a-real-hash' });
+    const first = await request(app).post('/api/auth/verify-email').send({ token });
+    await prisma.user.update({ where: { id: first.body.id }, data: { suspendedAt: new Date() } });
+
+    const res = await request(app).post('/api/auth/verify-email').send({ token });
+    expect(res.status).toBe(403);
   });
 
   it('rejects an unknown token without creating anything', async () => {

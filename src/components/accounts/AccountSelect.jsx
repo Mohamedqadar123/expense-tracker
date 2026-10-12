@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { getUnusedPresetAccounts } from '../../constants/presetAccounts'
+import { formatCurrency } from '../../utils/format'
 
 // An account can only be debited up to its balance, so the balance is shown
 // next to each of the user's accounts to make that visible before they choose.
 function formatAccountLabel(account) {
-  return Number.isFinite(account.balance) ? `${account.name} ($${account.balance.toFixed(2)})` : account.name;
+  return Number.isFinite(account.balance) ? `${account.name} (${formatCurrency(account.balance)})` : account.name;
 }
 
 // The account picker used wherever money moves (transactions, recurring

@@ -1,19 +1,19 @@
-import { API_BASE, parseJsonOrThrow } from './config';
+import { API_BASE, apiFetch, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/billing`;
 
 export async function getPlans() {
-  const res = await fetch(`${BASE_URL}/plans`);
+  const res = await apiFetch(`${BASE_URL}/plans`);
   return parseJsonOrThrow(res, 'Failed to load pricing');
 }
 
 export async function getBillingStatus() {
-  const res = await fetch(`${BASE_URL}/status`, { credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}/status`, { credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to load subscription');
 }
 
 async function post(path, fallbackMessage) {
-  const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}${path}`, { method: 'POST', credentials: 'include' });
   return parseJsonOrThrow(res, fallbackMessage);
 }
 
@@ -30,7 +30,7 @@ export function resubscribe() {
 // Resolves only after the customer approves (or rejects) the charge on their
 // phone, so this request can stay open for a couple of minutes.
 export async function subscribe(plan, phone) {
-  const res = await fetch(`${BASE_URL}/subscribe`, {
+  const res = await apiFetch(`${BASE_URL}/subscribe`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

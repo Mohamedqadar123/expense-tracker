@@ -4,9 +4,12 @@ import '../styles/shared.css'
 import './FinanceAI.css'
 import { getAiMessages, askAiQuestion, clearAiMessages } from '../api/financeAI'
 import ChatMessageList from '../components/financeAI/ChatMessageList.jsx'
+import { useFeedback } from '../context/useFeedback.js'
+import { loadErrorMessage } from '../api/config'
 
 function FinanceAI() {
   const { t } = useTranslation();
+  const { confirm } = useFeedback();
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -19,7 +22,7 @@ function FinanceAI() {
     setLoadError(null);
     getAiMessages()
       .then(setHistory)
-      .catch(() => setLoadError(t('financeAI.loadError')))
+      .catch((err) => setLoadError(loadErrorMessage(err, t('financeAI.loadError'))))
       .finally(() => setIsLoading(false));
   };
 
@@ -53,9 +56,14 @@ function FinanceAI() {
   };
 
   const handleClear = async () => {
-    if (!window.confirm(t('financeAI.clearConfirm'))) return;
-    await clearAiMessages();
-    setHistory([]);
+    if (!(await confirm(t('financeAI.clearConfirm'), t('financeAI.clearHistory')))) return;
+    setSendError(null);
+    try {
+      await clearAiMessages();
+      setHistory([]);
+    } catch (err) {
+      setSendError(err.message);
+    }
   };
 
   return (
@@ -81,13 +89,14 @@ function FinanceAI() {
           <input
             type="text"
             placeholder={t('financeAI.inputPlaceholder')}
+            aria-label={t('financeAI.inputPlaceholder')}
             value={questionInput}
             onChange={(e) => setQuestionInput(e.target.value)}
             disabled={isSending}
           />
           <button type="submit" disabled={isSending || !questionInput.trim()}>{t('financeAI.send')}</button>
         </form>
-        {sendError && <p className="auth-error">{sendError}</p>}
+        {sendError && <p className="auth-error" role="alert">{sendError}</p>}
       </div>
     </div>
   );

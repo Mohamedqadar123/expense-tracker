@@ -50,21 +50,22 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
       <input
         type="text"
         placeholder={t('transactions.searchPlaceholder')}
+        aria-label={t('transactions.searchPlaceholder')}
         value={searchDraft}
         onChange={(e) => setSearchDraft(e.target.value)}
       />
-      <select value={filters.type} onChange={(e) => onChange({ type: e.target.value })}>
+      <select aria-label={t('reports.type')} value={filters.type} onChange={(e) => onChange({ type: e.target.value })}>
         <option value="all">{t('transactions.allTypes')}</option>
         <option value="income">{t('common.income')}</option>
         <option value="expense">{t('common.expense')}</option>
       </select>
-      <select value={filters.category} onChange={(e) => onChange({ category: e.target.value })}>
+      <select aria-label={t('transactions.category')} value={filters.category} onChange={(e) => onChange({ category: e.target.value })}>
         <option value="all">{t('transactions.allCategories')}</option>
         {categories.map(c => (
           <option key={c} value={c}>{c}</option>
         ))}
       </select>
-      <select value={filters.account} onChange={(e) => onChange({ account: e.target.value })}>
+      <select aria-label={t('transactions.account')} value={filters.account} onChange={(e) => onChange({ account: e.target.value })}>
         <option value="all">{t('transactions.allAccounts')}</option>
         {accounts.map(a => (
           <option key={a} value={a}>{a}</option>
@@ -73,12 +74,14 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
       <div className="filter-date-range">
         <input
           type="date"
+          aria-label={t('common.startDate')}
           value={filters.startDate}
           onChange={(e) => onChange({ startDate: e.target.value })}
         />
         <span>{t('common.to')}</span>
         <input
           type="date"
+          aria-label={t('common.endDate')}
           value={filters.endDate}
           onChange={(e) => onChange({ endDate: e.target.value })}
         />
@@ -87,6 +90,7 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
         <input
           type="number"
           placeholder={t('transactions.minAmountPlaceholder')}
+          aria-label={t('transactions.minAmountPlaceholder')}
           value={minDraft}
           onChange={(e) => setMinDraft(e.target.value)}
         />
@@ -94,11 +98,12 @@ function TransactionFilters({ filters, onChange, categories, accounts }) {
         <input
           type="number"
           placeholder={t('transactions.maxAmountPlaceholder')}
+          aria-label={t('transactions.maxAmountPlaceholder')}
           value={maxDraft}
           onChange={(e) => setMaxDraft(e.target.value)}
         />
       </div>
-      <select value={filters.sort} onChange={(e) => onChange({ sort: e.target.value })}>
+      <select aria-label={t('transactions.sortBy')} value={filters.sort} onChange={(e) => onChange({ sort: e.target.value })}>
         {SORT_OPTIONS.map(s => (
           <option key={s.value} value={s.value}>{s.label}</option>
         ))}

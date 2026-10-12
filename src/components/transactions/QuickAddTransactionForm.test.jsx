@@ -20,8 +20,8 @@ describe('QuickAddTransactionForm', () => {
 
     render(<QuickAddTransactionForm categories={['Food', 'Rent']} onSuccess={vi.fn()} />);
 
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Coffee');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '5');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByLabelText(/amount/i), '5');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
     await waitFor(() => expect(findPostCall(fetchMock)).toBeTruthy());
@@ -38,10 +38,11 @@ describe('QuickAddTransactionForm', () => {
     window.addEventListener('transaction:created', spy);
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Bad');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '0');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Bad');
+    await userEvent.type(screen.getByLabelText(/amount/i), '0');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
+    expect(screen.getByText('Enter an amount greater than 0')).toBeInTheDocument();
     expect(findPostCall(fetchMock)).toBeUndefined();
     expect(spy).not.toHaveBeenCalled();
     window.removeEventListener('transaction:created', spy);
@@ -53,8 +54,8 @@ describe('QuickAddTransactionForm', () => {
     window.addEventListener('transaction:created', spy);
 
     render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
-    await userEvent.type(screen.getByPlaceholderText(/description/i), 'Coffee');
-    await userEvent.type(screen.getByPlaceholderText(/amount/i), '5');
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByLabelText(/amount/i), '5');
     await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
 
     expect(await screen.findByText(/too many requests, please slow down/i)).toBeInTheDocument();
@@ -62,7 +63,7 @@ describe('QuickAddTransactionForm', () => {
     window.removeEventListener('transaction:created', spy);
   });
 
-  it('filters the category dropdown to income categories when Credit is selected', async () => {
+  it('filters the category dropdown to income categories when Income is selected', async () => {
     mockFetchOnce([]);
     render(<QuickAddTransactionForm categories={['Food', 'Salary']} onSuccess={vi.fn()} />);
 
@@ -71,11 +72,52 @@ describe('QuickAddTransactionForm', () => {
     const select = screen.getAllByRole('combobox')[0];
     expect(select).toHaveValue('Food');
 
-    await userEvent.click(screen.getByRole('button', { name: /credit/i }));
+    // Expense is a debit (type "expense"), Income a credit (type "income")
+    expect(screen.getByRole('button', { name: 'Expense' })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(screen.getByRole('button', { name: 'Income' }));
 
     expect(select).toHaveValue('Salary');
     expect(within(select).getAllByRole('option')).toHaveLength(1);
     expect(within(select).getByRole('option', { name: 'Salary' })).toBeInTheDocument();
+  });
+
+  it('says what is missing under each empty field instead of saving', async () => {
+    const fetchMock = mockFetchOnce({ id: 1 }, { status: 201 });
+    render(<QuickAddTransactionForm categories={['Food']} onSuccess={vi.fn()} />);
+
+    await userEvent.click(screen.getByRole('button', { name: /add transaction/i }));
+
+    expect(screen.getByText('Enter a description')).toBeInTheDocument();
+    expect(screen.getByText('Enter an amount greater than 0')).toBeInTheDocument();
+    expect(findPostCall(fetchMock)).toBeUndefined();
+
+    // The message goes as soon as the field is corrected
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    expect(screen.queryByText('Enter a description')).not.toBeInTheDocument();
+  });
+
+  it('saves once, and shows it is saving, when the button is clicked twice', async () => {
+    let finish;
+    const fetchMock = vi.fn((url, options) => (options?.method === 'POST'
+      ? new Promise((resolve) => { finish = () => resolve({ ok: true, status: 201, json: async () => ({ id: 1 }) }); })
+      : Promise.resolve({ ok: true, status: 200, json: async () => [] })));
+    vi.stubGlobal('fetch', fetchMock);
+    const onSuccess = vi.fn();
+
+    render(<QuickAddTransactionForm categories={['Food']} onSuccess={onSuccess} />);
+    await userEvent.type(screen.getByLabelText(/description/i), 'Coffee');
+    await userEvent.type(screen.getByLabelText(/amount/i), '5');
+    const submit = screen.getByRole('button', { name: /add transaction/i });
+    await userEvent.dblClick(submit);
+
+    expect(submit).toBeDisabled();
+    expect(submit).toHaveTextContent('Adding…');
+    finish();
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
+    expect(fetchMock.mock.calls.filter(([, options]) => options?.method === 'POST')).toHaveLength(1);
+    // Reset and ready for the next one
+    expect(screen.getByLabelText(/description/i)).toHaveValue('');
+    expect(submit).toBeEnabled();
   });
 
   it('offers a dropdown of the user\'s real accounts instead of free text once any exist', async () => {

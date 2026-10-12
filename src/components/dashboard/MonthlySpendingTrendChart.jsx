@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../../context/useTheme.js'
 import { getChartColors, getTooltipStyle } from '../../theme/chartColors.js'
+import { formatCurrency } from '../../utils/format'
 
 function MonthlySpendingTrendChart({ data }) {
   const { resolvedTheme } = useTheme();
@@ -19,7 +20,7 @@ function MonthlySpendingTrendChart({ data }) {
               <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} />
               <XAxis dataKey="month" fontSize={12} stroke={colors.axis} />
               <YAxis fontSize={12} stroke={colors.axis} />
-              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} {...getTooltipStyle(colors)} />
+              <Tooltip formatter={(value) => formatCurrency(value)} {...getTooltipStyle(colors)} />
               <Bar dataKey="amount" fill={colors.neutral} name={t('common.expense')} />
             </BarChart>
           </ResponsiveContainer>

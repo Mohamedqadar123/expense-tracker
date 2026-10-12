@@ -37,3 +37,20 @@ export function getPeriodRange(preset, customStart, customEnd) {
 
   return { start: end, end };
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// The stretch of the same length that ends the day before `start`: for
+// Oct 1 - Oct 11 (11 days) that is Sep 20 - Sep 30. Used to compare a period
+// with the one before it, like for like.
+export function getPreviousPeriodRange(start, end) {
+  const startMs = Date.parse(`${start}T00:00:00Z`);
+  const endMs = Date.parse(`${end}T00:00:00Z`);
+  const days = Math.round((endMs - startMs) / DAY_MS) + 1;
+  const previousEnd = new Date(startMs - DAY_MS);
+  const previousStart = new Date(startMs - days * DAY_MS);
+  return {
+    start: previousStart.toISOString().slice(0, 10),
+    end: previousEnd.toISOString().slice(0, 10),
+  };
+}

@@ -1,17 +1,21 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PRESET_ACCOUNTS } from '../../constants/presetAccounts'
+import Field from '../Field.jsx'
+import { useSubmitGuard } from '../../hooks/useSubmitGuard.js'
 
 function AccountForm({ initialValues, onSubmit, onCancel }) {
   const { t } = useTranslation();
   const [name, setName] = useState(initialValues?.name || '');
   const [startingBalance, setStartingBalance] = useState(initialValues?.startingBalance ?? '');
   const [error, setError] = useState(null);
+  const saving = useSubmitGuard();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     if (!name.trim()) return;
+    if (!saving.begin()) return;
     try {
       await onSubmit({
         name: name.trim(),
@@ -23,31 +27,40 @@ function AccountForm({ initialValues, onSubmit, onCancel }) {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      saving.end();
     }
   };
 
   return (
     <form className="inline-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder={t('accounts.namePlaceholder')}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        list="preset-account-names"
-      />
+      <Field label={t('accounts.name')} wide>
+        <input
+          type="text"
+          placeholder={t('accounts.namePlaceholder')}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          list="preset-account-names"
+          required
+        />
+      </Field>
       <datalist id="preset-account-names">
         {PRESET_ACCOUNTS.map((preset) => <option key={preset} value={preset} />)}
       </datalist>
-      <input
-        type="number"
-        placeholder={t('accounts.startingBalancePlaceholder')}
-        value={startingBalance}
-        onChange={(e) => setStartingBalance(e.target.value)}
-        step="0.01"
-      />
-      <button type="submit">{initialValues ? t('common.save') : t('common.add')}</button>
-      {onCancel && <button type="button" onClick={onCancel}>{t('common.cancel')}</button>}
-      {error && <p className="auth-error">{error}</p>}
+      <Field label={t('accounts.startingBalancePlaceholder')}>
+        <input
+          type="number"
+          value={startingBalance}
+          onChange={(e) => setStartingBalance(e.target.value)}
+          step="0.01"
+        />
+      </Field>
+      <button type="submit" disabled={saving.isPending} aria-busy={saving.isPending}>
+        {saving.isPending && <span className="button-spinner" aria-hidden="true" />}
+        {saving.isPending ? t('common.saving') : initialValues ? t('common.save') : t('common.add')}
+      </button>
+      {onCancel && <button type="button" onClick={onCancel} disabled={saving.isPending}>{t('common.cancel')}</button>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
     </form>
   );
 }

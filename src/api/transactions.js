@@ -1,4 +1,4 @@
-import { API_BASE, parseJsonOrThrow } from './config';
+import { API_BASE, apiFetch, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/transactions`;
 
@@ -10,17 +10,17 @@ export async function getTransactions(params = {}) {
     }
   });
   const qs = searchParams.toString();
-  const res = await fetch(`${BASE_URL}${qs ? `?${qs}` : ''}`, { credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}${qs ? `?${qs}` : ''}`, { credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to fetch transactions');
 }
 
 export async function getTransactionAccounts() {
-  const res = await fetch(`${BASE_URL}/accounts`, { credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}/accounts`, { credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to fetch accounts');
 }
 
 export async function createTransaction(data) {
-  const res = await fetch(BASE_URL, {
+  const res = await apiFetch(BASE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -30,7 +30,7 @@ export async function createTransaction(data) {
 }
 
 export async function updateTransaction(id, data) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
+  const res = await apiFetch(`${BASE_URL}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -40,6 +40,6 @@ export async function updateTransaction(id, data) {
 }
 
 export async function deleteTransaction(id) {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to delete transaction');
 }

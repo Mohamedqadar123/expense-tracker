@@ -12,3 +12,203 @@
   margin-bottom: 20px;
   color: var(--color-text-subtle);
 }
+
+/* Total across every account */
+
+.accounts-total {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.accounts-total-label {
+  flex-basis: 100%;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.accounts-total-value {
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.account-currency {
+  padding: 2px 8px;
+  background: var(--color-surface-alt);
+  color: var(--color-text-subtle);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* One card per account: one column on phones, more as they fit */
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.account-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.account-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.account-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--color-surface-alt);
+  color: var(--color-info);
+  border-radius: var(--radius-sm);
+}
+
+.account-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.account-icon-mobileMoney { color: var(--color-accent); background: var(--color-accent-bg); }
+.account-icon-cash { color: var(--color-warning); background: var(--color-warning-bg); }
+.account-icon-other { color: var(--color-text-subtle); }
+
+.account-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-card-title h2 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-lg);
+}
+
+.account-type {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.account-balance {
+  font-size: 26px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* In the red. The shared .expense-amount class carries its own size, meant
+   for table rows, so the size is restated here. */
+.account-balance.expense-amount {
+  font-size: 26px;
+  color: var(--color-danger);
+}
+
+.accounts-total-value.expense-amount {
+  font-size: 28px;
+  color: var(--color-danger);
+}
+
+.account-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* Recent activity: grows to fill the card so the actions line up along a row */
+
+.account-activity {
+  flex: 1;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.account-activity h3 {
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.account-activity ul {
+  list-style: none;
+}
+
+.account-activity li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 4px 0;
+  font-size: var(--font-size-sm);
+}
+
+.account-activity-description {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-activity-date {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+.account-activity li .income-amount,
+.account-activity li .expense-amount {
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.account-activity-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.account-delete {
+  color: var(--color-danger);
+}
+
+.account-delete:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* Phones have no room beside the title, so the button goes under it, full width */
+@media (max-width: 639.98px) {
+  .accounts-page .page-header {
+    flex-direction: column;
+  }
+
+  .accounts-add-button {
+    width: 100%;
+  }
+}

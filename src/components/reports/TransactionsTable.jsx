@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { formatSignedCurrency, formatDate } from '../../utils/format'
 
 function TransactionsTable({ transactions }) {
   const { t } = useTranslation();
@@ -23,12 +24,12 @@ function TransactionsTable({ transactions }) {
             <tbody>
               {transactions.map(tx => (
                 <tr key={tx.id}>
-                  <td data-label={t('transactions.date')}>{tx.date.slice(0, 10)}</td>
+                  <td data-label={t('transactions.date')}>{formatDate(tx.date)}</td>
                   <td data-label={t('transactions.description')}>{tx.description}</td>
                   <td data-label={t('transactions.category')}>{tx.category}</td>
                   <td data-label={t('reports.type')}>{t(`common.${tx.type}`)}</td>
                   <td data-label={t('transactions.amount')} className={tx.type === 'income' ? 'income-amount' : 'expense-amount'}>
-                    {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
+                    {formatSignedCurrency(tx.amount, tx.type)}
                   </td>
                 </tr>
               ))}

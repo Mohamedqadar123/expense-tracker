@@ -34,7 +34,9 @@ const askLimiter = rateLimit({
 router.get('/messages', asyncHandler(async (req, res) => {
   const messages = await prisma.aiMessage.findMany({
     where: { userId: req.user.id },
-    orderBy: { createdAt: 'asc' },
+    // A question and its answer are saved in one transaction, so Postgres
+    // gives them the same createdAt; id keeps them in insertion order.
+    orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
   });
   res.json(messages);
 }));
@@ -51,11 +53,13 @@ router.post('/messages', askLimiter, asyncHandler(async (req, res) => {
       buildFinancialSummary(prisma, userId),
       prisma.aiMessage.findMany({
         where: { userId },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         take: CONVERSATION_CONTEXT_LIMIT,
       }),
     ]);
     const history = historyRows.reverse().map((m) => ({ role: m.role, content: m.content }));
+    // Claude requires the conversation to open with a user turn.
+    while (history.length && history[0].role !== 'user') history.shift();
 
     const answer = await askFinancialQuestion({ summary, history, question });
 

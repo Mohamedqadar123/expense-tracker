@@ -15,7 +15,11 @@
     "debit": "مدين",
     "to": "إلى",
     "notAvailable": "غير متاح",
-    "welcome": "مرحباً، {{name}}"
+    "welcome": "مرحباً، {{name}}",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "confirm": "تأكيد",
+    "saving": "جارٍ الحفظ…"
   },
   "nav": {
     "home": "الرئيسية",
@@ -30,7 +34,16 @@
     "more": "المزيد",
     "addTransaction": "إضافة معاملة",
     "billing": "الخطة والاشتراك",
-    "admin": "الإدارة"
+    "admin": "الإدارة",
+    "groupMoney": "إدارة الأموال",
+    "groupPlanning": "التخطيط",
+    "groupOverview": "نظرة عامة",
+    "groupAnalytics": "التحليلات",
+    "groupTools": "الأدوات",
+    "groupSettings": "الإعدادات",
+    "financialCalculator": "الحاسبة المالية",
+    "collapseSidebar": "طي الشريط الجانبي",
+    "expandSidebar": "توسيع الشريط الجانبي"
   },
   "theme": {
     "label": "المظهر",
@@ -57,7 +70,7 @@
     "custom": "مخصص"
   },
   "alerts": {
-    "overBudget": "لقد تجاوزت ميزانية \"{{name}}\" (${{spent}} من أصل ${{amount}}).",
+    "overBudget": "لقد تجاوزت ميزانية \"{{name}}\" ({{spent}} من أصل {{amount}}).",
     "nearBudget": "لقد استخدمت {{percent}}% من ميزانية \"{{name}}\"."
   },
   "dashboard": {
@@ -78,7 +91,20 @@
     "monthlySpending": "الإنفاق الشهري",
     "spendingByCategory": "الإنفاق حسب الفئة",
     "noExpensesPeriod": "لا توجد مصروفات خلال هذه الفترة.",
-    "noExpenses6mo": "لا توجد مصروفات خلال الأشهر الستة الماضية."
+    "noExpenses6mo": "لا توجد مصروفات خلال الأشهر الستة الماضية.",
+    "welcome": "مرحبًا بعودتك، {{name}}",
+    "balanceHint": "في جميع حساباتك حتى اليوم",
+    "incomeHint": "الأموال الواردة خلال هذه الفترة",
+    "expensesHint": "الأموال الصادرة خلال هذه الفترة",
+    "savingsRateHint": "نسبة الدخل المتبقية بعد المصروفات",
+    "savingsRateNoIncome": "لا يوجد دخل في هذه الفترة",
+    "vsPrevious": "{{change}} مقارنة بالفترة السابقة",
+    "vsPreviousPoints": "{{change}} نقطة مقارنة بالفترة السابقة",
+    "viewAll": "عرض كل المعاملات",
+    "emptyTitle": "لا توجد معاملات في هذه الفترة",
+    "emptyBody": "ستظهر تحليلاتك المالية هنا. أضف معاملة للبدء.",
+    "totalSpent": "إجمالي الإنفاق",
+    "otherCategories": "فئات أخرى"
   },
   "transactions": {
     "brand": "Finance Tracker",
@@ -111,7 +137,12 @@
     "adding": "جارٍ الإضافة…",
     "prev": "السابق",
     "next": "التالي",
-    "pageOf": "صفحة {{page}} من {{totalPages}} ({{total}} إجمالاً)"
+    "pageOf": "صفحة {{page}} من {{totalPages}} ({{total}} إجمالاً)",
+    "sortBy": "ترتيب حسب",
+    "editTransaction": "تعديل المعاملة",
+    "emptyTitle": "لا توجد معاملات بعد",
+    "emptyBody": "أضف أول معاملة لك لتبدأ بتتبع أموالك.",
+    "filters": "عوامل التصفية"
   },
   "budgets": {
     "title": "الميزانيات",
@@ -120,14 +151,37 @@
     "performance": "أداء الميزانية",
     "loading": "جارٍ تحميل الميزانيات...",
     "loadError": "تعذّر تحميل الميزانيات",
-    "empty": "لا توجد ميزانيات بعد — أضف واحدة أدناه.",
+    "empty": "لا توجد ميزانيات بعد. أضف واحدة لتحديد حد للإنفاق.",
     "emptyReport": "لا توجد ميزانيات لعرض تقرير عنها.",
     "deleteConfirm": "هل تريد حذف هذه الميزانية؟",
-    "spentOf": "تم إنفاق ${{spent}} من أصل ${{amount}}",
-    "remaining": "المتبقي ${{remaining}}",
+    "spentOf": "تم إنفاق {{spent}} من أصل {{amount}}",
+    "remaining": "المتبقي {{remaining}}",
     "addBudget": "إضافة ميزانية",
     "namePlaceholder": "اسم الميزانية",
-    "amountPlaceholder": "المبلغ"
+    "amountPlaceholder": "المبلغ",
+    "period": "الفترة",
+    "overBy": "تجاوز بمقدار {{amount}}",
+    "editBudget": "تعديل الميزانية",
+    "status": {
+      "normal": "ضمن الحد",
+      "warning": "يقترب من الحد",
+      "near_limit": "قريب من الحد",
+      "exceeded": "تجاوز الميزانية"
+    },
+    "budgeted": "المخصص",
+    "spent": "المصروف",
+    "remainingLabel": "المتبقي",
+    "overByLabel": "التجاوز",
+    "percentUsed": "تم استخدام {{percent}}%",
+    "ended": "انتهت",
+    "upcoming": "قادمة",
+    "allPeriods": "الكل",
+    "totalBudgeted": "إجمالي المخصص",
+    "totalSpent": "إجمالي المصروف",
+    "totalRemaining": "إجمالي المتبقي",
+    "totalOver": "إجمالي التجاوز",
+    "overviewHint": "لجميع الميزانيات المعروضة",
+    "viewSpending": "عرض الإنفاق"
   },
   "goals": {
     "title": "الأهداف",
@@ -135,14 +189,25 @@
     "heading": "أهداف الادخار",
     "loading": "جارٍ تحميل الأهداف...",
     "loadError": "تعذّر تحميل أهداف الادخار",
-    "empty": "لا توجد أهداف ادخار بعد — أضف واحدة أدناه.",
+    "empty": "لا توجد أهداف ادخار بعد. أضف هدفًا لتبدأ الادخار.",
     "deleteConfirm": "هل تريد حذف هدف الادخار هذا؟",
     "target": "الهدف: {{date}}",
     "addGoal": "إضافة هدف ادخار",
     "namePlaceholder": "اسم الهدف",
     "targetAmountPlaceholder": "المبلغ المستهدف",
     "savedSoFarPlaceholder": "المبلغ المدّخر حتى الآن",
-    "accountHint": "يُخصم المبلغ المدّخر من الحساب المحدد. تخفيض المبلغ المدّخر يعيده إلى الحساب."
+    "accountHint": "يُخصم المبلغ المدّخر من الحساب المحدد. تخفيض المبلغ المدّخر يعيده إلى الحساب.",
+    "targetDate": "التاريخ المستهدف (اختياري)",
+    "addMoney": "إضافة مبلغ",
+    "addMoneyTo": "إضافة مبلغ: {{name}}",
+    "amountToAdd": "المبلغ المراد إضافته",
+    "toGo": "متبقٍ {{amount}}",
+    "reached": "تم بلوغ الهدف",
+    "editGoal": "تعديل هدف الادخار",
+    "deleteGoal": "حذف هدف الادخار",
+    "deleteWithMoney": "يحتوي هذا الهدف على {{amount}}. سيُعاد المبلغ إلى الحساب الذي تختاره، ثم يُحذف الهدف.",
+    "returnTo": "إعادة المبلغ إلى",
+    "returnAndDelete": "إعادة المبلغ والحذف"
   },
   "reports": {
     "title": "التقارير المالية",
@@ -168,7 +233,7 @@
     "subtitle": "أتمتة الدخل والمصروفات المتكررة",
     "loading": "جارٍ تحميل المعاملات المتكررة...",
     "loadError": "تعذّر تحميل المعاملات المتكررة",
-    "empty": "لا توجد معاملات متكررة بعد — أضف واحدة أدناه.",
+    "empty": "لا توجد معاملات متكررة بعد. أضف واحدة لتتم تلقائيًا.",
     "deleteConfirm": "هل تريد حذف هذه المعاملة المتكررة؟ لن تتأثر المعاملات التي تم إنشاؤها مسبقًا.",
     "active": "نشطة",
     "paused": "متوقفة مؤقتًا",
@@ -183,7 +248,9 @@
     "historyLoadError": "تعذّر تحميل السجل",
     "noOccurrences": "لم يتم إنشاء أي تكرار بعد.",
     "transactionDeleted": "تم حذف المعاملة",
-    "endDateOptionalPlaceholder": "تاريخ الانتهاء (اختياري)"
+    "endDateOptionalPlaceholder": "تاريخ الانتهاء (اختياري)",
+    "frequency": "التكرار",
+    "editRecurring": "تعديل المعاملة المتكررة"
   },
   "financeAI": {
     "title": "المساعد المالي الذكي",
@@ -214,14 +281,26 @@
     "heading": "حساباتك",
     "loading": "جارٍ تحميل الحسابات...",
     "loadError": "تعذّر تحميل الحسابات",
-    "empty": "لا توجد حسابات بعد — أضف واحدًا أدناه، مثل \"البنك\" أو \"EVC\".",
+    "empty": "لا توجد حسابات بعد. أضف حسابًا، مثل \"Bank\" أو \"EVC\".",
     "deleteConfirm": "حذف هذا الحساب؟ لا يمكن حذف حساب لديه معاملات.",
-    "startingBalance": "الرصيد الابتدائي: ${{amount}}",
+    "startingBalance": "الرصيد الابتدائي: {{amount}}",
     "addAccount": "إضافة حساب",
     "namePlaceholder": "اسم الحساب (مثل Salam Bank أو EVC Plus)",
     "startingBalancePlaceholder": "الرصيد الابتدائي",
     "yourAccounts": "حساباتك",
-    "presetAccounts": "البنوك والمحافظ الإلكترونية"
+    "presetAccounts": "البنوك والمحافظ الإلكترونية",
+    "name": "اسم الحساب",
+    "totalBalance": "إجمالي الرصيد، كل الحسابات",
+    "typeBank": "حساب بنكي",
+    "typeMobileMoney": "محفظة الهاتف المحمول",
+    "typeCash": "نقدًا",
+    "typeOther": "أخرى",
+    "moneyIn": "الوارد {{amount}}",
+    "moneyOut": "الصادر {{amount}}",
+    "recentActivity": "آخر النشاط",
+    "noActivity": "لا يوجد نشاط بعد",
+    "viewTransactions": "عرض المعاملات",
+    "editAccount": "تعديل الحساب"
   },
   "billing": {
     "title": "الاشتراك",
@@ -272,5 +351,23 @@
     "unsubscribeConfirm": "هل تريد إلغاء اشتراكك؟ ستحتفظ بالوصول الكامل حتى {{date}}، وهي المدة التي دفعت مقابلها. بعد ذلك تنتهي خطتك وستحتاج إلى الاشتراك مجدداً لمواصلة استخدام التطبيق.",
     "unsubscribed": "لقد ألغيت اشتراكك. تبقى خطتك ({{plan}}) فعّالة حتى {{date}} ثم تنتهي.",
     "keepPlan": "أبقِ خطتي"
+  },
+  "feedback": {
+    "added": "تمت الإضافة",
+    "saved": "تم حفظ التغييرات",
+    "deleted": "تم الحذف"
+  },
+  "validation": {
+    "descriptionRequired": "أدخل وصفًا",
+    "amountPositive": "أدخل مبلغًا أكبر من 0",
+    "dateRequired": "اختر تاريخًا",
+    "dateFuture": "لا يمكن أن يكون التاريخ في المستقبل",
+    "nameRequired": "أدخل اسمًا",
+    "endAfterStart": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء"
+  },
+  "errors": {
+    "network": "تعذّر الوصول إلى الخادم. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.",
+    "session": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+    "server": "حدث خطأ من جهتنا. يرجى المحاولة بعد قليل."
   }
 }

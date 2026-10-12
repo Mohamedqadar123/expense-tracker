@@ -159,3 +159,41 @@
 .admin-status-unknown {
   color: var(--color-warning);
 }
+
+.admin-row-suspended td {
+  background: var(--color-danger-bg);
+}
+
+.admin-suspended {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-danger);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.admin-row-actions button {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.admin-moderation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-moderation-warning {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm, 14px);
+}
+
+.admin-moderation-actions {
+  display: flex;
+  gap: 8px;
+}

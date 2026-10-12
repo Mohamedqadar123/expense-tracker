@@ -22,12 +22,14 @@ function PeriodSelector({ preset, customStart, customEnd, onChange, presets = DA
         <div className="period-custom-range">
           <input
             type="date"
+            aria-label={t('common.startDate')}
             value={customStart}
             onChange={(e) => onChange({ preset: 'custom', customStart: e.target.value, customEnd })}
           />
           <span>{t('common.to')}</span>
           <input
             type="date"
+            aria-label={t('common.endDate')}
             value={customEnd}
             onChange={(e) => onChange({ preset: 'custom', customStart, customEnd: e.target.value })}
           />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import './Auth.css'
 import { SavingsIllustration } from '../components/illustrations/Illustrations.jsx'
 import { forgotPassword } from '../api/auth'
+import Field from '../components/Field.jsx'
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -37,14 +38,16 @@ function ForgotPassword() {
           <>
             <p className="subtitle">Enter your email and we'll send you a reset link</p>
             <form onSubmit={handleSubmit}>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              {error && <p className="auth-error">{error}</p>}
+              <Field label="Email">
+                <input
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Field>
+              {error && <p className="auth-error" role="alert">{error}</p>}
               <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Sending...' : 'Send Reset Link'}
               </button>

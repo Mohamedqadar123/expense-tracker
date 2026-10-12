@@ -1,14 +1,14 @@
-import { API_BASE, parseJsonOrThrow } from './config';
+import { API_BASE, apiFetch, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/auth`;
 
 export async function getMe() {
-  const res = await fetch(`${BASE_URL}/me`, { credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}/me`, { credentials: 'include' });
   return parseJsonOrThrow(res, 'Not authenticated');
 }
 
 export async function login(email, password) {
-  const res = await fetch(`${BASE_URL}/login`, {
+  const res = await apiFetch(`${BASE_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -20,7 +20,7 @@ export async function login(email, password) {
 // Does not sign the person in: the account only exists once they open the
 // link emailed to them. `plan` is the paid plan they picked beforehand, if any.
 export async function signup(email, password, name, plan) {
-  const res = await fetch(`${BASE_URL}/signup`, {
+  const res = await apiFetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -30,7 +30,7 @@ export async function signup(email, password, name, plan) {
 }
 
 async function postJson(path, body, fallbackMessage) {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await apiFetch(`${BASE_URL}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -52,5 +52,5 @@ export function resetPassword(token, password) {
 }
 
 export async function logout() {
-  await fetch(`${BASE_URL}/logout`, { method: 'POST', credentials: 'include' });
+  await apiFetch(`${BASE_URL}/logout`, { method: 'POST', credentials: 'include' });
 }

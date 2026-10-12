@@ -15,7 +15,11 @@
     "debit": "Debit",
     "to": "to",
     "notAvailable": "N/A",
-    "welcome": "Welcome, {{name}}"
+    "welcome": "Welcome, {{name}}",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "confirm": "Confirm",
+    "saving": "Saving…"
   },
   "nav": {
     "home": "Home",
@@ -30,7 +34,16 @@
     "more": "More",
     "addTransaction": "Add Transaction",
     "billing": "Plan & billing",
-    "admin": "Admin"
+    "admin": "Admin",
+    "groupMoney": "Money Management",
+    "groupPlanning": "Planning",
+    "groupOverview": "Overview",
+    "groupAnalytics": "Analytics",
+    "groupTools": "Tools",
+    "groupSettings": "Settings",
+    "financialCalculator": "Financial Calculator",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
   },
   "theme": {
     "label": "Theme",
@@ -57,7 +70,7 @@
     "custom": "Custom"
   },
   "alerts": {
-    "overBudget": "You're over budget for \"{{name}}\" (${{spent}} of ${{amount}}).",
+    "overBudget": "You're over budget for \"{{name}}\" ({{spent}} of {{amount}}).",
     "nearBudget": "You've used {{percent}}% of your \"{{name}}\" budget."
   },
   "dashboard": {
@@ -78,7 +91,20 @@
     "monthlySpending": "Monthly Spending",
     "spendingByCategory": "Spending by Category",
     "noExpensesPeriod": "No expenses in this period.",
-    "noExpenses6mo": "No expenses in the last 6 months."
+    "noExpenses6mo": "No expenses in the last 6 months.",
+    "welcome": "Welcome back, {{name}}",
+    "balanceHint": "Across all your accounts, to date",
+    "incomeHint": "Money in during this period",
+    "expensesHint": "Money out during this period",
+    "savingsRateHint": "Share of income left after expenses",
+    "savingsRateNoIncome": "No income in this period",
+    "vsPrevious": "{{change}} vs previous period",
+    "vsPreviousPoints": "{{change}} pts vs previous period",
+    "viewAll": "View all transactions",
+    "emptyTitle": "No transactions in this period",
+    "emptyBody": "Your financial insights will appear here. Add a transaction to get started.",
+    "totalSpent": "Total spent",
+    "otherCategories": "Other categories"
   },
   "transactions": {
     "brand": "Finance Tracker",
@@ -111,7 +137,12 @@
     "adding": "Adding…",
     "prev": "Prev",
     "next": "Next",
-    "pageOf": "Page {{page}} of {{totalPages}} ({{total}} total)"
+    "pageOf": "Page {{page}} of {{totalPages}} ({{total}} total)",
+    "sortBy": "Sort by",
+    "editTransaction": "Edit Transaction",
+    "emptyTitle": "No transactions yet",
+    "emptyBody": "Add your first transaction to start tracking your money.",
+    "filters": "Filters"
   },
   "budgets": {
     "title": "Budgets",
@@ -120,14 +151,37 @@
     "performance": "Budget Performance",
     "loading": "Loading budgets...",
     "loadError": "Failed to load budgets",
-    "empty": "No budgets yet — add one below.",
+    "empty": "No budgets yet. Add one to set a spending limit.",
     "emptyReport": "No budgets to report on.",
     "deleteConfirm": "Delete this budget?",
-    "spentOf": "${{spent}} spent of ${{amount}}",
-    "remaining": "${{remaining}} remaining",
+    "spentOf": "{{spent}} spent of {{amount}}",
+    "remaining": "{{remaining}} remaining",
     "addBudget": "Add Budget",
     "namePlaceholder": "Budget name",
-    "amountPlaceholder": "Amount"
+    "amountPlaceholder": "Amount",
+    "period": "Period",
+    "overBy": "Over by {{amount}}",
+    "editBudget": "Edit Budget",
+    "status": {
+      "normal": "On track",
+      "warning": "Approaching limit",
+      "near_limit": "Near limit",
+      "exceeded": "Over budget"
+    },
+    "budgeted": "Budgeted",
+    "spent": "Spent",
+    "remainingLabel": "Remaining",
+    "overByLabel": "Over by",
+    "percentUsed": "{{percent}}% used",
+    "ended": "Ended",
+    "upcoming": "Upcoming",
+    "allPeriods": "All",
+    "totalBudgeted": "Total budgeted",
+    "totalSpent": "Total spent",
+    "totalRemaining": "Total remaining",
+    "totalOver": "Over in total",
+    "overviewHint": "Across the budgets shown",
+    "viewSpending": "View spending"
   },
   "goals": {
     "title": "Goals",
@@ -135,14 +189,25 @@
     "heading": "Savings Goals",
     "loading": "Loading savings goals...",
     "loadError": "Failed to load savings goals",
-    "empty": "No savings goals yet — add one below.",
+    "empty": "No savings goals yet. Add one to start saving towards it.",
     "deleteConfirm": "Delete this savings goal?",
     "target": "Target: {{date}}",
     "addGoal": "Add Savings Goal",
     "namePlaceholder": "Goal name",
     "targetAmountPlaceholder": "Target amount",
     "savedSoFarPlaceholder": "Saved so far",
-    "accountHint": "Saved money is debited from the selected account. Lowering the saved amount credits it back."
+    "accountHint": "Saved money is debited from the selected account. Lowering the saved amount credits it back.",
+    "targetDate": "Target date (optional)",
+    "addMoney": "Add money",
+    "addMoneyTo": "Add money: {{name}}",
+    "amountToAdd": "Amount to add",
+    "toGo": "{{amount}} to go",
+    "reached": "Goal reached",
+    "editGoal": "Edit Savings Goal",
+    "deleteGoal": "Delete Savings Goal",
+    "deleteWithMoney": "This goal holds {{amount}}. It will be returned to the account you choose, and then the goal is deleted.",
+    "returnTo": "Return the money to",
+    "returnAndDelete": "Return money and delete"
   },
   "reports": {
     "title": "Financial Reports",
@@ -168,7 +233,7 @@
     "subtitle": "Automate repeating income and expenses",
     "loading": "Loading recurring transactions...",
     "loadError": "Failed to load recurring transactions",
-    "empty": "No recurring transactions yet — add one below.",
+    "empty": "No recurring transactions yet. Add one to automate it.",
     "deleteConfirm": "Delete this recurring transaction? Already-generated transactions will not be affected.",
     "active": "Active",
     "paused": "Paused",
@@ -183,7 +248,9 @@
     "historyLoadError": "Failed to load history",
     "noOccurrences": "No occurrences generated yet.",
     "transactionDeleted": "transaction deleted",
-    "endDateOptionalPlaceholder": "End date (optional)"
+    "endDateOptionalPlaceholder": "End date (optional)",
+    "frequency": "Frequency",
+    "editRecurring": "Edit Recurring Transaction"
   },
   "financeAI": {
     "title": "Finance AI",
@@ -214,14 +281,26 @@
     "heading": "Your Accounts",
     "loading": "Loading accounts...",
     "loadError": "Failed to load accounts",
-    "empty": "No accounts yet — add one below, e.g. \"Bank\" or \"EVC\".",
+    "empty": "No accounts yet. Add one, e.g. \"Bank\" or \"EVC\".",
     "deleteConfirm": "Delete this account? An account that has transactions cannot be deleted.",
-    "startingBalance": "Starting balance: ${{amount}}",
+    "startingBalance": "Starting balance: {{amount}}",
     "addAccount": "Add Account",
     "namePlaceholder": "Account name (e.g. Salam Bank, EVC Plus)",
     "startingBalancePlaceholder": "Starting balance",
     "yourAccounts": "Your accounts",
-    "presetAccounts": "Banks and mobile money"
+    "presetAccounts": "Banks and mobile money",
+    "name": "Account name",
+    "totalBalance": "Total balance, all accounts",
+    "typeBank": "Bank account",
+    "typeMobileMoney": "Mobile money",
+    "typeCash": "Cash",
+    "typeOther": "Other",
+    "moneyIn": "In {{amount}}",
+    "moneyOut": "Out {{amount}}",
+    "recentActivity": "Recent activity",
+    "noActivity": "No activity yet",
+    "viewTransactions": "View transactions",
+    "editAccount": "Edit Account"
   },
   "billing": {
     "title": "Subscription",
@@ -272,5 +351,23 @@
     "unsubscribeConfirm": "Unsubscribe from your plan? You keep full access until {{date}}, which you have already paid for. After that your plan ends and you will need to subscribe again to keep using the app.",
     "unsubscribed": "You have unsubscribed. Your {{plan}} plan stays active until {{date}}, then ends.",
     "keepPlan": "Keep my plan"
+  },
+  "feedback": {
+    "added": "Added",
+    "saved": "Changes saved",
+    "deleted": "Deleted"
+  },
+  "validation": {
+    "descriptionRequired": "Enter a description",
+    "amountPositive": "Enter an amount greater than 0",
+    "dateRequired": "Choose a date",
+    "dateFuture": "The date cannot be in the future",
+    "nameRequired": "Enter a name",
+    "endAfterStart": "The end date must be after the start date"
+  },
+  "errors": {
+    "network": "Can't reach the server. Check your internet connection and try again.",
+    "session": "Your session has ended. Please log in again.",
+    "server": "Something went wrong on our side. Please try again in a moment."
   }
 }

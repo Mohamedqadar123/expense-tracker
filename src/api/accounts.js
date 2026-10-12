@@ -1,14 +1,14 @@
-import { API_BASE, parseJsonOrThrow } from './config';
+import { API_BASE, apiFetch, parseJsonOrThrow } from './config';
 
 const BASE_URL = `${API_BASE}/accounts`;
 
 export async function getAccounts() {
-  const res = await fetch(BASE_URL, { credentials: 'include' });
+  const res = await apiFetch(BASE_URL, { credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to load accounts');
 }
 
 export async function createAccount(data) {
-  const res = await fetch(BASE_URL, {
+  const res = await apiFetch(BASE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -18,7 +18,7 @@ export async function createAccount(data) {
 }
 
 export async function updateAccount(id, data) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
+  const res = await apiFetch(`${BASE_URL}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -28,6 +28,6 @@ export async function updateAccount(id, data) {
 }
 
 export async function deleteAccount(id) {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
+  const res = await apiFetch(`${BASE_URL}/${id}`, { method: 'DELETE', credentials: 'include' });
   return parseJsonOrThrow(res, 'Failed to delete account');
 }

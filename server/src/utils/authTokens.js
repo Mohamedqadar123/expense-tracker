@@ -2,6 +2,12 @@ import { createHash, randomBytes } from 'node:crypto';
 import prisma from '../prismaClient.js';
 
 export const RESET_PASSWORD = 'reset_password';
+// The confirmation link from signing up, after it has created the account.
+// It keeps signing that account in until the link's own expiry, so opening
+// it again (a second tap, another device, an email app that opened it first
+// to scan it) lands in the app instead of on "link expired". Created in
+// pendingSignups.js with the link's existing hash, not by issueAuthToken.
+export const SIGNUP_LINK = 'signup_link';
 
 const TTL_MS = {
   [RESET_PASSWORD]: 60 * 60 * 1000,

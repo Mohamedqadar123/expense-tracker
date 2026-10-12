@@ -136,13 +136,15 @@
   margin-inline-start: 8px;
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 12px;
   background: var(--color-success-bg);
   color: var(--color-success);
 }
 
 .landing-footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   justify-content: space-between;
   padding: 24px 0;
   margin-top: 24px;

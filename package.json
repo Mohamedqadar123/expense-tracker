@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "start": "cd server && npx --no-install prisma migrate deploy && node src/index.js"
   },
   "dependencies": {
     "i18next": "^26.4.2",
@@ -39,5 +40,8 @@
     "jsdom": "^27.2.0",
     "vite": "^7.2.4",
     "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

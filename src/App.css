@@ -268,11 +268,11 @@ th {
     text-align: start;
   }
 
-  .table-scroll table td[data-label="Actions"] {
+  .table-scroll table td.table-actions {
     justify-content: flex-end;
   }
 
-  .table-scroll table td[data-label="Actions"]::before {
+  .table-scroll table td.table-actions::before {
     content: none;
   }
 }
