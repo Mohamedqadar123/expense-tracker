@@ -36,8 +36,12 @@ export function AuthProvider({ children }) {
     return freshUser;
   }, []);
 
+  // For a response that has already signed someone in and returned their
+  // account (opening the sign-up link), so the app needn't ask again.
+  const signInAs = useCallback((signedInUser) => setUser(signedInUser), []);
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, isLoading, login, signup, logout, refreshUser, signInAs }}>
       {children}
     </AuthContext.Provider>
   );
